@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}">
+    <title>Edit Claim - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-pencil-square"></i> Edit Claim #<span th:text="${claim.claimId}">1</span></h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/claims/edit/{id}(id=${claim.claimId})}" method="post" th:object="${claim}">
+                        
+                        <!-- Policy Info (Read-only) -->
+                        <div class="mb-3">
+                            <label class="form-label">Policy</label>
+                            <input type="text" class="form-control" 
+                                   th:value="${claim.policyName + ' (' + claim.policyNumber + ')'}" readonly disabled>
+                            <input type="hidden" th:field="*{policyId}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="claimAmount" class="form-label">Claim Amount ($) *</label>
+                            <input type="number" class="form-control" id="claimAmount" 
+                                   th:field="*{claimAmount}" step="0.01" min="0.01" required>
+                            <div class="form-text">Enter the amount you are claiming</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Claim Description *</label>
+                            <textarea class="form-control" id="description" th:field="*{description}" 
+                                      rows="5" required
+                                      placeholder="Please provide detailed information about your claim"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason for Claim</label>
+                            <textarea class="form-control" id="reason" th:field="*{reason}" 
+                                      rows="3"
+                                      placeholder="Additional reason or context for your claim (optional)"></textarea>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Note:</strong> You can only edit claims that are still in PENDING status.
+                            Once a claim is under review or processed, it cannot be modified.
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/claims/view/{id}(id=${claim.claimId})}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

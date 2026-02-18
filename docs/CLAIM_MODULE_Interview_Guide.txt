@@ -1,0 +1,458 @@
+================================================================================
+          CLAIM MODULE - TECHNICAL INTERVIEW REFERENCE GUIDE
+                    Health Insurance Claim Management System
+================================================================================
+
+
+================================================================================
+SECTION 1: MODULE ARCHITECTURE OVERVIEW
+================================================================================
+
+LAYERED ARCHITECTURE:
+--------------------
+┌─────────────────────────────────────────────────────────────────┐
+│  PRESENTATION LAYER                                             │
+│  - ClaimController.java (handles HTTP requests)                 │
+│  - Thymeleaf templates (HTML views)                            │
+│  - ClaimDTO.java (data transfer + validation)                  │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │ @Autowired
+┌──────────────────────────▼──────────────────────────────────────┐
+│  BUSINESS LAYER                                                 │
+│  - ClaimService.java (interface/contract)                      │
+│  - ClaimServiceImpl.java (business logic + transactions)       │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │ @Autowired
+┌──────────────────────────▼──────────────────────────────────────┐
+│  PERSISTENCE LAYER                                              │
+│  - ClaimRepository.java (extends JpaRepository)                │
+│  - Claim.java (JPA Entity)                                     │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │ Hibernate ORM
+┌──────────────────────────▼──────────────────────────────────────┐
+│  DATABASE LAYER                                                 │
+│  - MySQL Database (claims table)                               │
+└─────────────────────────────────────────────────────────────────┘
+
+
+FILE STRUCTURE:
+--------------
+src/main/java/com/hicms/
+├── entity/
+│   ├── Claim.java            ← JPA Entity (maps to claims table)
+│   └── ClaimStatus.java      ← Enum: PENDING, APPROVED, REJECTED
+├── dto/
+│   ├── ClaimDTO.java         ← Form binding + validation
+│   └── ClaimReviewDTO.java   ← Review form data
+├── repository/
+│   └── ClaimRepository.java  ← Data access (auto-implemented)
+├── service/
+│   ├── ClaimService.java     ← Interface (contract)
+│   └── impl/
+│       └── ClaimServiceImpl.java ← Business logic
+└── controller/
+    └── ClaimController.java  ← HTTP request handling
+
+
+================================================================================
+SECTION 2: ANNOTATIONS EXPLAINED
+================================================================================
+
+JPA/HIBERNATE ANNOTATIONS (Entity Layer):
+-----------------------------------------
+@Entity              → Marks class as database table
+@Table(name="...")   → Specifies table name
+@Id                  → Primary key field
+@GeneratedValue      → Auto-generate ID (AUTO_INCREMENT)
+@Column              → Customize column (nullable, length, unique)
+@ManyToOne           → Many-to-one relationship (FK)
+@OneToMany           → One-to-many relationship
+@JoinColumn          → Foreign key column name
+@Enumerated(STRING)  → Store enum as text, not number
+@PrePersist          → Method called before INSERT
+@PreUpdate           → Method called before UPDATE
+
+SPRING ANNOTATIONS:
+------------------
+@Repository          → Data access component
+@Service             → Business logic component
+@Controller          → Web MVC controller (returns views)
+@Transactional       → Transaction management
+@Autowired           → Dependency injection
+@RequiredArgsConstructor → Lombok: constructor injection
+
+WEB/MVC ANNOTATIONS:
+-------------------
+@RequestMapping("/claims")     → Base URL for all endpoints
+@GetMapping("/submit")         → Handle GET /claims/submit
+@PostMapping("/submit")        → Handle POST /claims/submit
+@PathVariable                  → Extract from URL: /view/{id}
+@RequestParam                  → Query parameter: ?customerId=5
+@ModelAttribute                → Bind form data to object
+@Valid                         → Trigger bean validation
+@PreAuthorize("hasRole(...)") → Method-level security
+
+VALIDATION ANNOTATIONS (DTO):
+----------------------------
+@NotNull       → Field cannot be null
+@NotBlank      → String cannot be null/empty/whitespace
+@Size(max=n)   → String length limit
+@DecimalMin    → Minimum number value
+@Email         → Valid email format
+
+
+================================================================================
+SECTION 3: COMPLETE CODE EXAMPLES
+================================================================================
+
+ENTITY - Claim.java:
+-------------------
+@Entity
+@Table(name = "claims")
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Claim {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long claimId;
+    
+    @Column(unique = true, nullable = false, length = 50)
+    private String claimNumber;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "policy_id", nullable = false)
+    private Policy policy;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "claimant_id", nullable = false)
+    private User claimant;
+    
+    @Column(name = "claim_amount", precision = 12, scale = 2)
+    private BigDecimal claimAmount;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "claim_status", nullable = false)
+    private ClaimStatus claimStatus;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdDate = LocalDateTime.now();
+    }
+}
+
+Generated SQL Table:
+CREATE TABLE claims (
+    claim_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    claim_number VARCHAR(50) UNIQUE NOT NULL,
+    policy_id BIGINT NOT NULL REFERENCES policies(policy_id),
+    claimant_id BIGINT NOT NULL REFERENCES users(user_id),
+    claim_amount DECIMAL(12,2),
+    claim_status VARCHAR(255) NOT NULL,
+    created_date DATETIME
+);
+
+
+REPOSITORY - ClaimRepository.java:
+---------------------------------
+@Repository
+public interface ClaimRepository extends JpaRepository<Claim, Long> {
+    
+    // Spring generates SQL from method name!
+    List<Claim> findByClaimantUserId(Long userId);
+    // → SELECT * FROM claims WHERE claimant_id = ?
+    
+    List<Claim> findByClaimStatus(ClaimStatus status);
+    // → SELECT * FROM claims WHERE claim_status = ?
+    
+    boolean existsByClaimNumber(String claimNumber);
+    // → SELECT COUNT(*) > 0 FROM claims WHERE claim_number = ?
+    
+    // Custom JPQL query
+    @Query("SELECT c FROM Claim c WHERE c.adjuster IS NULL")
+    List<Claim> findUnassignedClaims();
+    // → SELECT * FROM claims WHERE adjuster_id IS NULL
+}
+
+
+SERVICE - ClaimServiceImpl.java:
+-------------------------------
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class ClaimServiceImpl implements ClaimService {
+    
+    private final ClaimRepository claimRepository;
+    private final PolicyRepository policyRepository;
+    
+    @Override
+    public Claim submitClaim(ClaimDTO dto, User claimant) {
+        
+        // 1. Get policy
+        Policy policy = policyRepository.findById(dto.getPolicyId())
+                .orElseThrow(() -> new RuntimeException("Policy not found"));
+        
+        // 2. Business validation
+        if (dto.getClaimAmount().compareTo(policy.getCoverageAmount()) > 0) {
+            throw new RuntimeException("Amount exceeds coverage");
+        }
+        
+        // 3. Build entity
+        Claim claim = Claim.builder()
+                .claimNumber(generateClaimNumber())
+                .policy(policy)
+                .claimant(claimant)
+                .claimAmount(dto.getClaimAmount())
+                .claimStatus(ClaimStatus.PENDING)
+                .build();
+        
+        // 4. Save to database
+        return claimRepository.save(claim);
+        // Hibernate generates: INSERT INTO claims (...) VALUES (...)
+    }
+}
+
+
+CONTROLLER - ClaimController.java:
+---------------------------------
+@Controller
+@RequestMapping("/claims")
+@RequiredArgsConstructor
+public class ClaimController {
+    
+    private final ClaimService claimService;
+    
+    @GetMapping
+    public String listClaims(Model model) {
+        List<Claim> claims = claimService.findAllClaims();
+        model.addAttribute("claims", claims);
+        return "claim/list";  // → templates/claim/list.html
+    }
+    
+    @PostMapping("/submit")
+    @PreAuthorize("hasAnyRole('USER', 'AGENT')")
+    public String submitClaim(
+            @Valid @ModelAttribute("claim") ClaimDTO claimDTO,
+            BindingResult result,
+            @AuthenticationPrincipal UserDetails userDetails,
+            RedirectAttributes redirectAttributes) {
+        
+        if (result.hasErrors()) {
+            return "claim/submit";  // Return to form with errors
+        }
+        
+        User user = userService.findByUsername(userDetails.getUsername());
+        claimService.submitClaim(claimDTO, user);
+        
+        redirectAttributes.addFlashAttribute("success", "Claim submitted!");
+        return "redirect:/claims";  // PRG pattern
+    }
+}
+
+
+================================================================================
+SECTION 4: CODE FLOW - CLAIM SUBMISSION
+================================================================================
+
+STEP-BY-STEP EXECUTION:
+----------------------
+
+1. USER ACTION
+   → User clicks "Submit New Claim" button
+   → Browser: GET /claims/submit
+
+2. SPRING SECURITY
+   → Checks: Is user logged in? Has USER/AGENT role?
+   → @PreAuthorize("hasAnyRole('USER','AGENT')") passes
+
+3. CONTROLLER (Show Form)
+   → ClaimController.submitClaimForm() executes
+   → Loads user's active enrollments
+   → Returns "claim/submit" (Thymeleaf template)
+
+4. USER FILLS FORM
+   → Selects policy, enters amount, description
+   → Clicks Submit button
+   → Browser: POST /claims/submit (form data)
+
+5. SPRING MVC BINDING
+   → @ModelAttribute binds form data → ClaimDTO object
+   → @Valid triggers validation (@NotNull, @DecimalMin)
+   → BindingResult captures any errors
+
+6. CONTROLLER (Process Submit)
+   → If validation errors → return to form
+   → Otherwise → call claimService.submitClaim()
+
+7. SERVICE LAYER
+   → @Transactional starts database transaction
+   → Fetches Policy from database
+   → Validates: Is user enrolled? Is amount valid?
+   → Generates unique claim number
+   → Builds Claim entity using Builder pattern
+
+8. REPOSITORY LAYER
+   → claimRepository.save(claim)
+   → @PrePersist triggers → sets createdDate
+   → Hibernate converts to SQL INSERT
+
+9. HIBERNATE/DATABASE
+   → INSERT INTO claims (...) VALUES (...)
+   → MySQL auto-generates claim_id
+   → Hibernate sets ID on entity object
+
+10. TRANSACTION COMMITS
+    → All changes are persisted
+    → If any error → rollback everything
+
+11. RESPONSE
+    → Controller adds flash message
+    → Returns "redirect:/claims"
+    → Browser follows redirect (GET /claims)
+    → User sees claim list with success message
+
+
+================================================================================
+SECTION 5: HIBERNATE SQL GENERATION
+================================================================================
+
+HOW HIBERNATE TRANSLATES OPERATIONS:
+-----------------------------------
+
+SAVE (New Entity):
+Java:  claimRepository.save(claim)  // claimId is null
+SQL:   INSERT INTO claims (claim_number, policy_id, ...) VALUES (?, ?, ...)
+
+SAVE (Existing Entity):
+Java:  claimRepository.save(claim)  // claimId = 10
+SQL:   UPDATE claims SET claim_number=?, policy_id=?, ... WHERE claim_id=10
+
+FIND BY ID:
+Java:  claimRepository.findById(10L)
+SQL:   SELECT * FROM claims WHERE claim_id = 10
+
+FIND ALL:
+Java:  claimRepository.findAll()
+SQL:   SELECT * FROM claims
+
+DELETE:
+Java:  claimRepository.deleteById(10L)
+SQL:   DELETE FROM claims WHERE claim_id = 10
+
+CUSTOM METHOD:
+Java:  claimRepository.findByClaimStatus(ClaimStatus.PENDING)
+SQL:   SELECT * FROM claims WHERE claim_status = 'PENDING'
+
+
+LAZY LOADING EXAMPLE:
+--------------------
+Java:
+  Claim claim = claimRepository.findById(10L);  // First query
+  String policyName = claim.getPolicy().getPolicyName();  // Second query
+
+SQL Generated:
+  SELECT * FROM claims WHERE claim_id = 10;
+  SELECT * FROM policies WHERE policy_id = 1;  // Triggered when accessing policy
+
+
+================================================================================
+SECTION 6: INTERVIEW QUESTIONS & ANSWERS
+================================================================================
+
+Q1: "Explain the claim module architecture."
+A1: "It follows MVC with 4 layers:
+    - Controller handles HTTP requests (@Controller, @GetMapping)
+    - Service contains business logic (@Service, @Transactional)
+    - Repository provides data access (extends JpaRepository)
+    - Entity maps to database table (@Entity, @Table)
+    Data flows: Browser→Controller→Service→Repository→Database"
+
+Q2: "What does @Transactional do?"
+A2: "It manages database transactions:
+    - Starts transaction when method begins
+    - Commits on successful completion
+    - Rolls back if any exception occurs
+    - Ensures data consistency (all-or-nothing)
+    @Transactional(readOnly=true) optimizes read operations"
+
+Q3: "How does Spring Data JPA generate queries from method names?"
+A3: "It parses method names into SQL:
+    - findByClaimStatus(status) → WHERE claim_status = ?
+    - findByClaimantUserId(id) → WHERE claimant_id = ?
+    - existsByClaimNumber(num) → SELECT COUNT(*)>0 WHERE claim_number=?
+    For complex queries, I use @Query with JPQL"
+
+Q4: "What's the difference between Entity and DTO?"
+A4: "Entity: Maps to database, has JPA annotations, relationships as objects
+    DTO: Transfers data, has validation annotations, flattened fields
+    Entity should stay in service layer; DTO is safe for views"
+
+Q5: "How does @ManyToOne work?"
+A5: "It defines a foreign key relationship:
+    @ManyToOne → Many claims belong to one policy
+    @JoinColumn(name='policy_id') → Creates FK column
+    fetch=LAZY → Loads related entity only when accessed"
+
+Q6: "What is @PrePersist?"
+A6: "It's a JPA lifecycle callback:
+    - @PrePersist runs before INSERT
+    - @PreUpdate runs before UPDATE
+    I use it to auto-set createdDate and updatedDate timestamps"
+
+Q7: "How does form validation work?"
+A7: "@Valid on parameter triggers Bean Validation
+    DTO has annotations: @NotNull, @Size, @DecimalMin
+    Errors go into BindingResult
+    If hasErrors(), return to form with error messages"
+
+Q8: "Explain the redirect after form submission."
+A8: "It's the PRG pattern (Post-Redirect-Get):
+    - POST /claims/submit processes the form
+    - Returns 'redirect:/claims' (HTTP 302)
+    - Browser follows redirect with GET /claims
+    This prevents duplicate submissions on page refresh"
+
+
+================================================================================
+SECTION 7: DATABASE CONNECTION FLOW
+================================================================================
+
+APPLICATION.PROPERTIES:
+----------------------
+spring.datasource.url=jdbc:mysql://localhost:3306/hicms_db
+spring.datasource.username=root
+spring.datasource.password=root
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+CONNECTION SEQUENCE:
+-------------------
+1. Application starts
+2. Spring reads datasource properties
+3. HikariCP creates connection pool
+4. Hibernate reads @Entity classes
+5. ddl-auto=update: Hibernate updates tables to match entities
+6. JpaRepository implementations are generated
+7. Connections from pool used for database operations
+
+
+ENTITY → TABLE MAPPING:
+----------------------
+@Entity @Table(name="claims")     →    CREATE TABLE claims (...)
+@Id @GeneratedValue               →    claim_id BIGINT AUTO_INCREMENT
+@Column(nullable=false)           →    column_name ... NOT NULL
+@ManyToOne @JoinColumn            →    FOREIGN KEY REFERENCES ...
+@Enumerated(EnumType.STRING)      →    claim_status VARCHAR(255)
+
+
+================================================================================
+END OF REFERENCE GUIDE
+================================================================================
+
+Files Created:
+1. c:\HICMS\docs\CLAIM_MODULE_Technical_Deep_Dive.md (Full documentation)
+2. c:\HICMS\docs\CLAIM_MODULE_Interview_Guide.txt (This file)
+
+Good luck with your interview!

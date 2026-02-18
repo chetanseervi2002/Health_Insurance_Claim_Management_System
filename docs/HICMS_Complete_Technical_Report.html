@@ -1,0 +1,3036 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>HICMS_Complete_Technical_Report.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="hicms---complete-technical-report">HICMS - COMPLETE TECHNICAL REPORT</h1>
+<h2 id="health-insurance-claim-management-system">Health Insurance Claim Management System</h2>
+<h3 id="comprehensive-guide-annotations-security-claims--interview-preparation">Comprehensive Guide: Annotations, Security, Claims &amp; Interview Preparation</h3>
+<hr>
+<h1 id="table-of-contents">TABLE OF CONTENTS</h1>
+<ol>
+<li><a href="#1-comprehensive-annotation-guide">Comprehensive Annotation Guide</a></li>
+<li><a href="#2-authentication--security-breakdown">Authentication &amp; Security Breakdown</a></li>
+<li><a href="#3-claim-management-module">Claim Management Module</a></li>
+<li><a href="#4-flow-diagrams-mermaidjs">Flow Diagrams (Mermaid.js)</a></li>
+<li><a href="#5-key-security-definitions">Key Security Definitions</a></li>
+<li><a href="#6-interview-questions--answers">Interview Questions &amp; Answers</a></li>
+</ol>
+<hr>
+<h1 id="1-comprehensive-annotation-guide">1. COMPREHENSIVE ANNOTATION GUIDE</h1>
+<h2 id="11-spring-boot-core-annotations">1.1 Spring Boot Core Annotations</h2>
+<h3 id="springbootapplication">@SpringBootApplication</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@SpringBootApplication</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HealthInsuranceClaimManagementApplication</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
+        SpringApplication.run(HealthInsuranceClaimManagementApplication<span class="hljs-class">.<span class="hljs-keyword">class</span>, <span class="hljs-title">args</span>)</span>;
+    }
+}
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Entry point of Spring Boot application</td>
+</tr>
+<tr>
+<td><strong>Combines</strong></td>
+<td><code>@Configuration</code> + <code>@EnableAutoConfiguration</code> + <code>@ComponentScan</code></td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>Bootstraps the entire application, enables auto-configuration for JPA, Security, Thymeleaf</td>
+</tr>
+</tbody>
+</table>
+<h3 id="configuration">@Configuration</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Configuration</span>
+<span class="hljs-meta">@EnableWebSecurity</span>
+<span class="hljs-meta">@EnableMethodSecurity</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SecurityConfig</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Marks class as source of bean definitions</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>Used in <code>SecurityConfig</code> to define security beans</td>
+</tr>
+<tr>
+<td><strong>Creates</strong></td>
+<td>Spring IoC container reads and instantiates @Bean methods</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bean">@Bean</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Bean</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> PasswordEncoder <span class="hljs-title">passwordEncoder</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> BCryptPasswordEncoder();
+}
+
+<span class="hljs-meta">@Bean</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> SecurityFilterChain <span class="hljs-title">filterChain</span><span class="hljs-params">(HttpSecurity http)</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Declares a method that returns a Spring-managed bean</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>Creates <code>PasswordEncoder</code>, <code>AuthenticationManager</code>, <code>SecurityFilterChain</code></td>
+</tr>
+<tr>
+<td><strong>Lifecycle</strong></td>
+<td>Singleton by default, managed by Spring container</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="12-stereotype-annotations-component-scanning">1.2 Stereotype Annotations (Component Scanning)</h2>
+<h3 id="controller">@Controller</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Controller</span>
+<span class="hljs-meta">@RequestMapping</span>(<span class="hljs-string">"/claims"</span>)
+<span class="hljs-meta">@RequiredArgsConstructor</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimController</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Marks class as Spring MVC controller (returns views)</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td><code>ClaimController</code>, <code>AuthController</code>, <code>DashboardController</code></td>
+</tr>
+<tr>
+<td><strong>Behavior</strong></td>
+<td>Handles HTTP requests, returns view names for Thymeleaf</td>
+</tr>
+</tbody>
+</table>
+<h3 id="restcontroller">@RestController</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@RestController</span>
+<span class="hljs-meta">@RequestMapping</span>(<span class="hljs-string">"/api/enrollments"</span>)
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EnrollmentApiController</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Combines <code>@Controller</code> + <code>@ResponseBody</code></td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>REST APIs for AJAX calls</td>
+</tr>
+<tr>
+<td><strong>Behavior</strong></td>
+<td>Returns JSON/XML directly (not view names)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="service">@Service</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Service</span>
+<span class="hljs-meta">@RequiredArgsConstructor</span>
+<span class="hljs-meta">@Transactional</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimServiceImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">ClaimService</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Marks class as service layer component</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td><code>ClaimServiceImpl</code>, <code>UserServiceImpl</code>, <code>DocumentServiceImpl</code></td>
+</tr>
+<tr>
+<td><strong>Behavior</strong></td>
+<td>Contains business logic, transaction management</td>
+</tr>
+</tbody>
+</table>
+<h3 id="repository">@Repository</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Repository</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">ClaimRepository</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">JpaRepository</span>&lt;<span class="hljs-title">Claim</span>, <span class="hljs-title">Long</span>&gt; </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Marks class as data access component</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td><code>ClaimRepository</code>, <code>UserRepository</code>, <code>PolicyRepository</code></td>
+</tr>
+<tr>
+<td><strong>Special</strong></td>
+<td>Enables exception translation (converts SQL exceptions to Spring's DataAccessException)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="component">@Component</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Component</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DataInitializer</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Generic Spring-managed component</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>Utility classes, initializers</td>
+</tr>
+<tr>
+<td><strong>Relationship</strong></td>
+<td>Parent of @Controller, @Service, @Repository</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="13-jpahibernate-annotations-entity-layer">1.3 JPA/Hibernate Annotations (Entity Layer)</h2>
+<h3 id="entity--table">@Entity &amp; @Table</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Entity</span>
+<span class="hljs-meta">@Table</span>(name = <span class="hljs-string">"claims"</span>)
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Claim</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>@Entity</strong></td>
+<td>Marks class as JPA entity (maps to DB table)</td>
+</tr>
+<tr>
+<td><strong>@Table</strong></td>
+<td>Specifies table name (default: class name)</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td><code>Claim</code>, <code>User</code>, <code>Policy</code>, <code>Document</code>, <code>PolicyEnrollment</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="id--generatedvalue">@Id &amp; @GeneratedValue</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Id</span>
+<span class="hljs-meta">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)
+<span class="hljs-keyword">private</span> Long claimId;
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>@Id</strong></td>
+<td>Marks field as primary key</td>
+</tr>
+<tr>
+<td><strong>@GeneratedValue</strong></td>
+<td>Auto-generate ID values</td>
+</tr>
+<tr>
+<td><strong>IDENTITY</strong></td>
+<td>Uses database AUTO_INCREMENT</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>All entities use IDENTITY strategy for MySQL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="column">@Column</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Column</span>(unique = <span class="hljs-keyword">true</span>, nullable = <span class="hljs-keyword">false</span>, length = <span class="hljs-number">50</span>)
+<span class="hljs-keyword">private</span> String claimNumber;
+
+<span class="hljs-meta">@Column</span>(name = <span class="hljs-string">"claim_amount"</span>, precision = <span class="hljs-number">12</span>, scale = <span class="hljs-number">2</span>)
+<span class="hljs-keyword">private</span> BigDecimal claimAmount;
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>Column name in DB</td>
+<td><code>claim_amount</code></td>
+</tr>
+<tr>
+<td><code>nullable</code></td>
+<td>Allow NULL</td>
+<td><code>false</code> = NOT NULL</td>
+</tr>
+<tr>
+<td><code>unique</code></td>
+<td>Unique constraint</td>
+<td>Claim number</td>
+</tr>
+<tr>
+<td><code>length</code></td>
+<td>VARCHAR length</td>
+<td>50 characters</td>
+</tr>
+<tr>
+<td><code>precision/scale</code></td>
+<td>Decimal precision</td>
+<td>DECIMAL(12,2)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="manytoone--joincolumn">@ManyToOne &amp; @JoinColumn</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@ManyToOne</span>(fetch = FetchType.LAZY)
+<span class="hljs-meta">@JoinColumn</span>(name = <span class="hljs-string">"policy_id"</span>, nullable = <span class="hljs-keyword">false</span>)
+<span class="hljs-keyword">private</span> Policy policy;
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>@ManyToOne</strong></td>
+<td>Many claims belong to one policy</td>
+</tr>
+<tr>
+<td><strong>@JoinColumn</strong></td>
+<td>Specifies foreign key column name</td>
+</tr>
+<tr>
+<td><strong>FetchType.LAZY</strong></td>
+<td>Load related entity only when accessed</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>Claim→Policy, Claim→User (claimant, agent, adjuster)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="onetomany">@OneToMany</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@OneToMany</span>(mappedBy = <span class="hljs-string">"claim"</span>, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+<span class="hljs-keyword">private</span> List&lt;Document&gt; documents = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>mappedBy</strong></td>
+<td>Field name in child entity that owns the relationship</td>
+</tr>
+<tr>
+<td><strong>cascade</strong></td>
+<td>Operations cascade to children</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>Claim has many Documents</td>
+</tr>
+</tbody>
+</table>
+<h3 id="enumerated">@Enumerated</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Enumerated</span>(EnumType.STRING)
+<span class="hljs-meta">@Column</span>(name = <span class="hljs-string">"claim_status"</span>, nullable = <span class="hljs-keyword">false</span>)
+<span class="hljs-keyword">private</span> ClaimStatus claimStatus;
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>EnumType.STRING</strong></td>
+<td>Store as &quot;PENDING&quot;, &quot;APPROVED&quot; (text)</td>
+</tr>
+<tr>
+<td><strong>EnumType.ORDINAL</strong></td>
+<td>Store as 0, 1, 2 (numbers) - NOT recommended</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td><code>ClaimStatus</code>, <code>Role</code>, <code>EnrollmentStatus</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="prepersist--preupdate">@PrePersist &amp; @PreUpdate</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@PrePersist</span>
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onCreate</span><span class="hljs-params">()</span> </span>{
+    createdDate = LocalDateTime.now();
+    updatedDate = LocalDateTime.now();
+}
+
+<span class="hljs-meta">@PreUpdate</span>
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onUpdate</span><span class="hljs-params">()</span> </span>{
+    updatedDate = LocalDateTime.now();
+}
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>@PrePersist</strong></td>
+<td>Callback before INSERT</td>
+</tr>
+<tr>
+<td><strong>@PreUpdate</strong></td>
+<td>Callback before UPDATE</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>Auto-set timestamps on all entities</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="14-webmvc-annotations">1.4 Web/MVC Annotations</h2>
+<h3 id="requestmapping">@RequestMapping</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Controller</span>
+<span class="hljs-meta">@RequestMapping</span>(<span class="hljs-string">"/claims"</span>)
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimController</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Maps HTTP requests to handler methods/classes</td>
+</tr>
+<tr>
+<td><strong>Class level</strong></td>
+<td>Base URL for all methods</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td><code>/claims</code>, <code>/policies</code>, <code>/enrollments</code>, <code>/admin</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="getmapping--postmapping">@GetMapping &amp; @PostMapping</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/submit"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">submitClaimForm</span><span class="hljs-params">(Model model)</span> </span>{ ... }
+
+<span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/submit"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">submitClaim</span><span class="hljs-params">(@Valid @ModelAttribute ClaimDTO claimDTO)</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>HTTP Method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@GetMapping</code></td>
+<td>GET</td>
+<td>Retrieve data, show forms</td>
+</tr>
+<tr>
+<td><code>@PostMapping</code></td>
+<td>POST</td>
+<td>Submit data, create resources</td>
+</tr>
+<tr>
+<td><code>@PutMapping</code></td>
+<td>PUT</td>
+<td>Update resources</td>
+</tr>
+<tr>
+<td><code>@DeleteMapping</code></td>
+<td>DELETE</td>
+<td>Remove resources</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pathvariable">@PathVariable</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/view/{id}"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">viewClaim</span><span class="hljs-params">(@PathVariable Long id, Model model)</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Extract value from URL path</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td><code>/claims/view/5</code> → <code>id = 5</code></td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>View, edit, review claims by ID</td>
+</tr>
+</tbody>
+</table>
+<h3 id="requestparam">@RequestParam</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/submit"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">submitClaim</span><span class="hljs-params">(
+    @RequestParam(required = <span class="hljs-keyword">false</span>)</span> Long customerId,
+    @<span class="hljs-title">RequestParam</span><span class="hljs-params">(value = <span class="hljs-string">"documents"</span>, required = <span class="hljs-keyword">false</span>)</span> List&lt;MultipartFile&gt; documents
+) </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>required</code></td>
+<td>Is parameter mandatory?</td>
+</tr>
+<tr>
+<td><code>defaultValue</code></td>
+<td>Default if not provided</td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>Parameter name</td>
+</tr>
+</tbody>
+</table>
+<h3 id="modelattribute">@ModelAttribute</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/submit"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">submitClaim</span><span class="hljs-params">(@ModelAttribute(<span class="hljs-string">"claim"</span>)</span> ClaimDTO claimDTO) </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Bind form data to Java object</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>HTML form → ClaimDTO, UserDTO</td>
+</tr>
+<tr>
+<td><strong>&quot;claim&quot;</strong></td>
+<td>Model attribute name for Thymeleaf</td>
+</tr>
+</tbody>
+</table>
+<h3 id="valid">@Valid</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/submit"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">submitClaim</span><span class="hljs-params">(
+    @Valid @ModelAttribute(<span class="hljs-string">"claim"</span>)</span> ClaimDTO claimDTO,
+    BindingResult result
+) </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Trigger Bean Validation</td>
+</tr>
+<tr>
+<td><strong>Checks</strong></td>
+<td>@NotNull, @NotBlank, @Size, @DecimalMin</td>
+</tr>
+<tr>
+<td><strong>BindingResult</strong></td>
+<td>Contains validation errors</td>
+</tr>
+</tbody>
+</table>
+<h3 id="authenticationprincipal">@AuthenticationPrincipal</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@GetMapping</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">listClaims</span><span class="hljs-params">(@AuthenticationPrincipal UserDetails userDetails)</span> </span>{
+    String username = userDetails.getUsername();
+    <span class="hljs-comment">// Get current logged-in user's claims</span>
+}
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Inject current authenticated user</td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><code>UserDetails</code> object from SecurityContext</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>Get current user in all authenticated endpoints</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="15-security-annotations">1.5 Security Annotations</h2>
+<h3 id="enablewebsecurity">@EnableWebSecurity</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Configuration</span>
+<span class="hljs-meta">@EnableWebSecurity</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SecurityConfig</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Enable Spring Security's web security support</td>
+</tr>
+<tr>
+<td><strong>Effect</strong></td>
+<td>Activates security filter chain</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>Applied to <code>SecurityConfig</code> class</td>
+</tr>
+</tbody>
+</table>
+<h3 id="enablemethodsecurity">@EnableMethodSecurity</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Configuration</span>
+<span class="hljs-meta">@EnableMethodSecurity</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SecurityConfig</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Enable method-level security annotations</td>
+</tr>
+<tr>
+<td><strong>Enables</strong></td>
+<td><code>@PreAuthorize</code>, <code>@PostAuthorize</code>, <code>@Secured</code></td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>Used throughout controllers</td>
+</tr>
+</tbody>
+</table>
+<h3 id="preauthorize">@PreAuthorize</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/submit"</span>)
+<span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasAnyRole('USER', 'AGENT')"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">submitClaimForm</span><span class="hljs-params">()</span> </span>{ ... }
+
+<span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/review/{id}"</span>)
+<span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasAnyRole('CLAIM_ADJUSTER', 'ADMIN')"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">reviewClaim</span><span class="hljs-params">()</span> </span>{ ... }
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Expression</th>
+<th>Description</th>
+<th>In HICMS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hasRole('ADMIN')</code></td>
+<td>Has specific role</td>
+<td>Admin-only operations</td>
+</tr>
+<tr>
+<td><code>hasAnyRole('A','B')</code></td>
+<td>Has any of roles</td>
+<td>Submit: USER or AGENT</td>
+</tr>
+<tr>
+<td><code>isAuthenticated()</code></td>
+<td>Is logged in</td>
+<td>General access</td>
+</tr>
+<tr>
+<td><code>@user.userId == principal.id</code></td>
+<td>Custom SpEL</td>
+<td>Owner check</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="16-lombok-annotations">1.6 Lombok Annotations</h2>
+<h3 id="getter--setter">@Getter &amp; @Setter</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Getter</span>
+<span class="hljs-meta">@Setter</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Claim</span> </span>{ 
+    <span class="hljs-keyword">private</span> Long claimId;  <span class="hljs-comment">// getClaimId(), setClaimId() auto-generated</span>
+}
+</div></code></pre>
+<h3 id="noargsconstructor--allargsconstructor">@NoArgsConstructor &amp; @AllArgsConstructor</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@NoArgsConstructor</span>   <span class="hljs-comment">// public Claim() {}</span>
+<span class="hljs-meta">@AllArgsConstructor</span>  <span class="hljs-comment">// public Claim(Long claimId, String claimNumber, ...) {}</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Claim</span> </span>{ ... }
+</div></code></pre>
+<h3 id="requiredargsconstructor">@RequiredArgsConstructor</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Service</span>
+<span class="hljs-meta">@RequiredArgsConstructor</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimServiceImpl</span> </span>{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ClaimRepository claimRepository;  <span class="hljs-comment">// Injected via constructor</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> PolicyRepository policyRepository;
+    <span class="hljs-comment">// Generates: public ClaimServiceImpl(ClaimRepository cr, PolicyRepository pr) {...}</span>
+}
+</div></code></pre>
+<h3 id="builder">@Builder</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Builder</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Claim</span> </span>{ ... }
+
+<span class="hljs-comment">// Usage:</span>
+Claim claim = Claim.builder()
+    .claimNumber(<span class="hljs-string">"CLM-20260201-001"</span>)
+    .claimAmount(<span class="hljs-keyword">new</span> BigDecimal(<span class="hljs-string">"2500.00"</span>))
+    .claimStatus(ClaimStatus.PENDING)
+    .build();
+</div></code></pre>
+<h3 id="data">@Data</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Data</span>  <span class="hljs-comment">// Combines @Getter, @Setter, @ToString, @EqualsAndHashCode, @RequiredArgsConstructor</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimDTO</span> </span>{ ... }
+</div></code></pre>
+<hr>
+<h2 id="17-transaction-annotation">1.7 Transaction Annotation</h2>
+<h3 id="transactional">@Transactional</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Service</span>
+<span class="hljs-meta">@Transactional</span>  <span class="hljs-comment">// Class-level: applies to all methods</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimServiceImpl</span> </span>{
+    
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-meta">@Transactional</span>(readOnly = <span class="hljs-keyword">true</span>)  <span class="hljs-comment">// Method-level override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Optional&lt;Claim&gt; <span class="hljs-title">findById</span><span class="hljs-params">(Long id)</span> </span>{ ... }
+    
+    <span class="hljs-meta">@Override</span>  <span class="hljs-comment">// Uses class-level @Transactional (read-write)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Claim <span class="hljs-title">submitClaim</span><span class="hljs-params">(ClaimDTO dto, User user)</span> </span>{ ... }
+}
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Default</td>
+<td>Read-write transaction</td>
+</tr>
+<tr>
+<td><code>readOnly = true</code></td>
+<td>Optimize for reads (no dirty checking)</td>
+</tr>
+<tr>
+<td><code>propagation</code></td>
+<td>How transaction propagates</td>
+</tr>
+<tr>
+<td><code>isolation</code></td>
+<td>Transaction isolation level</td>
+</tr>
+<tr>
+<td><code>rollbackFor</code></td>
+<td>Exceptions that trigger rollback</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="2-authentication--security-breakdown">2. AUTHENTICATION &amp; SECURITY BREAKDOWN</h1>
+<h2 id="21-authentication-mechanism-in-hicms">2.1 Authentication Mechanism in HICMS</h2>
+<p>HICMS uses <strong>Form-Based Authentication</strong> with <strong>Spring Security</strong> (not JWT/OAuth2).</p>
+<h3 id="authentication-components">Authentication Components</h3>
+<pre class="hljs"><code><div>┌─────────────────────────────────────────────────────────────────────────────┐
+│                    SPRING SECURITY AUTHENTICATION FLOW                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────┐      ┌────────────────────┐      ┌─────────────────────────┐
+│   Browser    │─────▶│  Security Filter   │─────▶│  Authentication        │
+│   (Login)    │      │  Chain             │      │  Manager               │
+└──────────────┘      └────────────────────┘      └───────────┬─────────────┘
+                                                              │
+                                                              ▼
+┌──────────────┐      ┌────────────────────┐      ┌─────────────────────────┐
+│  Session     │◀─────│  Security Context  │◀─────│  DaoAuthentication     │
+│  Created     │      │  Holder            │      │  Provider              │
+└──────────────┘      └────────────────────┘      └───────────┬─────────────┘
+                                                              │
+                                                              ▼
+                                                  ┌─────────────────────────┐
+                                                  │  CustomUserDetails      │
+                                                  │  Service                │
+                                                  └───────────┬─────────────┘
+                                                              │
+                                                              ▼
+                                                  ┌─────────────────────────┐
+                                                  │  UserRepository         │
+                                                  │  (Database)             │
+                                                  └─────────────────────────┘
+</div></code></pre>
+<h3 id="security-configuration-breakdown">Security Configuration Breakdown</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Configuration</span>
+<span class="hljs-meta">@EnableWebSecurity</span>
+<span class="hljs-meta">@EnableMethodSecurity</span>
+<span class="hljs-meta">@RequiredArgsConstructor</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SecurityConfig</span> </span>{
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> CustomUserDetailsService userDetailsService;
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// 1. PASSWORD ENCODER - BCrypt for secure password hashing</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Bean</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> PasswordEncoder <span class="hljs-title">passwordEncoder</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> BCryptPasswordEncoder();
+        <span class="hljs-comment">// Hashes passwords with salt, 10 rounds by default</span>
+        <span class="hljs-comment">// Example: "password123" → "$2a$10$N9qo8uLOickgx2ZMRZoMy..."</span>
+    }
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// 2. AUTHENTICATION PROVIDER - Uses UserDetailsService + PasswordEncoder</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Bean</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> DaoAuthenticationProvider <span class="hljs-title">authenticationProvider</span><span class="hljs-params">()</span> </span>{
+        DaoAuthenticationProvider authProvider = <span class="hljs-keyword">new</span> DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        <span class="hljs-keyword">return</span> authProvider;
+    }
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// 3. SECURITY FILTER CHAIN - Defines security rules</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Bean</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> SecurityFilterChain <span class="hljs-title">filterChain</span><span class="hljs-params">(HttpSecurity http)</span> <span class="hljs-keyword">throws</span> Exception </span>{
+        http
+            <span class="hljs-comment">// Disable CSRF (for simplicity; enable in production)</span>
+            .csrf(csrf -&gt; csrf.disable())
+            
+            <span class="hljs-comment">// URL-based authorization rules</span>
+            .authorizeHttpRequests(auth -&gt; auth
+                <span class="hljs-comment">// Public pages</span>
+                .requestMatchers(<span class="hljs-string">"/"</span>, <span class="hljs-string">"/home"</span>, <span class="hljs-string">"/login"</span>, <span class="hljs-string">"/register"</span>).permitAll()
+                .requestMatchers(<span class="hljs-string">"/css/**"</span>, <span class="hljs-string">"/js/**"</span>, <span class="hljs-string">"/images/**"</span>).permitAll()
+                
+                <span class="hljs-comment">// Role-based access</span>
+                .requestMatchers(<span class="hljs-string">"/admin/**"</span>).hasRole(<span class="hljs-string">"ADMIN"</span>)
+                .requestMatchers(<span class="hljs-string">"/claims/**"</span>).authenticated()
+                
+                <span class="hljs-comment">// All other requests need authentication</span>
+                .anyRequest().authenticated()
+            )
+            
+            <span class="hljs-comment">// Form login configuration</span>
+            .formLogin(form -&gt; form
+                .loginPage(<span class="hljs-string">"/login"</span>)           <span class="hljs-comment">// Custom login page</span>
+                .loginProcessingUrl(<span class="hljs-string">"/login"</span>)  <span class="hljs-comment">// Form submission URL</span>
+                .defaultSuccessUrl(<span class="hljs-string">"/dashboard"</span>, <span class="hljs-keyword">true</span>)  <span class="hljs-comment">// Redirect after login</span>
+                .failureUrl(<span class="hljs-string">"/login?error=true"</span>)
+                .permitAll()
+            )
+            
+            <span class="hljs-comment">// Logout configuration</span>
+            .logout(logout -&gt; logout
+                .logoutRequestMatcher(<span class="hljs-keyword">new</span> AntPathRequestMatcher(<span class="hljs-string">"/logout"</span>))
+                .logoutSuccessUrl(<span class="hljs-string">"/login?logout=true"</span>)
+                .invalidateHttpSession(<span class="hljs-keyword">true</span>)   <span class="hljs-comment">// Clear session</span>
+                .deleteCookies(<span class="hljs-string">"JSESSIONID"</span>)   <span class="hljs-comment">// Remove session cookie</span>
+                .permitAll()
+            );
+        
+        <span class="hljs-keyword">return</span> http.build();
+    }
+}
+</div></code></pre>
+<h3 id="customuserdetailsservice">CustomUserDetailsService</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@Service</span>
+<span class="hljs-meta">@RequiredArgsConstructor</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CustomUserDetailsService</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">UserDetailsService</span> </span>{
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> UserRepository userRepository;
+    
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-meta">@Transactional</span>(readOnly = <span class="hljs-keyword">true</span>)
+    <span class="hljs-function"><span class="hljs-keyword">public</span> UserDetails <span class="hljs-title">loadUserByUsername</span><span class="hljs-params">(String username)</span> <span class="hljs-keyword">throws</span> UsernameNotFoundException </span>{
+        <span class="hljs-comment">// 1. Find user in database</span>
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -&gt; <span class="hljs-keyword">new</span> UsernameNotFoundException(<span class="hljs-string">"User not found: "</span> + username));
+        
+        <span class="hljs-comment">// 2. Convert to Spring Security's UserDetails</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),      <span class="hljs-comment">// BCrypt hashed password</span>
+                user.isEnabled(),        <span class="hljs-comment">// Account enabled?</span>
+                <span class="hljs-keyword">true</span>,                    <span class="hljs-comment">// Account not expired</span>
+                <span class="hljs-keyword">true</span>,                    <span class="hljs-comment">// Credentials not expired</span>
+                <span class="hljs-keyword">true</span>,                    <span class="hljs-comment">// Account not locked</span>
+                Collections.singletonList(
+                    <span class="hljs-keyword">new</span> SimpleGrantedAuthority(<span class="hljs-string">"ROLE_"</span> + user.getRole().name())
+                )
+                <span class="hljs-comment">// ROLE_USER, ROLE_ADMIN, ROLE_AGENT, ROLE_CLAIM_ADJUSTER</span>
+        );
+    }
+}
+</div></code></pre>
+<h2 id="22-understanding-%22claims%22-in-security-context">2.2 Understanding &quot;Claims&quot; in Security Context</h2>
+<blockquote>
+<p><strong>IMPORTANT</strong>: In this application, &quot;Claims&quot; has TWO meanings:</p>
+<ol>
+<li><strong>Insurance Claims</strong> - The business domain (Claim entity)</li>
+<li><strong>Security Claims</strong> - Part of authentication tokens (not used in this app)</li>
+</ol>
+</blockquote>
+<h3 id="security-claims-jwt-context---for-reference">Security Claims (JWT Context - For Reference)</h3>
+<p>If HICMS used JWT authentication, claims would be:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"sub"</span>: <span class="hljs-string">"john.doe"</span>,           <span class="hljs-comment">// Subject (username)</span>
+  <span class="hljs-attr">"iat"</span>: <span class="hljs-number">1706745600</span>,           <span class="hljs-comment">// Issued At</span>
+  <span class="hljs-attr">"exp"</span>: <span class="hljs-number">1706832000</span>,           <span class="hljs-comment">// Expiration</span>
+  <span class="hljs-attr">"roles"</span>: [<span class="hljs-string">"ROLE_USER"</span>],      <span class="hljs-comment">// Custom claim: user roles</span>
+  <span class="hljs-attr">"userId"</span>: <span class="hljs-number">5</span>                  <span class="hljs-comment">// Custom claim: user ID</span>
+}
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sub</code></td>
+<td>Registered</td>
+<td>Subject (who the token is about)</td>
+</tr>
+<tr>
+<td><code>iat</code></td>
+<td>Registered</td>
+<td>When token was issued</td>
+</tr>
+<tr>
+<td><code>exp</code></td>
+<td>Registered</td>
+<td>When token expires</td>
+</tr>
+<tr>
+<td><code>roles</code></td>
+<td>Custom</td>
+<td>User's roles/authorities</td>
+</tr>
+<tr>
+<td><code>userId</code></td>
+<td>Custom</td>
+<td>Application-specific data</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hicms-approach-session-based">HICMS Approach (Session-Based)</h3>
+<p>Instead of JWT claims, HICMS stores user information in:</p>
+<ol>
+<li><strong>HttpSession</strong> - Server-side session storage</li>
+<li><strong>SecurityContextHolder</strong> - Holds authentication object</li>
+<li><strong>JSESSIONID Cookie</strong> - Session identifier in browser</li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-comment">// Getting current user's information</span>
+<span class="hljs-meta">@AuthenticationPrincipal</span> UserDetails userDetails
+
+<span class="hljs-comment">// The UserDetails contains:</span>
+<span class="hljs-comment">// - username</span>
+<span class="hljs-comment">// - password (hashed)</span>
+<span class="hljs-comment">// - authorities (roles)</span>
+<span class="hljs-comment">// - enabled status</span>
+</div></code></pre>
+<hr>
+<h1 id="3-claim-management-module">3. CLAIM MANAGEMENT MODULE</h1>
+<h2 id="31-module-overview">3.1 Module Overview</h2>
+<p>The Claim Management Module handles the complete lifecycle of insurance claims from submission to approval/rejection.</p>
+<h3 id="entities-involved">Entities Involved</h3>
+<pre class="hljs"><code><div>┌─────────────────────────────────────────────────────────────────────────────┐
+│                         CLAIM MODULE ENTITIES                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│    User      │     │    Policy    │     │   Document   │
+│  (Claimant)  │     │              │     │              │
+└──────┬───────┘     └──────┬───────┘     └──────┬───────┘
+       │                    │                    │
+       │ files              │ for               │ attached to
+       │                    │                    │
+       └────────────┬───────┴────────────────────┘
+                    │
+                    ▼
+              ┌──────────────┐
+              │    CLAIM     │
+              │              │
+              │ - claimId    │
+              │ - claimNumber│
+              │ - amount     │
+              │ - status     │
+              │ - remarks    │
+              └──────────────┘
+                    │
+        ┌───────────┼───────────┐
+        │           │           │
+        ▼           ▼           ▼
+    ┌───────┐   ┌───────┐   ┌───────┐
+    │ Agent │   │Adjuster│   │ User  │
+    │(files)│   │(reviews)   │(owner)│
+    └───────┘   └───────┘   └───────┘
+</div></code></pre>
+<h3 id="claimstatus-enum">ClaimStatus Enum</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> ClaimStatus {
+    PENDING,        <span class="hljs-comment">// Initial state after submission</span>
+    UNDER_REVIEW,   <span class="hljs-comment">// Assigned to adjuster</span>
+    APPROVED,       <span class="hljs-comment">// Claim approved</span>
+    REJECTED,       <span class="hljs-comment">// Claim rejected</span>
+    CANCELLED       <span class="hljs-comment">// Cancelled by user</span>
+}
+</div></code></pre>
+<h3 id="business-rules">Business Rules</h3>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Enrollment Required</strong></td>
+<td>User must be enrolled in policy to file claim</td>
+</tr>
+<tr>
+<td><strong>Amount Validation</strong></td>
+<td>Claim amount cannot exceed coverage amount</td>
+</tr>
+<tr>
+<td><strong>Edit Restriction</strong></td>
+<td>Only PENDING claims can be edited</td>
+</tr>
+<tr>
+<td><strong>Cancel Restriction</strong></td>
+<td>Only PENDING claims can be cancelled</td>
+</tr>
+<tr>
+<td><strong>Review Access</strong></td>
+<td>Only ADJUSTER and ADMIN can review claims</td>
+</tr>
+<tr>
+<td><strong>Owner Access</strong></td>
+<td>Users can only edit/cancel their own claims</td>
+</tr>
+</tbody>
+</table>
+<h2 id="32-key-business-logic">3.2 Key Business Logic</h2>
+<h3 id="claim-submission">Claim Submission</h3>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">public</span> Claim <span class="hljs-title">submitClaimWithAgent</span><span class="hljs-params">(ClaimDTO claimDTO, User claimant, User agent)</span> </span>{
+    
+    <span class="hljs-comment">// 1. VALIDATE POLICY EXISTS</span>
+    Policy policy = policyRepository.findById(claimDTO.getPolicyId())
+            .orElseThrow(() -&gt; <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Policy not found"</span>));
+    
+    <span class="hljs-comment">// 2. VALIDATE ENROLLMENT</span>
+    <span class="hljs-keyword">boolean</span> isEnrolled = enrollmentRepository
+            .existsByPolicyholderUserIdAndPolicyPolicyIdAndEnrollmentStatusIn(
+                    claimant.getUserId(),
+                    claimDTO.getPolicyId(),
+                    Arrays.asList(PolicyEnrollment.EnrollmentStatus.ACTIVE)
+            );
+    
+    <span class="hljs-keyword">if</span> (!isEnrolled) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"User is not enrolled in this policy"</span>);
+    }
+    
+    <span class="hljs-comment">// 3. VALIDATE AMOUNT</span>
+    <span class="hljs-keyword">if</span> (claimDTO.getClaimAmount().compareTo(policy.getCoverageAmount()) &gt; <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Claim amount exceeds coverage amount"</span>);
+    }
+    
+    <span class="hljs-comment">// 4. CREATE CLAIM</span>
+    Claim claim = Claim.builder()
+            .claimNumber(generateClaimNumber())
+            .policy(policy)
+            .claimant(claimant)
+            .agent(agent)
+            .claimAmount(claimDTO.getClaimAmount())
+            .claimDate(LocalDate.now())
+            .description(claimDTO.getDescription())
+            .claimStatus(ClaimStatus.PENDING)
+            .build();
+    
+    <span class="hljs-comment">// 5. PERSIST</span>
+    <span class="hljs-keyword">return</span> claimRepository.save(claim);
+}
+</div></code></pre>
+<h3 id="claim-review">Claim Review</h3>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">public</span> Claim <span class="hljs-title">reviewClaim</span><span class="hljs-params">(Long claimId, ClaimReviewDTO reviewDTO, User adjuster)</span> </span>{
+    
+    <span class="hljs-comment">// 1. FIND CLAIM</span>
+    Claim claim = claimRepository.findById(claimId)
+            .orElseThrow(() -&gt; <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Claim not found"</span>));
+    
+    <span class="hljs-comment">// 2. UPDATE WITH DECISION</span>
+    claim.setAdjuster(adjuster);
+    claim.setClaimStatus(reviewDTO.getClaimStatus());  <span class="hljs-comment">// APPROVED or REJECTED</span>
+    claim.setApprovedAmount(reviewDTO.getApprovedAmount());
+    claim.setRemarks(reviewDTO.getRemarks());
+    
+    <span class="hljs-comment">// 3. SAVE</span>
+    <span class="hljs-keyword">return</span> claimRepository.save(claim);
+}
+</div></code></pre>
+<hr>
+<h1 id="4-flow-diagrams-mermaidjs">4. FLOW DIAGRAMS (MERMAID.JS)</h1>
+<h2 id="41-authentication-flow-diagram">4.1 Authentication Flow Diagram</h2>
+<pre><code class="language-mermaid"><div class="mermaid">sequenceDiagram
+    autonumber
+    participant Browser
+    participant SecurityFilter as Security Filter Chain
+    participant AuthManager as Authentication Manager
+    participant UserDetailsService as CustomUserDetailsService
+    participant Database as MySQL Database
+    participant SecurityContext as SecurityContextHolder
+    
+    Browser->>SecurityFilter: GET /login
+    SecurityFilter->>Browser: Return login.html
+    
+    Browser->>SecurityFilter: POST /login (username, password)
+    SecurityFilter->>AuthManager: Authenticate credentials
+    AuthManager->>UserDetailsService: loadUserByUsername(username)
+    UserDetailsService->>Database: SELECT * FROM users WHERE username=?
+    Database-->>UserDetailsService: User entity
+    UserDetailsService-->>AuthManager: UserDetails (with authorities)
+    
+    AuthManager->>AuthManager: Verify password with BCrypt
+    
+    alt Password Valid
+        AuthManager-->>SecurityFilter: Authentication Success
+        SecurityFilter->>SecurityContext: Store Authentication
+        SecurityFilter->>Browser: Redirect to /dashboard + Set JSESSIONID cookie
+    else Password Invalid
+        AuthManager-->>SecurityFilter: Authentication Failed
+        SecurityFilter->>Browser: Redirect to /login?error=true
+    end
+    
+    Note over Browser,SecurityContext: Subsequent Requests
+    
+    Browser->>SecurityFilter: GET /claims (with JSESSIONID)
+    SecurityFilter->>SecurityContext: Get Authentication from Session
+    SecurityContext-->>SecurityFilter: Authentication object
+    SecurityFilter->>SecurityFilter: Check authorization rules
+    SecurityFilter->>Browser: Return claims list
+</div></code></pre>
+<h2 id="42-claim-lifecycle-flow-diagram">4.2 Claim Lifecycle Flow Diagram</h2>
+<pre><code class="language-mermaid"><div class="mermaid">flowchart TD
+    subgraph User Actions
+        A[User Login] --> B{Has Active Enrollment?}
+        B -->|No| C[Enroll in Policy First]
+        B -->|Yes| D[Submit New Claim]
+    end
+    
+    subgraph Claim Submission
+        D --> E[Fill Claim Form]
+        E --> F{Validate Amount}
+        F -->|Exceeds Coverage| G[Show Error]
+        G --> E
+        F -->|Valid| H[Generate Claim Number]
+        H --> I[Save with PENDING Status]
+        I --> J[Upload Supporting Documents]
+    end
+    
+    subgraph Claim Processing
+        J --> K[Claim in PENDING State]
+        K --> L{User Action}
+        L -->|Edit| M[Update Claim Details]
+        M --> K
+        L -->|Cancel| N[Set Status: CANCELLED]
+        L -->|Wait| O[Adjuster Assigns Self]
+        O --> P[Status: UNDER_REVIEW]
+    end
+    
+    subgraph Claim Review
+        P --> Q[Adjuster Reviews Claim]
+        Q --> R[View Documents]
+        R --> S{Decision}
+        S -->|Approve| T[Set Approved Amount]
+        T --> U[Status: APPROVED]
+        S -->|Reject| V[Add Rejection Remarks]
+        V --> W[Status: REJECTED]
+    end
+    
+    subgraph Final States
+        N --> X[CANCELLED - Closed]
+        U --> Y[APPROVED - Closed]
+        W --> Z[REJECTED - Closed]
+    end
+    
+    style K fill:#ffeb3b
+    style P fill:#2196f3
+    style U fill:#4caf50
+    style W fill:#f44336
+    style X fill:#9e9e9e
+</div></code></pre>
+<h2 id="43-claim-status-state-diagram">4.3 Claim Status State Diagram</h2>
+<pre><code class="language-mermaid"><div class="mermaid">stateDiagram-v2
+    [*] --> PENDING: User submits claim
+    
+    PENDING --> UNDER_REVIEW: Adjuster assigns self
+    PENDING --> CANCELLED: User cancels
+    PENDING --> PENDING: User edits
+    
+    UNDER_REVIEW --> APPROVED: Adjuster approves
+    UNDER_REVIEW --> REJECTED: Adjuster rejects
+    
+    APPROVED --> [*]
+    REJECTED --> [*]
+    CANCELLED --> [*]
+    
+    note right of PENDING: Initial state\nEditable by owner
+    note right of UNDER_REVIEW: Assigned to adjuster\nNo longer editable
+    note right of APPROVED: Final state\nPayment processed
+    note right of REJECTED: Final state\nWith remarks
+</div></code></pre>
+<h2 id="44-authorization-decision-flow">4.4 Authorization Decision Flow</h2>
+<pre><code class="language-mermaid"><div class="mermaid">flowchart TD
+    A[HTTP Request] --> B{Is URL public?}
+    B -->|Yes /login, /register| C[Allow Access]
+    B -->|No| D{Is User Authenticated?}
+    
+    D -->|No| E[Redirect to /login]
+    D -->|Yes| F{Check URL Pattern}
+    
+    F -->|/admin/**| G{Has ROLE_ADMIN?}
+    F -->|/claims/review/**| H{Has ROLE_ADJUSTER or ADMIN?}
+    F -->|/claims/submit| I{Has ROLE_USER or AGENT?}
+    F -->|/claims| J{Is Authenticated?}
+    
+    G -->|Yes| K[Allow Access]
+    G -->|No| L[403 Access Denied]
+    
+    H -->|Yes| K
+    H -->|No| L
+    
+    I -->|Yes| K
+    I -->|No| L
+    
+    J -->|Yes| M{Method-level @PreAuthorize?}
+    M -->|Pass| K
+    M -->|Fail| L
+    
+    style C fill:#4caf50
+    style K fill:#4caf50
+    style L fill:#f44336
+    style E fill:#ff9800
+</div></code></pre>
+<hr>
+<h1 id="5-key-security-definitions">5. KEY SECURITY DEFINITIONS</h1>
+<h2 id="51-core-security-concepts">5.1 Core Security Concepts</h2>
+<h3 id="authentication">Authentication</h3>
+<blockquote>
+<p><strong>Definition</strong>: The process of verifying the identity of a user, device, or system.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>What it answers</strong></td>
+<td>&quot;Who are you?&quot;</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>Username + password verification via form login</td>
+</tr>
+<tr>
+<td><strong>Mechanism</strong></td>
+<td>BCrypt password comparison</td>
+</tr>
+<tr>
+<td><strong>Result</strong></td>
+<td><code>Authentication</code> object in SecurityContext</td>
+</tr>
+</tbody>
+</table>
+<pre class="hljs"><code><div><span class="hljs-comment">// After successful authentication:</span>
+Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+String username = auth.getName();  <span class="hljs-comment">// "john.doe"</span>
+Collection&lt;? extends GrantedAuthority&gt; roles = auth.getAuthorities();  <span class="hljs-comment">// [ROLE_USER]</span>
+</div></code></pre>
+<hr>
+<h3 id="authorization">Authorization</h3>
+<blockquote>
+<p><strong>Definition</strong>: The process of determining whether an authenticated user has permission to access a resource.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>What it answers</strong></td>
+<td>&quot;What are you allowed to do?&quot;</td>
+</tr>
+<tr>
+<td><strong>In HICMS</strong></td>
+<td>Role-based access control (RBAC)</td>
+</tr>
+<tr>
+<td><strong>Levels</strong></td>
+<td>URL-level + Method-level</td>
+</tr>
+</tbody>
+</table>
+<pre class="hljs"><code><div><span class="hljs-comment">// URL-level (SecurityConfig)</span>
+.requestMatchers(<span class="hljs-string">"/admin/**"</span>).hasRole(<span class="hljs-string">"ADMIN"</span>)
+
+<span class="hljs-comment">// Method-level (Controller)</span>
+<span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasAnyRole('CLAIM_ADJUSTER', 'ADMIN')"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">reviewClaim</span><span class="hljs-params">()</span> </span>{ ... }
+</div></code></pre>
+<hr>
+<h3 id="jwt-json-web-token">JWT (JSON Web Token)</h3>
+<blockquote>
+<p><strong>Definition</strong>: A compact, URL-safe token format for securely transmitting information between parties as a JSON object.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Header</strong></td>
+<td>Algorithm &amp; token type</td>
+<td><code>{&quot;alg&quot;:&quot;HS256&quot;,&quot;typ&quot;:&quot;JWT&quot;}</code></td>
+</tr>
+<tr>
+<td><strong>Payload</strong></td>
+<td>Claims (data)</td>
+<td><code>{&quot;sub&quot;:&quot;john&quot;,&quot;role&quot;:&quot;USER&quot;}</code></td>
+</tr>
+<tr>
+<td><strong>Signature</strong></td>
+<td>Verification</td>
+<td><code>HMACSHA256(header.payload, secret)</code></td>
+</tr>
+</tbody>
+</table>
+<pre class="hljs"><code><div>eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huIiwicm9sZSI6IlVTRVIifQ.signature
+└──────Header──────┘.└──────────Payload──────────────┘.└─Signature─┘
+</div></code></pre>
+<blockquote>
+<p><strong>Note</strong>: HICMS uses session-based auth, not JWT.</p>
+</blockquote>
+<hr>
+<h3 id="claims-security-context">Claims (Security Context)</h3>
+<blockquote>
+<p><strong>Definition</strong>: Pieces of information asserted about a subject (user) in a token or authentication context.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Registered</strong></td>
+<td>Standard claims</td>
+<td><code>sub</code>, <code>iat</code>, <code>exp</code></td>
+</tr>
+<tr>
+<td><strong>Public</strong></td>
+<td>Publicly defined</td>
+<td><code>name</code>, <code>email</code></td>
+</tr>
+<tr>
+<td><strong>Private</strong></td>
+<td>Application-specific</td>
+<td><code>userId</code>, <code>roles</code></td>
+</tr>
+</tbody>
+</table>
+<pre class="hljs"><code><div><span class="hljs-comment">// In HICMS, "claims" about the user are stored in UserDetails:</span>
+UserDetails user = userDetailsService.loadUserByUsername(<span class="hljs-string">"john"</span>);
+<span class="hljs-comment">// Claims:</span>
+<span class="hljs-comment">// - username: "john"</span>
+<span class="hljs-comment">// - password: (hashed)</span>
+<span class="hljs-comment">// - authorities: [ROLE_USER]</span>
+<span class="hljs-comment">// - enabled: true</span>
+</div></code></pre>
+<hr>
+<h3 id="securitycontextholder">SecurityContextHolder</h3>
+<blockquote>
+<p><strong>Definition</strong>: The heart of Spring Security's authentication storage mechanism. Holds the security context for the current thread.</p>
+</blockquote>
+<pre class="hljs"><code><div><span class="hljs-comment">// How it works:</span>
+┌─────────────────────────────────────────────────────────────────┐
+│                    SecurityContextHolder                         │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │                  SecurityContext                         │    │
+│  │  ┌─────────────────────────────────────────────────┐    │    │
+│  │  │              Authentication                      │    │    │
+│  │  │  - Principal: UserDetails                       │    │    │
+│  │  │  - Credentials: (password, usually <span class="hljs-keyword">null</span> after)  │    │    │
+│  │  │  - Authorities: [ROLE_USER, ROLE_ADMIN]        │    │    │
+│  │  │  - Authenticated: <span class="hljs-keyword">true</span>/<span class="hljs-keyword">false</span>                   │    │    │
+│  │  └─────────────────────────────────────────────────┘    │    │
+│  └─────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment">// Usage in code:</span>
+Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+<span class="hljs-keyword">if</span> (auth != <span class="hljs-keyword">null</span> &amp;&amp; auth.isAuthenticated()) {
+    String username = auth.getName();
+    <span class="hljs-keyword">boolean</span> isAdmin = auth.getAuthorities().stream()
+        .anyMatch(a -&gt; a.getAuthority().equals(<span class="hljs-string">"ROLE_ADMIN"</span>));
+}
+</div></code></pre>
+<hr>
+<h3 id="filterchain">FilterChain</h3>
+<blockquote>
+<p><strong>Definition</strong>: A chain of filters that process incoming HTTP requests in sequence before reaching the servlet/controller.</p>
+</blockquote>
+<pre class="hljs"><code><div><span class="hljs-comment">// Spring Security Filter Chain (simplified order):</span>
+┌─────────────────────────────────────────────────────────────────┐
+│ HTTP Request                                                     │
+└───────────────────────────┬─────────────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ <span class="hljs-number">1</span>. SecurityContextPersistenceFilter                             │
+│    → Restores SecurityContext from session                      │
+└───────────────────────────┬─────────────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ <span class="hljs-number">2</span>. UsernamePasswordAuthenticationFilter                         │
+│    → <span class="hljs-function">Handles form <span class="hljs-title">login</span> <span class="hljs-params">(POST /login)</span>                          │
+└───────────────────────────┬─────────────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ 3. ExceptionTranslationFilter                                   │
+│    → Handles authentication/authorization exceptions            │
+└───────────────────────────┬─────────────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ 4. FilterSecurityInterceptor                                    │
+│    → Final authorization <span class="hljs-title">decision</span> <span class="hljs-params">(URL-level)</span>                  │
+└───────────────────────────┬─────────────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ Controller / Handler                                            │
+│    → @PreAuthorize <span class="hljs-title">checks</span> <span class="hljs-params">(method-level)</span>                       │
+└─────────────────────────────────────────────────────────────────┘
+</span></div></code></pre>
+<hr>
+<h1 id="6-interview-questions--answers">6. INTERVIEW QUESTIONS &amp; ANSWERS</h1>
+<h2 id="section-a-spring-boot--annotations-15-questions">Section A: Spring Boot &amp; Annotations (15 Questions)</h2>
+<h3 id="q1-what-does-springbootapplication-do-internally">Q1: What does @SpringBootApplication do internally?</h3>
+<p><strong>Answer:</strong>
+<code>@SpringBootApplication</code> is a convenience annotation that combines three annotations:</p>
+<ol>
+<li><strong>@Configuration</strong> - Marks the class as a source of bean definitions</li>
+<li><strong>@EnableAutoConfiguration</strong> - Enables Spring Boot's auto-configuration mechanism</li>
+<li><strong>@ComponentScan</strong> - Scans for components in the current package and sub-packages</li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-comment">// Equivalent to:</span>
+<span class="hljs-meta">@Configuration</span>
+<span class="hljs-meta">@EnableAutoConfiguration</span>
+<span class="hljs-meta">@ComponentScan</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Application</span> </span>{ }
+</div></code></pre>
+<hr>
+<h3 id="q2-whats-the-difference-between-controller-and-restcontroller">Q2: What's the difference between @Controller and @RestController?</h3>
+<p><strong>Answer:</strong></p>
+<table>
+<thead>
+<tr>
+<th>@Controller</th>
+<th>@RestController</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Returns view names (for template engines)</td>
+<td>Returns data directly (JSON/XML)</td>
+</tr>
+<tr>
+<td>Need @ResponseBody on each method for JSON</td>
+<td>@ResponseBody applied automatically</td>
+</tr>
+<tr>
+<td>Used with Thymeleaf, JSP</td>
+<td>Used for REST APIs</td>
+</tr>
+</tbody>
+</table>
+<pre class="hljs"><code><div><span class="hljs-meta">@Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WebController</span> </span>{
+    <span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/page"</span>)
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">page</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"page"</span>;  <span class="hljs-comment">// Returns templates/page.html</span>
+    }
+}
+
+<span class="hljs-meta">@RestController</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ApiController</span> </span>{
+    <span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/api/data"</span>)
+    <span class="hljs-function"><span class="hljs-keyword">public</span> ClaimDTO <span class="hljs-title">getData</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> claimDTO;  <span class="hljs-comment">// Returns JSON automatically</span>
+    }
+}
+</div></code></pre>
+<hr>
+<h3 id="q3-explain-the-difference-between-component-service-repository-and-controller">Q3: Explain the difference between @Component, @Service, @Repository, and @Controller.</h3>
+<p><strong>Answer:</strong>
+All are stereotype annotations that mark classes for component scanning, but with semantic differences:</p>
+<table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>Purpose</th>
+<th>Special Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>@Component</td>
+<td>Generic component</td>
+<td>None</td>
+</tr>
+<tr>
+<td>@Service</td>
+<td>Business logic layer</td>
+<td>None (semantic only)</td>
+</tr>
+<tr>
+<td>@Repository</td>
+<td>Data access layer</td>
+<td>Exception translation to DataAccessException</td>
+</tr>
+<tr>
+<td>@Controller</td>
+<td>Web layer</td>
+<td>Handles HTTP requests</td>
+</tr>
+</tbody>
+</table>
+<pre class="hljs"><code><div><span class="hljs-meta">@Component</span>      <span class="hljs-comment">// Generic - use when none of the others fit</span>
+<span class="hljs-meta">@Service</span>        <span class="hljs-comment">// Business logic - ClaimServiceImpl</span>
+<span class="hljs-meta">@Repository</span>     <span class="hljs-comment">// Data access - ClaimRepository</span>
+<span class="hljs-meta">@Controller</span>     <span class="hljs-comment">// Web handling - ClaimController</span>
+</div></code></pre>
+<hr>
+<h3 id="q4-what-is-the-purpose-of-transactional-and-how-does-it-work">Q4: What is the purpose of @Transactional and how does it work?</h3>
+<p><strong>Answer:</strong>
+<code>@Transactional</code> manages database transactions declaratively:</p>
+<p><strong>How it works:</strong></p>
+<ol>
+<li>Spring creates a proxy around the bean</li>
+<li>Proxy starts transaction before method execution</li>
+<li>If method succeeds → commit</li>
+<li>If exception occurs → rollback</li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-meta">@Service</span>
+<span class="hljs-meta">@Transactional</span>  <span class="hljs-comment">// All methods are transactional</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimServiceImpl</span> </span>{
+    
+    <span class="hljs-meta">@Transactional</span>(readOnly = <span class="hljs-keyword">true</span>)  <span class="hljs-comment">// Optimize for reads</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Claim&gt; <span class="hljs-title">findAll</span><span class="hljs-params">()</span> </span>{ }
+    
+    <span class="hljs-meta">@Transactional</span>(rollbackFor = Exception<span class="hljs-class">.<span class="hljs-keyword">class</span>)  // <span class="hljs-title">Rollback</span> <span class="hljs-title">on</span> <span class="hljs-title">any</span> <span class="hljs-title">exception</span>
+    <span class="hljs-title">public</span> <span class="hljs-title">Claim</span> <span class="hljs-title">submitClaim</span>() </span>{ }
+}
+</div></code></pre>
+<p><strong>Key properties:</strong></p>
+<ul>
+<li><code>readOnly</code> - Optimization hint for read operations</li>
+<li><code>propagation</code> - How to handle nested transactions</li>
+<li><code>isolation</code> - Transaction isolation level</li>
+<li><code>rollbackFor</code> - Exceptions that trigger rollback</li>
+</ul>
+<hr>
+<h3 id="q5-explain-preauthorize-and-how-it-differs-from-url-based-security">Q5: Explain @PreAuthorize and how it differs from URL-based security.</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>URL-based security (SecurityConfig):</strong></p>
+<pre class="hljs"><code><div>.requestMatchers(<span class="hljs-string">"/admin/**"</span>).hasRole(<span class="hljs-string">"ADMIN"</span>)
+</div></code></pre>
+<ul>
+<li>Applied globally in configuration</li>
+<li>Coarse-grained (URL patterns)</li>
+<li>Evaluated before reaching controller</li>
+</ul>
+<p><strong>@PreAuthorize (Method-level):</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasRole('ADMIN') and #userId == principal.id"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">updateUser</span><span class="hljs-params">(Long userId)</span> </span>{ }
+</div></code></pre>
+<ul>
+<li>Applied per method</li>
+<li>Fine-grained (can access method parameters)</li>
+<li>Evaluated after reaching controller, before method executes</li>
+<li>Supports SpEL expressions</li>
+</ul>
+<hr>
+<h3 id="q6-what-is-the-purpose-of-valid-and-how-does-it-work-with-bindingresult">Q6: What is the purpose of @Valid and how does it work with BindingResult?</h3>
+<p><strong>Answer:</strong>
+<code>@Valid</code> triggers Bean Validation (JSR-380) on an object:</p>
+<pre class="hljs"><code><div><span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/submit"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">submit</span><span class="hljs-params">(
+    @Valid @ModelAttribute(<span class="hljs-string">"claim"</span>)</span> ClaimDTO claimDTO,  <span class="hljs-comment">// Validate this object</span>
+    BindingResult result  <span class="hljs-comment">// Must immediately follow @Valid parameter</span>
+) </span>{
+    <span class="hljs-keyword">if</span> (result.hasErrors()) {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"claim/form"</span>;  <span class="hljs-comment">// Return to form with errors</span>
+    }
+    <span class="hljs-comment">// Process valid data</span>
+}
+</div></code></pre>
+<p><strong>ClaimDTO with validation:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimDTO</span> </span>{
+    <span class="hljs-meta">@NotNull</span>(message = <span class="hljs-string">"Policy is required"</span>)
+    <span class="hljs-keyword">private</span> Long policyId;
+    
+    <span class="hljs-meta">@DecimalMin</span>(value = <span class="hljs-string">"0.01"</span>, message = <span class="hljs-string">"Amount must be positive"</span>)
+    <span class="hljs-keyword">private</span> BigDecimal claimAmount;
+    
+    <span class="hljs-meta">@NotBlank</span>(message = <span class="hljs-string">"Description required"</span>)
+    <span class="hljs-meta">@Size</span>(max = <span class="hljs-number">1000</span>, message = <span class="hljs-string">"Max 1000 characters"</span>)
+    <span class="hljs-keyword">private</span> String description;
+}
+</div></code></pre>
+<hr>
+<h3 id="q7-explain-fetchtypelazy-vs-fetchtypeeager-in-jpa">Q7: Explain FetchType.LAZY vs FetchType.EAGER in JPA.</h3>
+<p><strong>Answer:</strong></p>
+<table>
+<thead>
+<tr>
+<th>FetchType</th>
+<th>Behavior</th>
+<th>SQL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LAZY</strong></td>
+<td>Load when accessed</td>
+<td>Separate query</td>
+</tr>
+<tr>
+<td><strong>EAGER</strong></td>
+<td>Load immediately</td>
+<td>JOIN in same query</td>
+</tr>
+</tbody>
+</table>
+<pre class="hljs"><code><div><span class="hljs-meta">@Entity</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Claim</span> </span>{
+    <span class="hljs-meta">@ManyToOne</span>(fetch = FetchType.LAZY)  <span class="hljs-comment">// Recommended</span>
+    <span class="hljs-keyword">private</span> Policy policy;
+    
+    <span class="hljs-meta">@ManyToOne</span>(fetch = FetchType.EAGER)  <span class="hljs-comment">// Load immediately</span>
+    <span class="hljs-keyword">private</span> User claimant;
+}
+</div></code></pre>
+<p><strong>LAZY loading example:</strong></p>
+<pre class="hljs"><code><div>Claim claim = claimRepository.findById(<span class="hljs-number">1L</span>);  <span class="hljs-comment">// Only loads Claim</span>
+<span class="hljs-comment">// SQL: SELECT * FROM claims WHERE claim_id = 1</span>
+
+String policyName = claim.getPolicy().getPolicyName();  <span class="hljs-comment">// Now loads Policy</span>
+<span class="hljs-comment">// SQL: SELECT * FROM policies WHERE policy_id = ?</span>
+</div></code></pre>
+<p><strong>Best Practice:</strong> Use LAZY by default, EAGER only when always needed.</p>
+<hr>
+<h3 id="q8-what-is-the-purpose-of-builder-from-lombok">Q8: What is the purpose of @Builder from Lombok?</h3>
+<p><strong>Answer:</strong>
+<code>@Builder</code> generates a builder pattern implementation:</p>
+<pre class="hljs"><code><div><span class="hljs-meta">@Builder</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Claim</span> </span>{
+    <span class="hljs-keyword">private</span> Long claimId;
+    <span class="hljs-keyword">private</span> String claimNumber;
+    <span class="hljs-keyword">private</span> BigDecimal claimAmount;
+}
+
+<span class="hljs-comment">// Usage:</span>
+Claim claim = Claim.builder()
+    .claimNumber(<span class="hljs-string">"CLM-001"</span>)
+    .claimAmount(<span class="hljs-keyword">new</span> BigDecimal(<span class="hljs-string">"2500.00"</span>))
+    .build();
+</div></code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Readable object construction</li>
+<li>Optional parameters</li>
+<li>Immutability-friendly</li>
+<li>No need for telescoping constructors</li>
+</ul>
+<hr>
+<h3 id="q9-what-does-requiredargsconstructor-do-and-why-is-it-preferred-for-dependency-injection">Q9: What does @RequiredArgsConstructor do and why is it preferred for dependency injection?</h3>
+<p><strong>Answer:</strong>
+<code>@RequiredArgsConstructor</code> generates a constructor for all <code>final</code> fields:</p>
+<pre class="hljs"><code><div><span class="hljs-meta">@Service</span>
+<span class="hljs-meta">@RequiredArgsConstructor</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimServiceImpl</span> </span>{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ClaimRepository claimRepository;    <span class="hljs-comment">// Injected</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> PolicyRepository policyRepository;  <span class="hljs-comment">// Injected</span>
+    
+    <span class="hljs-comment">// Lombok generates:</span>
+    <span class="hljs-comment">// public ClaimServiceImpl(ClaimRepository cr, PolicyRepository pr) {</span>
+    <span class="hljs-comment">//     this.claimRepository = cr;</span>
+    <span class="hljs-comment">//     this.policyRepository = pr;</span>
+    <span class="hljs-comment">// }</span>
+}
+</div></code></pre>
+<p><strong>Why constructor injection is preferred:</strong></p>
+<ol>
+<li><strong>Immutability</strong> - Fields can be final</li>
+<li><strong>Testability</strong> - Easy to mock in tests</li>
+<li><strong>Required dependencies</strong> - Cannot create object without dependencies</li>
+<li><strong>No reflection</strong> - Unlike @Autowired on fields</li>
+</ol>
+<hr>
+<h3 id="q10-explain-enumeratedenumtypestring-vs-ordinal">Q10: Explain @Enumerated(EnumType.STRING) vs ORDINAL.</h3>
+<p><strong>Answer:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> ClaimStatus {
+    PENDING,      <span class="hljs-comment">// ORDINAL: 0, STRING: "PENDING"</span>
+    APPROVED,     <span class="hljs-comment">// ORDINAL: 1, STRING: "APPROVED"</span>
+    REJECTED      <span class="hljs-comment">// ORDINAL: 2, STRING: "REJECTED"</span>
+}
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Storage</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ORDINAL</strong></td>
+<td>Integer</td>
+<td>0, 1, 2</td>
+</tr>
+<tr>
+<td><strong>STRING</strong></td>
+<td>Varchar</td>
+<td>&quot;PENDING&quot;, &quot;APPROVED&quot;</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why STRING is preferred:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@Enumerated</span>(EnumType.STRING)  <span class="hljs-comment">// Use this</span>
+<span class="hljs-keyword">private</span> ClaimStatus status;
+</div></code></pre>
+<ol>
+<li><strong>Readability</strong> - Database shows &quot;PENDING&quot; not &quot;0&quot;</li>
+<li><strong>Safety</strong> - Adding new enum values doesn't break existing data</li>
+<li><strong>Refactoring</strong> - Can reorder enums without data corruption</li>
+</ol>
+<hr>
+<h2 id="section-b-security-questions-15-questions">Section B: Security Questions (15 Questions)</h2>
+<h3 id="q11-explain-how-spring-securitys-authentication-flow-works-in-hicms">Q11: Explain how Spring Security's authentication flow works in HICMS.</h3>
+<p><strong>Answer:</strong></p>
+<ol>
+<li><strong>User submits login form</strong> (POST /login)</li>
+<li><strong>UsernamePasswordAuthenticationFilter</strong> intercepts request</li>
+<li><strong>AuthenticationManager</strong> delegates to <strong>DaoAuthenticationProvider</strong></li>
+<li><strong>CustomUserDetailsService.loadUserByUsername()</strong> queries database</li>
+<li><strong>BCryptPasswordEncoder</strong> verifies password</li>
+<li><strong>On success:</strong>
+<ul>
+<li>Creates <code>Authentication</code> object</li>
+<li>Stores in <code>SecurityContextHolder</code></li>
+<li>Creates HTTP session</li>
+<li>Sets JSESSIONID cookie</li>
+<li>Redirects to /dashboard</li>
+</ul>
+</li>
+<li><strong>On failure:</strong> Redirects to /login?error=true</li>
+</ol>
+<hr>
+<h3 id="q12-what-is-securitycontextholder-and-how-is-authentication-stored">Q12: What is SecurityContextHolder and how is authentication stored?</h3>
+<p><strong>Answer:</strong>
+<code>SecurityContextHolder</code> is the core storage mechanism for security information:</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Structure:</span>
+SecurityContextHolder
+    └── SecurityContext
+            └── Authentication
+                    ├── Principal (UserDetails)
+                    ├── Credentials (password, usually cleared)
+                    ├── Authorities (roles)
+                    └── isAuthenticated (<span class="hljs-keyword">boolean</span>)
+</div></code></pre>
+<p><strong>Storage strategies:</strong></p>
+<ul>
+<li><code>MODE_THREADLOCAL</code> (default) - Each thread has its own context</li>
+<li><code>MODE_INHERITABLETHREADLOCAL</code> - Child threads inherit</li>
+<li><code>MODE_GLOBAL</code> - Single context for entire application</li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-comment">// Getting current user:</span>
+Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+String username = auth.getName();
+</div></code></pre>
+<hr>
+<h3 id="q13-how-does-preauthorize-handle-role-checking">Q13: How does @PreAuthorize handle role checking?</h3>
+<p><strong>Answer:</strong>
+<code>@PreAuthorize</code> uses Spring Expression Language (SpEL):</p>
+<pre class="hljs"><code><div><span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasRole('ADMIN')"</span>)
+<span class="hljs-comment">// Checks: authorities.contains("ROLE_ADMIN")</span>
+
+<span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasAnyRole('USER', 'AGENT')"</span>)
+<span class="hljs-comment">// Checks: authorities.containsAny(["ROLE_USER", "ROLE_AGENT"])</span>
+
+<span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasRole('USER') and #claim.claimant.userId == principal.id"</span>)
+<span class="hljs-comment">// Complex: Role check + parameter access</span>
+</div></code></pre>
+<p><strong>How it works:</strong></p>
+<ol>
+<li>Method invocation intercepted by Spring AOP</li>
+<li>SpEL expression evaluated</li>
+<li>If true → method executes</li>
+<li>If false → AccessDeniedException thrown</li>
+</ol>
+<hr>
+<h3 id="q14-why-does-hicms-add-%22role%22-prefix-to-roles">Q14: Why does HICMS add &quot;ROLE_&quot; prefix to roles?</h3>
+<p><strong>Answer:</strong>
+Spring Security conventions require the &quot;ROLE_&quot; prefix for <code>hasRole()</code>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// In CustomUserDetailsService:</span>
+<span class="hljs-keyword">new</span> SimpleGrantedAuthority(<span class="hljs-string">"ROLE_"</span> + user.getRole().name())
+<span class="hljs-comment">// Creates: ROLE_USER, ROLE_ADMIN, ROLE_AGENT, ROLE_CLAIM_ADJUSTER</span>
+
+<span class="hljs-comment">// In @PreAuthorize:</span>
+<span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasRole('ADMIN')"</span>)
+<span class="hljs-comment">// Spring automatically checks for "ROLE_ADMIN"</span>
+
+<span class="hljs-comment">// Alternative without prefix:</span>
+<span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasAuthority('ADMIN')"</span>)
+<span class="hljs-comment">// Checks for exactly "ADMIN"</span>
+</div></code></pre>
+<hr>
+<h3 id="q15-what-is-the-purpose-of-bcryptpasswordencoder">Q15: What is the purpose of BCryptPasswordEncoder?</h3>
+<p><strong>Answer:</strong>
+BCrypt is a password hashing algorithm designed for security:</p>
+<pre class="hljs"><code><div><span class="hljs-meta">@Bean</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> PasswordEncoder <span class="hljs-title">passwordEncoder</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> BCryptPasswordEncoder();
+}
+</div></code></pre>
+<p><strong>Features:</strong></p>
+<ol>
+<li><strong>Salt</strong> - Random salt per password (stored in hash)</li>
+<li><strong>Adaptive</strong> - Work factor can be increased</li>
+<li><strong>Slow</strong> - Intentionally slow to prevent brute force</li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-comment">// Hashing:</span>
+String hash = encoder.encode(<span class="hljs-string">"password123"</span>);
+<span class="hljs-comment">// Result: $2a$10$N9qo8uLOickgx2ZMRZoMy...</span>
+<span class="hljs-comment">//         ↑  ↑ └── Hash</span>
+<span class="hljs-comment">//         │  └── Work factor (10 = 2^10 iterations)</span>
+<span class="hljs-comment">//         └── Algorithm version</span>
+
+<span class="hljs-comment">// Verification:</span>
+<span class="hljs-keyword">boolean</span> matches = encoder.matches(<span class="hljs-string">"password123"</span>, hash);  <span class="hljs-comment">// true</span>
+</div></code></pre>
+<hr>
+<h3 id="q16-how-does-session-based-authentication-work-vs-jwt">Q16: How does session-based authentication work vs JWT?</h3>
+<p><strong>Answer:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Session-Based (HICMS)</th>
+<th>JWT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Storage</strong></td>
+<td>Server (HttpSession)</td>
+<td>Client (localStorage/cookie)</td>
+</tr>
+<tr>
+<td><strong>Identifier</strong></td>
+<td>JSESSIONID cookie</td>
+<td>Token in header</td>
+</tr>
+<tr>
+<td><strong>Scalability</strong></td>
+<td>Needs session replication</td>
+<td>Stateless</td>
+</tr>
+<tr>
+<td><strong>Revocation</strong></td>
+<td>Easy (invalidate session)</td>
+<td>Hard (needs blacklist)</td>
+</tr>
+<tr>
+<td><strong>Size</strong></td>
+<td>Small cookie</td>
+<td>Larger token</td>
+</tr>
+</tbody>
+</table>
+<p><strong>HICMS Flow:</strong></p>
+<pre class="hljs"><code><div>Login → Create Session → Store in Server → Send JSESSIONID cookie
+Request → Send cookie → Server looks up session → Get Authentication
+</div></code></pre>
+<p><strong>JWT Flow:</strong></p>
+<pre class="hljs"><code><div>Login → Generate Token → Send to client → Client stores
+Request → Send token in header → Server validates signature → Extract claims
+</div></code></pre>
+<hr>
+<h3 id="q17-explain-the-filter-chain-in-spring-security">Q17: Explain the filter chain in Spring Security.</h3>
+<p><strong>Answer:</strong>
+Requests pass through multiple filters in order:</p>
+<pre class="hljs"><code><div>Request → SecurityContextPersistenceFilter
+        → HeaderWriterFilter
+        → CsrfFilter (if enabled)
+        → LogoutFilter
+        → UsernamePasswordAuthenticationFilter
+        → RequestCacheAwareFilter
+        → SecurityContextHolderAwareRequestFilter
+        → AnonymousAuthenticationFilter
+        → SessionManagementFilter
+        → ExceptionTranslationFilter
+        → FilterSecurityInterceptor
+        → Controller
+</div></code></pre>
+<p><strong>Key filters in HICMS:</strong></p>
+<ol>
+<li><strong>SecurityContextPersistenceFilter</strong> - Restores context from session</li>
+<li><strong>UsernamePasswordAuthenticationFilter</strong> - Handles form login</li>
+<li><strong>ExceptionTranslationFilter</strong> - Handles auth exceptions</li>
+<li><strong>FilterSecurityInterceptor</strong> - Makes authorization decisions</li>
+</ol>
+<hr>
+<h3 id="q18-how-does-hicms-handle-access-denied-scenarios">Q18: How does HICMS handle access denied scenarios?</h3>
+<p><strong>Answer:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// In SecurityConfig:</span>
+.exceptionHandling(ex -&gt; ex
+    .accessDeniedPage(<span class="hljs-string">"/access-denied"</span>)
+)
+</div></code></pre>
+<p><strong>Scenarios:</strong></p>
+<ol>
+<li><strong>Not authenticated</strong> → Redirect to /login</li>
+<li><strong>Authenticated but not authorized</strong> → Show /access-denied page</li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-comment">// In Controller (method-level):</span>
+<span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasRole('ADMIN')"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">adminOnly</span><span class="hljs-params">()</span> </span>{ }
+
+<span class="hljs-comment">// If user without ADMIN role calls this:</span>
+<span class="hljs-comment">// → AccessDeniedException thrown</span>
+<span class="hljs-comment">// → ExceptionTranslationFilter catches</span>
+<span class="hljs-comment">// → Redirects to /access-denied</span>
+</div></code></pre>
+<hr>
+<h3 id="q19-what-is-csrf-and-why-is-it-disabled-in-hicms">Q19: What is CSRF and why is it disabled in HICMS?</h3>
+<p><strong>Answer:</strong>
+<strong>CSRF (Cross-Site Request Forgery):</strong> Attack where malicious site tricks user's browser into making requests to another site where user is authenticated.</p>
+<pre class="hljs"><code><div>.csrf(csrf -&gt; csrf.disable())  <span class="hljs-comment">// Disabled in HICMS</span>
+</div></code></pre>
+<p><strong>Why it might be disabled:</strong></p>
+<ol>
+<li>Development/testing convenience</li>
+<li>REST APIs with token-based auth</li>
+<li>Single-page applications</li>
+</ol>
+<p><strong>Why it should be enabled in production:</strong></p>
+<pre class="hljs"><code><div>.csrf(csrf -&gt; csrf
+    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+)
+</div></code></pre>
+<p>Then in forms:</p>
+<pre class="hljs"><code><div><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"hidden"</span> <span class="hljs-attr">th:name</span>=<span class="hljs-string">"${_csrf.parameterName}"</span> <span class="hljs-attr">th:value</span>=<span class="hljs-string">"${_csrf.token}"</span>/&gt;</span>
+</div></code></pre>
+<hr>
+<h3 id="q20-how-does-authenticationprincipal-work">Q20: How does @AuthenticationPrincipal work?</h3>
+<p><strong>Answer:</strong>
+<code>@AuthenticationPrincipal</code> injects the currently authenticated user:</p>
+<pre class="hljs"><code><div><span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/profile"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">profile</span><span class="hljs-params">(@AuthenticationPrincipal UserDetails userDetails)</span> </span>{
+    String username = userDetails.getUsername();
+    <span class="hljs-comment">// userDetails is the object returned by UserDetailsService</span>
+}
+</div></code></pre>
+<p><strong>How it works:</strong></p>
+<ol>
+<li>Spring's <code>AuthenticationPrincipalArgumentResolver</code> handles this annotation</li>
+<li>Gets <code>Authentication</code> from <code>SecurityContextHolder</code></li>
+<li>Extracts <code>principal</code> (the UserDetails object)</li>
+<li>Injects into method parameter</li>
+</ol>
+<p><strong>Alternative:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/profile"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">profile</span><span class="hljs-params">(Principal principal)</span> </span>{
+    String username = principal.getName();
+}
+</div></code></pre>
+<hr>
+<h2 id="section-c-claim-module-questions-15-questions">Section C: Claim Module Questions (15 Questions)</h2>
+<h3 id="q21-explain-the-claim-lifecycle-in-hicms">Q21: Explain the claim lifecycle in HICMS.</h3>
+<p><strong>Answer:</strong></p>
+<pre class="hljs"><code><div>PENDING → UNDER_REVIEW → APPROVED
+    ↓          ↓
+CANCELLED  REJECTED
+</div></code></pre>
+<ol>
+<li><strong>PENDING</strong> - Initial state after user submits claim</li>
+<li><strong>UNDER_REVIEW</strong> - Adjuster assigns themselves to claim</li>
+<li><strong>APPROVED</strong> - Adjuster approves, sets approved amount</li>
+<li><strong>REJECTED</strong> - Adjuster rejects, adds remarks</li>
+<li><strong>CANCELLED</strong> - User cancels (only from PENDING)</li>
+</ol>
+<hr>
+<h3 id="q22-what-validations-occur-during-claim-submission">Q22: What validations occur during claim submission?</h3>
+<p><strong>Answer:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">public</span> Claim <span class="hljs-title">submitClaim</span><span class="hljs-params">(ClaimDTO dto, User claimant)</span> </span>{
+    <span class="hljs-comment">// 1. Policy exists</span>
+    Policy policy = policyRepository.findById(dto.getPolicyId())
+        .orElseThrow(() -&gt; <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Policy not found"</span>));
+    
+    <span class="hljs-comment">// 2. User is enrolled in policy</span>
+    <span class="hljs-keyword">boolean</span> isEnrolled = enrollmentRepository
+        .existsByPolicyholderUserIdAndPolicyPolicyIdAndEnrollmentStatusIn(...);
+    <span class="hljs-keyword">if</span> (!isEnrolled) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"User is not enrolled"</span>);
+    }
+    
+    <span class="hljs-comment">// 3. Amount doesn't exceed coverage</span>
+    <span class="hljs-keyword">if</span> (dto.getClaimAmount().compareTo(policy.getCoverageAmount()) &gt; <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Amount exceeds coverage"</span>);
+    }
+    
+    <span class="hljs-comment">// 4. DTO validation (@Valid)</span>
+    <span class="hljs-comment">// - @NotNull policyId</span>
+    <span class="hljs-comment">// - @DecimalMin claimAmount</span>
+    <span class="hljs-comment">// - @NotBlank description</span>
+}
+</div></code></pre>
+<hr>
+<h3 id="q23-how-does-role-based-claim-access-work">Q23: How does role-based claim access work?</h3>
+<p><strong>Answer:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@GetMapping</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">listClaims</span><span class="hljs-params">(@AuthenticationPrincipal UserDetails userDetails)</span> </span>{
+    User user = userService.findByUsername(userDetails.getUsername());
+    
+    List&lt;Claim&gt; claims;
+    <span class="hljs-keyword">switch</span> (user.getRole()) {
+        <span class="hljs-keyword">case</span> ADMIN:
+            claims = claimService.findAllClaims();       <span class="hljs-comment">// See ALL claims</span>
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> AGENT:
+            claims = claimService.findByAgent(user);     <span class="hljs-comment">// Claims they filed</span>
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> CLAIM_ADJUSTER:
+            claims = claimService.findByAdjuster(user);  <span class="hljs-comment">// Claims assigned to them</span>
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">default</span>: <span class="hljs-comment">// USER</span>
+            claims = claimService.findByClaimant(user);  <span class="hljs-comment">// Their own claims</span>
+    }
+}
+</div></code></pre>
+<hr>
+<h3 id="q24-why-is-ownership-validation-important-for-claim-operations">Q24: Why is ownership validation important for claim operations?</h3>
+<p><strong>Answer:</strong>
+Ownership validation prevents users from modifying claims they don't own:</p>
+<pre class="hljs"><code><div><span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/cancel/{id}"</span>)
+<span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasRole('USER')"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">cancelClaim</span><span class="hljs-params">(@PathVariable Long id, 
+                          @AuthenticationPrincipal UserDetails userDetails)</span> </span>{
+    User user = userService.findByUsername(userDetails.getUsername());
+    Claim claim = claimService.findById(id).orElseThrow();
+    
+    <span class="hljs-comment">// CRITICAL: Verify ownership</span>
+    <span class="hljs-keyword">if</span> (!claim.getClaimant().getUserId().equals(user.getUserId())) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"You can only cancel your own claims"</span>);
+    }
+    
+    <span class="hljs-comment">// Also check state</span>
+    <span class="hljs-keyword">if</span> (claim.getClaimStatus() != ClaimStatus.PENDING) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Only pending claims can be cancelled"</span>);
+    }
+}
+</div></code></pre>
+<p>Without this, User A could cancel User B's claims just by knowing the ID!</p>
+<hr>
+<h3 id="q25-how-does-the-claim-number-generation-work">Q25: How does the claim number generation work?</h3>
+<p><strong>Answer:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">private</span> String <span class="hljs-title">generateClaimNumber</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-comment">// Format: CLM-YYYYMMDD-XXX</span>
+    String datePrefix = LocalDate.now()
+        .format(DateTimeFormatter.ofPattern(<span class="hljs-string">"yyyyMMdd"</span>));
+    String baseNumber = <span class="hljs-string">"CLM-"</span> + datePrefix + <span class="hljs-string">"-"</span>;  <span class="hljs-comment">// CLM-20260201-</span>
+    
+    <span class="hljs-keyword">int</span> counter = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">while</span> (claimRepository.existsByClaimNumber(
+            baseNumber + String.format(<span class="hljs-string">"%03d"</span>, counter))) {
+        counter++;  <span class="hljs-comment">// Find next available number</span>
+    }
+    
+    <span class="hljs-keyword">return</span> baseNumber + String.format(<span class="hljs-string">"%03d"</span>, counter);
+    <span class="hljs-comment">// Example: CLM-20260201-001, CLM-20260201-002, etc.</span>
+}
+</div></code></pre>
+<p><strong>Note:</strong> This has a race condition. Better approach: database sequence or UUID.</p>
+<hr>
+<h2 id="section-d-advanced-questions-10-questions">Section D: Advanced Questions (10 Questions)</h2>
+<h3 id="q26-whats-the-n1-query-problem-and-how-does-it-relate-to-hicms">Q26: What's the N+1 query problem and how does it relate to HICMS?</h3>
+<p><strong>Answer:</strong>
+The N+1 problem occurs with lazy loading:</p>
+<pre class="hljs"><code><div>List&lt;Claim&gt; claims = claimRepository.findAll();  <span class="hljs-comment">// 1 query</span>
+<span class="hljs-keyword">for</span> (Claim claim : claims) {
+    String policyName = claim.getPolicy().getPolicyName();  <span class="hljs-comment">// N queries!</span>
+}
+<span class="hljs-comment">// Total: 1 + N queries (if 100 claims, 101 queries)</span>
+</div></code></pre>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li><strong>JOIN FETCH in JPQL:</strong></li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-meta">@Query</span>(<span class="hljs-string">"SELECT c FROM Claim c JOIN FETCH c.policy"</span>)
+<span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findAllWithPolicy</span><span class="hljs-params">()</span></span>;
+</div></code></pre>
+<ol start="2">
+<li><strong>Entity Graph:</strong></li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-meta">@EntityGraph</span>(attributePaths = {<span class="hljs-string">"policy"</span>, <span class="hljs-string">"claimant"</span>})
+<span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findAll</span><span class="hljs-params">()</span></span>;
+</div></code></pre>
+<ol start="3">
+<li><strong>DTO Projection:</strong></li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-meta">@Query</span>(<span class="hljs-string">"SELECT new com.hicms.dto.ClaimDTO(c.claimId, p.policyName) FROM Claim c JOIN c.policy p"</span>)
+<span class="hljs-function">List&lt;ClaimDTO&gt; <span class="hljs-title">findAllDTO</span><span class="hljs-params">()</span></span>;
+</div></code></pre>
+<hr>
+<h3 id="q27-explain-transaction-propagation-in-nested-service-calls">Q27: Explain transaction propagation in nested service calls.</h3>
+<p><strong>Answer:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@Service</span>
+<span class="hljs-meta">@Transactional</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimServiceImpl</span> </span>{
+    
+    <span class="hljs-meta">@Autowired</span>
+    <span class="hljs-keyword">private</span> DocumentService documentService;
+    
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">submitClaimWithDocuments</span><span class="hljs-params">(ClaimDTO dto, List&lt;MultipartFile&gt; files)</span> </span>{
+        Claim claim = createClaim(dto);  <span class="hljs-comment">// Same transaction</span>
+        
+        <span class="hljs-keyword">for</span> (MultipartFile file : files) {
+            documentService.uploadDocument(claim.getId(), file);  <span class="hljs-comment">// Same or new transaction?</span>
+        }
+    }
+}
+</div></code></pre>
+<p><strong>Propagation types:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REQUIRED (default)</td>
+<td>Use existing or create new</td>
+</tr>
+<tr>
+<td>REQUIRES_NEW</td>
+<td>Always create new (suspends existing)</td>
+</tr>
+<tr>
+<td>NESTED</td>
+<td>Nested transaction (savepoint)</td>
+</tr>
+<tr>
+<td>SUPPORTS</td>
+<td>Use existing or run non-transactional</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="q28-how-would-you-implement-claim-historyaudit-logging">Q28: How would you implement claim history/audit logging?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Option 1: Hibernate Envers</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@Entity</span>
+<span class="hljs-meta">@Audited</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Claim</span> </span>{
+    <span class="hljs-comment">// All changes automatically tracked</span>
+}
+</div></code></pre>
+<p><strong>Option 2: Custom audit listener</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@Entity</span>
+<span class="hljs-meta">@EntityListeners</span>(ClaimAuditListener<span class="hljs-class">.<span class="hljs-keyword">class</span>)
+<span class="hljs-title">public</span> <span class="hljs-title">class</span> <span class="hljs-title">Claim</span> </span>{ }
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimAuditListener</span> </span>{
+    <span class="hljs-meta">@PostUpdate</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onUpdate</span><span class="hljs-params">(Claim claim)</span> </span>{
+        <span class="hljs-comment">// Log: who changed, when, what changed</span>
+    }
+}
+</div></code></pre>
+<p><strong>Option 3: Separate audit table</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@Entity</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimAudit</span> </span>{
+    <span class="hljs-keyword">private</span> Long claimId;
+    <span class="hljs-keyword">private</span> ClaimStatus oldStatus;
+    <span class="hljs-keyword">private</span> ClaimStatus newStatus;
+    <span class="hljs-keyword">private</span> LocalDateTime changedAt;
+    <span class="hljs-keyword">private</span> String changedBy;
+}
+</div></code></pre>
+<hr>
+<h3 id="q29-how-would-you-implement-claim-amount-limits-per-policy-type">Q29: How would you implement claim amount limits per policy type?</h3>
+<p><strong>Answer:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@Entity</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Policy</span> </span>{
+    <span class="hljs-keyword">private</span> BigDecimal coverageAmount;      <span class="hljs-comment">// Max per claim</span>
+    <span class="hljs-keyword">private</span> BigDecimal annualLimit;         <span class="hljs-comment">// Max per year</span>
+    <span class="hljs-keyword">private</span> BigDecimal lifetimeLimit;       <span class="hljs-comment">// Max lifetime</span>
+}
+
+<span class="hljs-comment">// In ClaimServiceImpl:</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">validateClaimAmount</span><span class="hljs-params">(ClaimDTO dto, User claimant, Policy policy)</span> </span>{
+    <span class="hljs-comment">// 1. Per-claim limit</span>
+    <span class="hljs-keyword">if</span> (dto.getClaimAmount().compareTo(policy.getCoverageAmount()) &gt; <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Exceeds coverage amount"</span>);
+    }
+    
+    <span class="hljs-comment">// 2. Annual limit</span>
+    BigDecimal yearTotal = claimRepository.sumApprovedAmountByUserAndYear(
+        claimant.getUserId(), Year.now().getValue());
+    <span class="hljs-keyword">if</span> (yearTotal.add(dto.getClaimAmount()).compareTo(policy.getAnnualLimit()) &gt; <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Would exceed annual limit"</span>);
+    }
+    
+    <span class="hljs-comment">// 3. Lifetime limit</span>
+    BigDecimal lifetimeTotal = claimRepository.sumApprovedAmountByUser(
+        claimant.getUserId());
+    <span class="hljs-keyword">if</span> (lifetimeTotal.add(dto.getClaimAmount()).compareTo(policy.getLifetimeLimit()) &gt; <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Would exceed lifetime limit"</span>);
+    }
+}
+</div></code></pre>
+<hr>
+<h3 id="q30-explain-how-you-would-add-email-notifications-to-the-claim-workflow">Q30: Explain how you would add email notifications to the claim workflow.</h3>
+<p><strong>Answer:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// 1. Event-driven approach</span>
+<span class="hljs-meta">@Service</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimServiceImpl</span> </span>{
+    
+    <span class="hljs-meta">@Autowired</span>
+    <span class="hljs-keyword">private</span> ApplicationEventPublisher eventPublisher;
+    
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Claim <span class="hljs-title">reviewClaim</span><span class="hljs-params">(Long id, ClaimReviewDTO dto, User adjuster)</span> </span>{
+        Claim claim = claimRepository.findById(id).orElseThrow();
+        claim.setClaimStatus(dto.getClaimStatus());
+        Claim saved = claimRepository.save(claim);
+        
+        <span class="hljs-comment">// Publish event</span>
+        eventPublisher.publishEvent(<span class="hljs-keyword">new</span> ClaimStatusChangedEvent(saved));
+        <span class="hljs-keyword">return</span> saved;
+    }
+}
+
+<span class="hljs-comment">// 2. Event listener</span>
+<span class="hljs-meta">@Component</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimNotificationListener</span> </span>{
+    
+    <span class="hljs-meta">@Autowired</span>
+    <span class="hljs-keyword">private</span> EmailService emailService;
+    
+    <span class="hljs-meta">@EventListener</span>
+    <span class="hljs-meta">@Async</span>  <span class="hljs-comment">// Non-blocking</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onClaimStatusChanged</span><span class="hljs-params">(ClaimStatusChangedEvent event)</span> </span>{
+        Claim claim = event.getClaim();
+        String email = claim.getClaimant().getEmail();
+        
+        <span class="hljs-keyword">if</span> (claim.getClaimStatus() == ClaimStatus.APPROVED) {
+            emailService.sendApprovalEmail(email, claim);
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (claim.getClaimStatus() == ClaimStatus.REJECTED) {
+            emailService.sendRejectionEmail(email, claim);
+        }
+    }
+}
+</div></code></pre>
+<hr>
+<h3 id="q31-how-does-springs-proxy-based-transactional-work-and-what-are-its-limitations">Q31: How does Spring's proxy-based @Transactional work and what are its limitations?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>How it works:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Your class:</span>
+<span class="hljs-meta">@Service</span>
+<span class="hljs-meta">@Transactional</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimServiceImpl</span> </span>{ }
+
+<span class="hljs-comment">// Spring creates a proxy:</span>
+ClaimServiceImpl$$EnhancerBySpringCGLIB$$... extends ClaimServiceImpl {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">save</span><span class="hljs-params">(Claim claim)</span> </span>{
+        <span class="hljs-comment">// 1. Begin transaction</span>
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">super</span>.save(claim);  <span class="hljs-comment">// Call actual method</span>
+            <span class="hljs-comment">// 2. Commit transaction</span>
+        } <span class="hljs-keyword">catch</span> (Exception e) {
+            <span class="hljs-comment">// 3. Rollback transaction</span>
+            <span class="hljs-keyword">throw</span> e;
+        }
+    }
+}
+</div></code></pre>
+<p><strong>Limitations:</strong></p>
+<ol>
+<li><strong>Self-invocation doesn't work:</strong></li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimService</span> </span>{
+    <span class="hljs-meta">@Transactional</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">methodA</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">this</span>.methodB();  <span class="hljs-comment">// Doesn't go through proxy!</span>
+    }
+    
+    <span class="hljs-meta">@Transactional</span>(propagation = REQUIRES_NEW)
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">methodB</span><span class="hljs-params">()</span> </span>{ }  <span class="hljs-comment">// Won't create new transaction</span>
+}
+</div></code></pre>
+<ol start="2">
+<li><strong>Only public methods:</strong></li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-meta">@Transactional</span>  <span class="hljs-comment">// Ignored on private/protected</span>
+<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">internalMethod</span><span class="hljs-params">()</span> </span>{ }
+</div></code></pre>
+<ol start="3">
+<li><strong>Only works on Spring beans:</strong></li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-keyword">new</span> ClaimService().save(claim);  <span class="hljs-comment">// No transaction!</span>
+</div></code></pre>
+<hr>
+<h3 id="q32-what-is-the-open-session-in-view-pattern-and-why-might-it-be-problematic">Q32: What is the Open Session in View pattern and why might it be problematic?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Open Session in View (OSIV):</strong></p>
+<ul>
+<li>Keeps Hibernate session open through the entire web request</li>
+<li>Allows lazy loading in view layer (Thymeleaf templates)</li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-comment"># Enabled by default in Spring Boot</span>
+<span class="hljs-meta">spring.jpa.open-in-view</span>=<span class="hljs-string">true</span>
+</div></code></pre>
+<p><strong>Problem:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/claims"</span>)
+<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">list</span><span class="hljs-params">(Model model)</span> </span>{
+    List&lt;Claim&gt; claims = claimService.findAll();  <span class="hljs-comment">// Transaction ends here</span>
+    model.addAttribute(<span class="hljs-string">"claims"</span>, claims);
+    <span class="hljs-keyword">return</span> <span class="hljs-string">"claim/list"</span>;  <span class="hljs-comment">// Lazy loading still works due to OSIV</span>
+}
+</div></code></pre>
+<p><strong>Issues:</strong></p>
+<ol>
+<li><strong>Performance</strong> - Session held for entire request</li>
+<li><strong>N+1 queries</strong> - Hidden in view layer</li>
+<li><strong>Connection pool exhaustion</strong> - Long-held connections</li>
+<li><strong>Unpredictable behavior</strong> - DB access from view</li>
+</ol>
+<p><strong>Better approach:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">spring.jpa.open-in-view</span>=<span class="hljs-string">false</span>
+</div></code></pre>
+<p>And use DTOs or fetch joins in service layer.</p>
+<hr>
+<h3 id="q33-how-would-you-implement-rate-limiting-for-claim-submissions">Q33: How would you implement rate limiting for claim submissions?</h3>
+<p><strong>Answer:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// 1. Using Bucket4j</span>
+<span class="hljs-meta">@Service</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimServiceImpl</span> </span>{
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Map&lt;Long, Bucket&gt; buckets = <span class="hljs-keyword">new</span> ConcurrentHashMap&lt;&gt;();
+    
+    <span class="hljs-function"><span class="hljs-keyword">private</span> Bucket <span class="hljs-title">getBucketForUser</span><span class="hljs-params">(Long userId)</span> </span>{
+        <span class="hljs-keyword">return</span> buckets.computeIfAbsent(userId, id -&gt; 
+            Bucket.builder()
+                .addLimit(Bandwidth.classic(<span class="hljs-number">5</span>, Refill.intervally(<span class="hljs-number">5</span>, Duration.ofDays(<span class="hljs-number">1</span>))))
+                .build()
+        );
+    }
+    
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Claim <span class="hljs-title">submitClaim</span><span class="hljs-params">(ClaimDTO dto, User user)</span> </span>{
+        Bucket bucket = getBucketForUser(user.getUserId());
+        
+        <span class="hljs-keyword">if</span> (!bucket.tryConsume(<span class="hljs-number">1</span>)) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RateLimitExceededException(<span class="hljs-string">"Max 5 claims per day"</span>);
+        }
+        
+        <span class="hljs-comment">// ... normal submission logic</span>
+    }
+}
+
+<span class="hljs-comment">// 2. Database-based approach</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">validateDailyLimit</span><span class="hljs-params">(User user)</span> </span>{
+    <span class="hljs-keyword">long</span> todayCount = claimRepository.countByClaimantAndCreatedDateAfter(
+        user, LocalDate.now().atStartOfDay());
+    
+    <span class="hljs-keyword">if</span> (todayCount &gt;= <span class="hljs-number">5</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Daily claim limit reached"</span>);
+    }
+}
+</div></code></pre>
+<hr>
+<h3 id="q34-how-would-you-implement-claim-workflow-approval-with-multiple-approvers">Q34: How would you implement claim workflow approval with multiple approvers?</h3>
+<p><strong>Answer:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// New entities:</span>
+<span class="hljs-meta">@Entity</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ApprovalLevel</span> </span>{
+    <span class="hljs-keyword">private</span> Integer level;           <span class="hljs-comment">// 1, 2, 3</span>
+    <span class="hljs-keyword">private</span> BigDecimal maxAmount;    <span class="hljs-comment">// Amount threshold</span>
+    <span class="hljs-keyword">private</span> Role requiredRole;       <span class="hljs-comment">// Who can approve</span>
+}
+
+<span class="hljs-meta">@Entity</span>  
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimApproval</span> </span>{
+    <span class="hljs-keyword">private</span> Long claimId;
+    <span class="hljs-keyword">private</span> Integer level;
+    <span class="hljs-keyword">private</span> Long approverId;
+    <span class="hljs-keyword">private</span> ApprovalStatus status;   <span class="hljs-comment">// PENDING, APPROVED, REJECTED</span>
+    <span class="hljs-keyword">private</span> LocalDateTime approvedAt;
+    <span class="hljs-keyword">private</span> String comments;
+}
+
+<span class="hljs-comment">// Service logic:</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimApprovalService</span> </span>{
+    
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">submitForApproval</span><span class="hljs-params">(Claim claim)</span> </span>{
+        List&lt;ApprovalLevel&gt; requiredLevels = 
+            approvalLevelRepository.findByMaxAmountGreaterThan(claim.getClaimAmount());
+        
+        <span class="hljs-keyword">for</span> (ApprovalLevel level : requiredLevels) {
+            ClaimApproval approval = ClaimApproval.builder()
+                .claimId(claim.getClaimId())
+                .level(level.getLevel())
+                .status(ApprovalStatus.PENDING)
+                .build();
+            approvalRepository.save(approval);
+        }
+    }
+    
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">approve</span><span class="hljs-params">(Long claimId, Integer level, User approver)</span> </span>{
+        ClaimApproval approval = findByClaimAndLevel(claimId, level);
+        approval.setStatus(ApprovalStatus.APPROVED);
+        approval.setApproverId(approver.getUserId());
+        
+        <span class="hljs-comment">// Check if all levels approved</span>
+        <span class="hljs-keyword">if</span> (allLevelsApproved(claimId)) {
+            claimService.updateStatus(claimId, ClaimStatus.APPROVED);
+        }
+    }
+}
+</div></code></pre>
+<hr>
+<h3 id="q35-what-testing-strategies-would-you-use-for-the-claim-module">Q35: What testing strategies would you use for the Claim module?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>1. Unit Tests (Service Layer):</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@ExtendWith</span>(MockitoExtension<span class="hljs-class">.<span class="hljs-keyword">class</span>)
+<span class="hljs-title">class</span> <span class="hljs-title">ClaimServiceImplTest</span> </span>{
+    
+    <span class="hljs-meta">@Mock</span>
+    <span class="hljs-keyword">private</span> ClaimRepository claimRepository;
+    
+    <span class="hljs-meta">@InjectMocks</span>
+    <span class="hljs-keyword">private</span> ClaimServiceImpl claimService;
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">submitClaim_ShouldThrow_WhenAmountExceedsCoverage</span><span class="hljs-params">()</span> </span>{
+        ClaimDTO dto = ClaimDTO.builder()
+            .claimAmount(<span class="hljs-keyword">new</span> BigDecimal(<span class="hljs-string">"1000000"</span>))
+            .build();
+        
+        Policy policy = Policy.builder()
+            .coverageAmount(<span class="hljs-keyword">new</span> BigDecimal(<span class="hljs-string">"10000"</span>))
+            .build();
+        
+        when(policyRepository.findById(any())).thenReturn(Optional.of(policy));
+        
+        assertThrows(RuntimeException<span class="hljs-class">.<span class="hljs-keyword">class</span>, 
+            () -&gt; <span class="hljs-title">claimService</span>.<span class="hljs-title">submitClaim</span>(<span class="hljs-title">dto</span>, <span class="hljs-title">user</span>))</span>;
+    }
+}
+</div></code></pre>
+<p><strong>2. Integration Tests (Repository):</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@DataJpaTest</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimRepositoryTest</span> </span>{
+    
+    <span class="hljs-meta">@Autowired</span>
+    <span class="hljs-keyword">private</span> ClaimRepository claimRepository;
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">findByClaimantUserId_ShouldReturnUserClaims</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-comment">// Setup test data</span>
+        List&lt;Claim&gt; claims = claimRepository.findByClaimantUserId(<span class="hljs-number">1L</span>);
+        assertThat(claims).hasSize(<span class="hljs-number">2</span>);
+    }
+}
+</div></code></pre>
+<p><strong>3. Controller Tests:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@WebMvcTest</span>(ClaimController<span class="hljs-class">.<span class="hljs-keyword">class</span>)
+@<span class="hljs-title">WithMockUser</span>(<span class="hljs-title">username</span> </span>= <span class="hljs-string">"user"</span>, roles = <span class="hljs-string">"USER"</span>)
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimControllerTest</span> </span>{
+    
+    <span class="hljs-meta">@Autowired</span>
+    <span class="hljs-keyword">private</span> MockMvc mockMvc;
+    
+    <span class="hljs-meta">@MockBean</span>
+    <span class="hljs-keyword">private</span> ClaimService claimService;
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">submitClaim_ShouldRedirect_WhenValid</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception </span>{
+        mockMvc.perform(post(<span class="hljs-string">"/claims/submit"</span>)
+            .param(<span class="hljs-string">"policyId"</span>, <span class="hljs-string">"1"</span>)
+            .param(<span class="hljs-string">"claimAmount"</span>, <span class="hljs-string">"1000"</span>))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl(<span class="hljs-string">"/claims"</span>));
+    }
+}
+</div></code></pre>
+<hr>
+<p><em>End of Technical Report</em></p>
+<hr>
+<h2 id="quick-reference-card">Quick Reference Card</h2>
+<h3 id="files-location">Files Location</h3>
+<ul>
+<li>Full Report: <code>docs/HICMS_Complete_Technical_Report.md</code></li>
+</ul>
+<h3 id="key-annotations-summary">Key Annotations Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Key Annotations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entity</td>
+<td><code>@Entity</code>, <code>@Table</code>, <code>@Id</code>, <code>@ManyToOne</code>, <code>@Column</code></td>
+</tr>
+<tr>
+<td>Repository</td>
+<td><code>@Repository</code>, JpaRepository methods</td>
+</tr>
+<tr>
+<td>Service</td>
+<td><code>@Service</code>, <code>@Transactional</code></td>
+</tr>
+<tr>
+<td>Controller</td>
+<td><code>@Controller</code>, <code>@GetMapping</code>, <code>@PostMapping</code>, <code>@PreAuthorize</code></td>
+</tr>
+<tr>
+<td>Security</td>
+<td><code>@EnableWebSecurity</code>, <code>@EnableMethodSecurity</code></td>
+</tr>
+<tr>
+<td>Validation</td>
+<td><code>@Valid</code>, <code>@NotNull</code>, <code>@NotBlank</code>, <code>@Size</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="security-flow">Security Flow</h3>
+<pre class="hljs"><code><div>Login → AuthManager → UserDetailsService → DB → BCrypt verify → Session created
+Request → Filter Chain → SecurityContext → Authorization check → Controller
+</div></code></pre>
+<h3 id="claim-flow">Claim Flow</h3>
+<pre class="hljs"><code><div>PENDING → UNDER_REVIEW → APPROVED/REJECTED
+   ↓
+CANCELLED
+</div></code></pre>
+
+</body>
+</html>

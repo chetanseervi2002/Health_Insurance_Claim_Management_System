@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CLAIM_MODULE_Technical_Deep_Dive.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="claim-module---comprehensive-technical-documentation">CLAIM MODULE - COMPREHENSIVE TECHNICAL DOCUMENTATION</h1>
+<h2 id="health-insurance-claim-management-system-hicms">Health Insurance Claim Management System (HICMS)</h2>
+<hr>
+<h1 id="table-of-contents">TABLE OF CONTENTS</h1>
+<ol>
+<li><a href="#1-module-overview--architecture">Module Overview &amp; Architecture</a></li>
+<li><a href="#2-file-structure--organization">File Structure &amp; Organization</a></li>
+<li><a href="#3-layer-by-layer-deep-dive">Layer-by-Layer Deep Dive</a></li>
+<li><a href="#4-annotations-reference-guide">Annotations Reference Guide</a></li>
+<li><a href="#5-complete-code-flow-walkthrough">Complete Code Flow Walkthrough</a></li>
+<li><a href="#6-database--hibernate-integration">Database &amp; Hibernate Integration</a></li>
+<li><a href="#7-method-connectivity--data-flow">Method Connectivity &amp; Data Flow</a></li>
+<li><a href="#8-interview-ready-explanations">Interview-Ready Explanations</a></li>
+</ol>
+<hr>
+<h1 id="1-module-overview--architecture">1. MODULE OVERVIEW &amp; ARCHITECTURE</h1>
+<h2 id="what-is-the-claim-module">What is the Claim Module?</h2>
+<p>The Claim Module manages the complete lifecycle of insurance claims—from submission by policyholders to review and approval/rejection by claim adjusters.</p>
+<h2 id="high-level-architecture">High-Level Architecture</h2>
+<pre class="hljs"><code><div>┌─────────────────────────────────────────────────────────────────────────────┐
+│                           PRESENTATION LAYER                                │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐              │
+│  │   Thymeleaf     │  │  ClaimController │  │  DTOs (Data     │              │
+│  │   Templates     │◄─┤  (HTTP Handler)  │◄─┤  Transfer)      │              │
+│  │   (HTML Views)  │  │                  │  │                  │              │
+│  └─────────────────┘  └────────┬─────────┘  └─────────────────┘              │
+└────────────────────────────────┼────────────────────────────────────────────┘
+                                 │ @Autowired (Dependency Injection)
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            BUSINESS LAYER                                   │
+│  ┌─────────────────────────────────────────────────────────────────┐        │
+│  │                    ClaimService Interface                        │        │
+│  │   submitClaim(), reviewClaim(), findById(), assignAdjuster()    │        │
+│  └──────────────────────────────┬──────────────────────────────────┘        │
+│                                 │ implements                                │
+│  ┌──────────────────────────────▼──────────────────────────────────┐        │
+│  │                   ClaimServiceImpl                               │        │
+│  │   Business Logic, Validation, Transaction Management            │        │
+│  └──────────────────────────────┬──────────────────────────────────┘        │
+└─────────────────────────────────┼───────────────────────────────────────────┘
+                                  │ @Autowired (Dependency Injection)
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          PERSISTENCE LAYER                                  │
+│  ┌──────────────────────────────────────────────────────────────────┐       │
+│  │                    ClaimRepository Interface                      │       │
+│  │   extends JpaRepository&lt;Claim, Long&gt;                             │       │
+│  │   Provides: save(), findById(), findAll(), delete(), custom      │       │
+│  └──────────────────────────────┬───────────────────────────────────┘       │
+│                                 │ Spring Data JPA auto-implements           │
+│  ┌──────────────────────────────▼───────────────────────────────────┐       │
+│  │                    Claim Entity (JPA/Hibernate)                   │       │
+│  │   @Entity, @Table, @Column mappings                              │       │
+│  └──────────────────────────────┬───────────────────────────────────┘       │
+└─────────────────────────────────┼───────────────────────────────────────────┘
+                                  │ Hibernate ORM
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          DATABASE LAYER                                     │
+│  ┌──────────────────────────────────────────────────────────────────┐       │
+│  │                    MySQL Database (hicms_db)                      │       │
+│  │   Tables: claims, users, policies, documents, enrollments        │       │
+│  └──────────────────────────────────────────────────────────────────┘       │
+└─────────────────────────────────────────────────────────────────────────────┘
+</div></code></pre>
+<h2 id="design-patterns-used">Design Patterns Used</h2>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Where Used</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MVC</strong></td>
+<td>Controller-Service-Repository</td>
+<td>Separation of concerns</td>
+</tr>
+<tr>
+<td><strong>DTO</strong></td>
+<td>ClaimDTO, ClaimReviewDTO</td>
+<td>Data transfer between layers</td>
+</tr>
+<tr>
+<td><strong>Repository</strong></td>
+<td>ClaimRepository</td>
+<td>Abstracts data access</td>
+</tr>
+<tr>
+<td><strong>Dependency Injection</strong></td>
+<td>@Autowired/@RequiredArgsConstructor</td>
+<td>Loose coupling</td>
+</tr>
+<tr>
+<td><strong>Builder</strong></td>
+<td>Claim.builder()</td>
+<td>Object construction</td>
+</tr>
+<tr>
+<td><strong>Template Method</strong></td>
+<td>@PrePersist, @PreUpdate</td>
+<td>Lifecycle callbacks</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="2-file-structure--organization">2. FILE STRUCTURE &amp; ORGANIZATION</h1>
+<h2 id="directory-layout">Directory Layout</h2>
+<pre class="hljs"><code><div>src/main/java/com/hicms/
+├── entity/                          # JPA Entities (Database Tables)
+│   ├── Claim.java                   # Main claim entity
+│   ├── ClaimStatus.java             # Enum: PENDING, APPROVED, REJECTED, etc.
+│   ├── User.java                    # User entity
+│   ├── Policy.java                  # Policy entity
+│   └── Document.java                # Document entity
+│
+├── dto/                             # Data Transfer Objects
+│   ├── ClaimDTO.java                # For claim submission/display
+│   └── ClaimReviewDTO.java          # For claim review operations
+│
+├── repository/                      # Data Access Layer
+│   └── ClaimRepository.java         # CRUD + custom queries
+│
+├── service/                         # Business Logic Layer
+│   ├── ClaimService.java            # Interface (contract)
+│   └── impl/
+│       └── ClaimServiceImpl.java    # Implementation
+│
+├── controller/                      # HTTP Request Handlers
+│   └── ClaimController.java         # REST/Web endpoints
+│
+└── config/                          # Configuration
+    └── SecurityConfig.java          # Spring Security setup
+
+src/main/resources/
+├── application.properties           # Database, JPA, server config
+└── templates/claim/                 # Thymeleaf HTML templates
+    ├── list.html                    # Claim listing page
+    ├── view.html                    # Claim details page
+    ├── submit.html                  # Claim submission form
+    └── review.html                  # Claim review form
+</div></code></pre>
+<h2 id="file-interconnections-diagram">File Interconnections Diagram</h2>
+<pre class="hljs"><code><div>┌─────────────────────┐     ┌─────────────────────┐
+│   ClaimController   │────▶│     ClaimService    │
+│   (HTTP Layer)      │     │    (Interface)      │
+└─────────────────────┘     └──────────┬──────────┘
+         │                             │ implements
+         │                  ┌──────────▼──────────┐
+         │                  │   ClaimServiceImpl  │
+         │                  │  (Business Logic)   │
+         │                  └──────────┬──────────┘
+         │                             │ uses
+         │                  ┌──────────▼──────────┐
+         │                  │   ClaimRepository   │
+         │                  │   (Data Access)     │
+         │                  └──────────┬──────────┘
+         │                             │ operates on
+┌────────▼─────────────────────────────▼──────────┐
+│                  Claim Entity                    │
+│            (JPA/Database Mapping)               │
+└─────────────────────────────────────────────────┘
+         │                             │
+         │ displays                    │ persists
+         ▼                             ▼
+┌─────────────────────┐     ┌─────────────────────┐
+│   ClaimDTO          │     │   MySQL Database    │
+│   (Transfer Object) │     │   (claims table)    │
+└─────────────────────┘     └─────────────────────┘
+</div></code></pre>
+<hr>
+<h1 id="3-layer-by-layer-deep-dive">3. LAYER-BY-LAYER DEEP DIVE</h1>
+<h2 id="31-entity-layer-claimjava">3.1 ENTITY LAYER (Claim.java)</h2>
+<h3 id="what-is-an-entity">What is an Entity?</h3>
+<p>An Entity is a Java class that maps to a database table. Each instance = one row. Each field = one column.</p>
+<h3 id="complete-code-with-explanations">Complete Code with Explanations</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">package</span> com.hicms.entity;
+
+<span class="hljs-keyword">import</span> jakarta.persistence.*;      <span class="hljs-comment">// JPA annotations</span>
+<span class="hljs-keyword">import</span> lombok.*;                    <span class="hljs-comment">// Reduces boilerplate</span>
+<span class="hljs-keyword">import</span> java.math.BigDecimal;
+<span class="hljs-keyword">import</span> java.time.LocalDate;
+<span class="hljs-keyword">import</span> java.time.LocalDateTime;
+<span class="hljs-keyword">import</span> java.util.ArrayList;
+<span class="hljs-keyword">import</span> java.util.List;
+
+<span class="hljs-meta">@Entity</span>                             <span class="hljs-comment">// ← Marks as JPA entity (database table)</span>
+<span class="hljs-meta">@Table</span>(name = <span class="hljs-string">"claims"</span>)             <span class="hljs-comment">// ← Explicit table name</span>
+<span class="hljs-meta">@Getter</span> <span class="hljs-meta">@Setter</span>                     <span class="hljs-comment">// ← Lombok: generates all getters/setters</span>
+<span class="hljs-meta">@NoArgsConstructor</span>                  <span class="hljs-comment">// ← Lombok: public Claim() {}</span>
+<span class="hljs-meta">@AllArgsConstructor</span>                 <span class="hljs-comment">// ← Lombok: constructor with all fields</span>
+<span class="hljs-meta">@Builder</span>                            <span class="hljs-comment">// ← Lombok: enables Claim.builder().build()</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Claim</span> </span>{
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// PRIMARY KEY</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Id</span>                                              <span class="hljs-comment">// ← This is the primary key</span>
+    <span class="hljs-meta">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)  <span class="hljs-comment">// ← Auto-increment</span>
+    <span class="hljs-keyword">private</span> Long claimId;
+    <span class="hljs-comment">// SQL: claim_id BIGINT PRIMARY KEY AUTO_INCREMENT</span>
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// BUSINESS IDENTIFIER</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Column</span>(unique = <span class="hljs-keyword">true</span>, nullable = <span class="hljs-keyword">false</span>, length = <span class="hljs-number">50</span>)
+    <span class="hljs-keyword">private</span> String claimNumber;
+    <span class="hljs-comment">// SQL: claim_number VARCHAR(50) UNIQUE NOT NULL</span>
+    <span class="hljs-comment">// Example: CLM-20260131-001</span>
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// RELATIONSHIPS (Foreign Keys)</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    
+    <span class="hljs-comment">// Many claims belong to ONE policy</span>
+    <span class="hljs-meta">@ManyToOne</span>(fetch = FetchType.LAZY)       <span class="hljs-comment">// ← Lazy loading (load when needed)</span>
+    <span class="hljs-meta">@JoinColumn</span>(name = <span class="hljs-string">"policy_id"</span>, nullable = <span class="hljs-keyword">false</span>)  <span class="hljs-comment">// ← FK column name</span>
+    <span class="hljs-keyword">private</span> Policy policy;
+    <span class="hljs-comment">// SQL: policy_id BIGINT NOT NULL FOREIGN KEY REFERENCES policies(policy_id)</span>
+    
+    <span class="hljs-comment">// Many claims filed by ONE claimant (user)</span>
+    <span class="hljs-meta">@ManyToOne</span>(fetch = FetchType.LAZY)
+    <span class="hljs-meta">@JoinColumn</span>(name = <span class="hljs-string">"claimant_id"</span>, nullable = <span class="hljs-keyword">false</span>)
+    <span class="hljs-keyword">private</span> User claimant;
+    
+    <span class="hljs-comment">// Many claims may be filed by ONE agent (optional)</span>
+    <span class="hljs-meta">@ManyToOne</span>(fetch = FetchType.LAZY)
+    <span class="hljs-meta">@JoinColumn</span>(name = <span class="hljs-string">"agent_id"</span>)            <span class="hljs-comment">// ← No nullable=false, so it can be NULL</span>
+    <span class="hljs-keyword">private</span> User agent;
+    
+    <span class="hljs-comment">// Many claims reviewed by ONE adjuster (optional initially)</span>
+    <span class="hljs-meta">@ManyToOne</span>(fetch = FetchType.LAZY)
+    <span class="hljs-meta">@JoinColumn</span>(name = <span class="hljs-string">"adjuster_id"</span>)
+    <span class="hljs-keyword">private</span> User adjuster;
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// MONETARY FIELDS</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Column</span>(name = <span class="hljs-string">"claim_amount"</span>, precision = <span class="hljs-number">12</span>, scale = <span class="hljs-number">2</span>, nullable = <span class="hljs-keyword">false</span>)
+    <span class="hljs-keyword">private</span> BigDecimal claimAmount;
+    <span class="hljs-comment">// SQL: claim_amount DECIMAL(12,2) NOT NULL</span>
+    <span class="hljs-comment">// precision=12: total digits, scale=2: decimal places</span>
+    <span class="hljs-comment">// Example: 9999999999.99</span>
+    
+    <span class="hljs-meta">@Column</span>(name = <span class="hljs-string">"approved_amount"</span>, precision = <span class="hljs-number">12</span>, scale = <span class="hljs-number">2</span>)
+    <span class="hljs-keyword">private</span> BigDecimal approvedAmount;        <span class="hljs-comment">// ← Set when approved</span>
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// DATE FIELDS</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Column</span>(name = <span class="hljs-string">"claim_date"</span>, nullable = <span class="hljs-keyword">false</span>)
+    <span class="hljs-keyword">private</span> LocalDate claimDate;
+    <span class="hljs-comment">// SQL: claim_date DATE NOT NULL</span>
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// TEXT FIELDS</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Column</span>(length = <span class="hljs-number">1000</span>)
+    <span class="hljs-keyword">private</span> String description;               <span class="hljs-comment">// ← Detailed claim description</span>
+    
+    <span class="hljs-meta">@Column</span>(length = <span class="hljs-number">500</span>)
+    <span class="hljs-keyword">private</span> String reason;                    <span class="hljs-comment">// ← Short reason for claim</span>
+    
+    <span class="hljs-meta">@Column</span>(length = <span class="hljs-number">1000</span>)
+    <span class="hljs-keyword">private</span> String remarks;                   <span class="hljs-comment">// ← Adjuster's comments</span>
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// ENUM FIELD (Status)</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Enumerated</span>(EnumType.STRING)              <span class="hljs-comment">// ← Store as "PENDING" not 0</span>
+    <span class="hljs-meta">@Column</span>(name = <span class="hljs-string">"claim_status"</span>, nullable = <span class="hljs-keyword">false</span>)
+    <span class="hljs-keyword">private</span> ClaimStatus claimStatus;
+    <span class="hljs-comment">// SQL: claim_status VARCHAR(255) NOT NULL</span>
+    <span class="hljs-comment">// Values: PENDING, UNDER_REVIEW, APPROVED, REJECTED, CANCELLED</span>
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// AUDIT TIMESTAMPS</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Column</span>(name = <span class="hljs-string">"created_date"</span>)
+    <span class="hljs-keyword">private</span> LocalDateTime createdDate;
+    
+    <span class="hljs-meta">@Column</span>(name = <span class="hljs-string">"updated_date"</span>)
+    <span class="hljs-keyword">private</span> LocalDateTime updatedDate;
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// ONE-TO-MANY RELATIONSHIP (Documents)</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Builder</span>.Default                          <span class="hljs-comment">// ← Initialize in builder</span>
+    <span class="hljs-meta">@OneToMany</span>(mappedBy = <span class="hljs-string">"claim"</span>,            <span class="hljs-comment">// ← The "claim" field in Document</span>
+               cascade = CascadeType.ALL,      <span class="hljs-comment">// ← Operations cascade to documents</span>
+               fetch = FetchType.LAZY)
+    <span class="hljs-keyword">private</span> List&lt;Document&gt; documents = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
+    
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// LIFECYCLE CALLBACKS (Automatic timestamp management)</span>
+    <span class="hljs-comment">// ═══════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@PrePersist</span>                               <span class="hljs-comment">// ← Called BEFORE INSERT</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onCreate</span><span class="hljs-params">()</span> </span>{
+        createdDate = LocalDateTime.now();
+        updatedDate = LocalDateTime.now();
+        <span class="hljs-keyword">if</span> (claimDate == <span class="hljs-keyword">null</span>) {
+            claimDate = LocalDate.now();
+        }
+    }
+    
+    <span class="hljs-meta">@PreUpdate</span>                                <span class="hljs-comment">// ← Called BEFORE UPDATE</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onUpdate</span><span class="hljs-params">()</span> </span>{
+        updatedDate = LocalDateTime.now();
+    }
+}
+</div></code></pre>
+<h3 id="generated-database-table">Generated Database Table</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> claims (
+    claim_id <span class="hljs-built_in">BIGINT</span> PRIMARY <span class="hljs-keyword">KEY</span> AUTO_INCREMENT,
+    claim_number <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">50</span>) <span class="hljs-keyword">UNIQUE</span> <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+    policy_id <span class="hljs-built_in">BIGINT</span> <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+    claimant_id <span class="hljs-built_in">BIGINT</span> <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+    agent_id <span class="hljs-built_in">BIGINT</span>,
+    adjuster_id <span class="hljs-built_in">BIGINT</span>,
+    claim_amount <span class="hljs-built_in">DECIMAL</span>(<span class="hljs-number">12</span>,<span class="hljs-number">2</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+    approved_amount <span class="hljs-built_in">DECIMAL</span>(<span class="hljs-number">12</span>,<span class="hljs-number">2</span>),
+    claim_date <span class="hljs-built_in">DATE</span> <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+    description <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">1000</span>),
+    reason <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">500</span>),
+    claim_status <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">255</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+    remarks <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">1000</span>),
+    created_date DATETIME,
+    updated_date DATETIME,
+    
+    <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span> (policy_id) <span class="hljs-keyword">REFERENCES</span> policies(policy_id),
+    <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span> (claimant_id) <span class="hljs-keyword">REFERENCES</span> <span class="hljs-keyword">users</span>(user_id),
+    <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span> (agent_id) <span class="hljs-keyword">REFERENCES</span> <span class="hljs-keyword">users</span>(user_id),
+    <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span> (adjuster_id) <span class="hljs-keyword">REFERENCES</span> <span class="hljs-keyword">users</span>(user_id)
+);
+</div></code></pre>
+<hr>
+<h2 id="32-repository-layer-claimrepositoryjava">3.2 REPOSITORY LAYER (ClaimRepository.java)</h2>
+<h3 id="what-is-a-repository">What is a Repository?</h3>
+<p>A Repository provides database operations. Spring Data JPA <strong>auto-implements</strong> methods based on naming conventions!</p>
+<h3 id="complete-code-with-explanations">Complete Code with Explanations</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">package</span> com.hicms.repository;
+
+<span class="hljs-keyword">import</span> com.hicms.entity.Claim;
+<span class="hljs-keyword">import</span> com.hicms.entity.ClaimStatus;
+<span class="hljs-keyword">import</span> org.springframework.data.jpa.repository.JpaRepository;
+<span class="hljs-keyword">import</span> org.springframework.data.jpa.repository.Query;
+<span class="hljs-keyword">import</span> org.springframework.data.repository.query.Param;
+<span class="hljs-keyword">import</span> org.springframework.stereotype.Repository;
+<span class="hljs-keyword">import</span> java.util.List;
+<span class="hljs-keyword">import</span> java.util.Optional;
+
+<span class="hljs-meta">@Repository</span>   <span class="hljs-comment">// ← Marks as Spring data access component (optional but recommended)</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">ClaimRepository</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">JpaRepository</span>&lt;<span class="hljs-title">Claim</span>, <span class="hljs-title">Long</span>&gt; </span>{
+    <span class="hljs-comment">//                                                  ↑       ↑</span>
+    <span class="hljs-comment">//                                            Entity    PK Type</span>
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// INHERITED FROM JpaRepository (No code needed!)</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// save(Claim claim)              → INSERT or UPDATE</span>
+    <span class="hljs-comment">// findById(Long id)              → SELECT * WHERE claim_id = ?</span>
+    <span class="hljs-comment">// findAll()                      → SELECT * FROM claims</span>
+    <span class="hljs-comment">// deleteById(Long id)            → DELETE FROM claims WHERE claim_id = ?</span>
+    <span class="hljs-comment">// count()                        → SELECT COUNT(*) FROM claims</span>
+    <span class="hljs-comment">// existsById(Long id)            → SELECT COUNT(*) &gt; 0 WHERE claim_id = ?</span>
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// QUERY METHODS BY NAMING CONVENTION</span>
+    <span class="hljs-comment">// Spring parses method name → generates SQL automatically!</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    
+    <span class="hljs-function">Optional&lt;Claim&gt; <span class="hljs-title">findByClaimNumber</span><span class="hljs-params">(String claimNumber)</span></span>;
+    <span class="hljs-comment">// Generated: SELECT * FROM claims WHERE claim_number = ?</span>
+    
+    <span class="hljs-function"><span class="hljs-keyword">boolean</span> <span class="hljs-title">existsByClaimNumber</span><span class="hljs-params">(String claimNumber)</span></span>;
+    <span class="hljs-comment">// Generated: SELECT COUNT(*) &gt; 0 FROM claims WHERE claim_number = ?</span>
+    
+    <span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findByClaimStatus</span><span class="hljs-params">(ClaimStatus status)</span></span>;
+    <span class="hljs-comment">// Generated: SELECT * FROM claims WHERE claim_status = ?</span>
+    
+    <span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findByClaimStatusIn</span><span class="hljs-params">(List&lt;ClaimStatus&gt; statuses)</span></span>;
+    <span class="hljs-comment">// Generated: SELECT * FROM claims WHERE claim_status IN (?, ?, ...)</span>
+    
+    <span class="hljs-comment">// Navigating relationships: claimant.userId</span>
+    <span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findByClaimantUserId</span><span class="hljs-params">(Long claimantId)</span></span>;
+    <span class="hljs-comment">// Generated: SELECT c.* FROM claims c </span>
+    <span class="hljs-comment">//            JOIN users u ON c.claimant_id = u.user_id </span>
+    <span class="hljs-comment">//            WHERE u.user_id = ?</span>
+    
+    <span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findByAgentUserId</span><span class="hljs-params">(Long agentId)</span></span>;
+    <span class="hljs-comment">// Generated: SELECT * FROM claims WHERE agent_id = ?</span>
+    
+    <span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findByAdjusterUserId</span><span class="hljs-params">(Long adjusterId)</span></span>;
+    <span class="hljs-comment">// Generated: SELECT * FROM claims WHERE adjuster_id = ?</span>
+    
+    <span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findByPolicyPolicyId</span><span class="hljs-params">(Long policyId)</span></span>;
+    <span class="hljs-comment">// Generated: SELECT * FROM claims WHERE policy_id = ?</span>
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// CUSTOM QUERIES (JPQL - Java Persistence Query Language)</span>
+    <span class="hljs-comment">// When naming convention isn't enough</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    
+    <span class="hljs-meta">@Query</span>(<span class="hljs-string">"SELECT c FROM Claim c WHERE c.claimStatus = 'PENDING' OR c.claimStatus = 'UNDER_REVIEW'"</span>)
+    <span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findPendingClaims</span><span class="hljs-params">()</span></span>;
+    <span class="hljs-comment">// Uses entity/field names, not table/column names</span>
+    
+    <span class="hljs-meta">@Query</span>(<span class="hljs-string">"SELECT c FROM Claim c WHERE c.claimant.userId = :userId ORDER BY c.createdDate DESC"</span>)
+    <span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findClaimsByClaimantOrderByDate</span><span class="hljs-params">(@Param(<span class="hljs-string">"userId"</span>)</span> Long userId)</span>;
+    <span class="hljs-comment">// :userId is a named parameter, bound via @Param</span>
+    
+    <span class="hljs-meta">@Query</span>(<span class="hljs-string">"SELECT c FROM Claim c WHERE c.adjuster IS NULL AND c.claimStatus = 'PENDING'"</span>)
+    <span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findUnassignedClaims</span><span class="hljs-params">()</span></span>;
+    
+    <span class="hljs-meta">@Query</span>(<span class="hljs-string">"SELECT COUNT(c) FROM Claim c WHERE c.claimStatus = :status"</span>)
+    <span class="hljs-function"><span class="hljs-keyword">long</span> <span class="hljs-title">countByClaimStatus</span><span class="hljs-params">(@Param(<span class="hljs-string">"status"</span>)</span> ClaimStatus status)</span>;
+}
+</div></code></pre>
+<h3 id="query-method-naming-rules">Query Method Naming Rules</h3>
+<table>
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Sample</th>
+<th>Generated SQL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>findBy</code></td>
+<td><code>findByClaimStatus(status)</code></td>
+<td><code>WHERE claim_status = ?</code></td>
+</tr>
+<tr>
+<td><code>And</code></td>
+<td><code>findByStatusAndAmount(s, a)</code></td>
+<td><code>WHERE status=? AND amount=?</code></td>
+</tr>
+<tr>
+<td><code>Or</code></td>
+<td><code>findByStatusOrAmount(s, a)</code></td>
+<td><code>WHERE status=? OR amount=?</code></td>
+</tr>
+<tr>
+<td><code>Between</code></td>
+<td><code>findByAmountBetween(a, b)</code></td>
+<td><code>WHERE amount BETWEEN ? AND ?</code></td>
+</tr>
+<tr>
+<td><code>LessThan</code></td>
+<td><code>findByAmountLessThan(a)</code></td>
+<td><code>WHERE amount &lt; ?</code></td>
+</tr>
+<tr>
+<td><code>GreaterThan</code></td>
+<td><code>findByAmountGreaterThan(a)</code></td>
+<td><code>WHERE amount &gt; ?</code></td>
+</tr>
+<tr>
+<td><code>Like</code></td>
+<td><code>findByDescriptionLike(d)</code></td>
+<td><code>WHERE description LIKE ?</code></td>
+</tr>
+<tr>
+<td><code>Containing</code></td>
+<td><code>findByDescriptionContaining(d)</code></td>
+<td><code>WHERE description LIKE '%?%'</code></td>
+</tr>
+<tr>
+<td><code>In</code></td>
+<td><code>findByStatusIn(list)</code></td>
+<td><code>WHERE status IN (?, ?, ...)</code></td>
+</tr>
+<tr>
+<td><code>OrderBy</code></td>
+<td><code>findByStatusOrderByDateDesc()</code></td>
+<td><code>ORDER BY date DESC</code></td>
+</tr>
+<tr>
+<td><code>IsNull</code></td>
+<td><code>findByAdjusterIsNull()</code></td>
+<td><code>WHERE adjuster_id IS NULL</code></td>
+</tr>
+<tr>
+<td><code>IsNotNull</code></td>
+<td><code>findByAdjusterIsNotNull()</code></td>
+<td><code>WHERE adjuster_id IS NOT NULL</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="33-service-layer-claimservice--claimserviceimpl">3.3 SERVICE LAYER (ClaimService &amp; ClaimServiceImpl)</h2>
+<h3 id="what-is-a-service">What is a Service?</h3>
+<p>The Service layer contains <strong>business logic</strong>. It validates data, applies rules, and coordinates database operations.</p>
+<h3 id="interface-contract">Interface (Contract)</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">package</span> com.hicms.service;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">ClaimService</span> </span>{
+    <span class="hljs-comment">// CREATE</span>
+    <span class="hljs-function">Claim <span class="hljs-title">submitClaim</span><span class="hljs-params">(ClaimDTO claimDTO, User claimant)</span></span>;
+    <span class="hljs-function">Claim <span class="hljs-title">submitClaimWithAgent</span><span class="hljs-params">(ClaimDTO claimDTO, User claimant, User agent)</span></span>;
+    
+    <span class="hljs-comment">// READ</span>
+    <span class="hljs-function">Optional&lt;Claim&gt; <span class="hljs-title">findById</span><span class="hljs-params">(Long claimId)</span></span>;
+    <span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findAllClaims</span><span class="hljs-params">()</span></span>;
+    <span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findClaimsByClaimant</span><span class="hljs-params">(Long claimantId)</span></span>;
+    
+    <span class="hljs-comment">// UPDATE</span>
+    <span class="hljs-function">Claim <span class="hljs-title">assignAdjuster</span><span class="hljs-params">(Long claimId, User adjuster)</span></span>;
+    <span class="hljs-function">Claim <span class="hljs-title">reviewClaim</span><span class="hljs-params">(Long claimId, ClaimReviewDTO reviewDTO, User adjuster)</span></span>;
+    
+    <span class="hljs-comment">// CONVERSION</span>
+    <span class="hljs-function">ClaimDTO <span class="hljs-title">convertToDTO</span><span class="hljs-params">(Claim claim)</span></span>;
+}
+</div></code></pre>
+<h3 id="implementation-claimserviceimpljava">Implementation (ClaimServiceImpl.java)</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">package</span> com.hicms.service.impl;
+
+<span class="hljs-meta">@Service</span>                          <span class="hljs-comment">// ← Marks as Spring service bean</span>
+<span class="hljs-meta">@RequiredArgsConstructor</span>          <span class="hljs-comment">// ← Lombok: generates constructor for final fields</span>
+<span class="hljs-meta">@Transactional</span>                    <span class="hljs-comment">// ← All methods run in database transaction</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimServiceImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">ClaimService</span> </span>{
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// DEPENDENCY INJECTION (via constructor - best practice)</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ClaimRepository claimRepository;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> PolicyRepository policyRepository;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> PolicyEnrollmentRepository enrollmentRepository;
+    <span class="hljs-comment">// Lombok's @RequiredArgsConstructor generates:</span>
+    <span class="hljs-comment">// public ClaimServiceImpl(ClaimRepository cr, PolicyRepository pr, ...) {</span>
+    <span class="hljs-comment">//     this.claimRepository = cr;</span>
+    <span class="hljs-comment">//     this.policyRepository = pr;</span>
+    <span class="hljs-comment">//     ...</span>
+    <span class="hljs-comment">// }</span>
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// SUBMIT CLAIM - Main business logic</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Claim <span class="hljs-title">submitClaimWithAgent</span><span class="hljs-params">(ClaimDTO claimDTO, User claimant, User agent)</span> </span>{
+        
+        <span class="hljs-comment">// STEP 1: Retrieve the policy</span>
+        Policy policy = policyRepository.findById(claimDTO.getPolicyId())
+                .orElseThrow(() -&gt; <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Policy not found"</span>));
+        
+        <span class="hljs-comment">// STEP 2: BUSINESS RULE - Verify enrollment</span>
+        <span class="hljs-keyword">boolean</span> isEnrolled = enrollmentRepository
+                .existsByPolicyholderUserIdAndPolicyPolicyIdAndEnrollmentStatusIn(
+                        claimant.getUserId(),
+                        claimDTO.getPolicyId(),
+                        Arrays.asList(PolicyEnrollment.EnrollmentStatus.ACTIVE)
+                );
+        
+        <span class="hljs-keyword">if</span> (!isEnrolled) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"User is not enrolled in this policy"</span>);
+        }
+        
+        <span class="hljs-comment">// STEP 3: BUSINESS RULE - Validate claim amount</span>
+        <span class="hljs-keyword">if</span> (claimDTO.getClaimAmount().compareTo(policy.getCoverageAmount()) &gt; <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Claim amount exceeds coverage amount"</span>);
+        }
+        
+        <span class="hljs-comment">// STEP 4: Build entity using Builder pattern</span>
+        Claim claim = Claim.builder()
+                .claimNumber(generateClaimNumber())    <span class="hljs-comment">// Generate unique number</span>
+                .policy(policy)
+                .claimant(claimant)
+                .agent(agent)                          <span class="hljs-comment">// May be null</span>
+                .claimAmount(claimDTO.getClaimAmount())
+                .claimDate(LocalDate.now())
+                .description(claimDTO.getDescription())
+                .reason(claimDTO.getReason())
+                .claimStatus(ClaimStatus.PENDING)      <span class="hljs-comment">// Initial status</span>
+                .build();
+        
+        <span class="hljs-comment">// STEP 5: Persist to database</span>
+        <span class="hljs-keyword">return</span> claimRepository.save(claim);
+        <span class="hljs-comment">// Hibernate: INSERT INTO claims (...) VALUES (...)</span>
+    }
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// READ OPERATIONS - @Transactional(readOnly = true) for optimization</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-meta">@Transactional</span>(readOnly = <span class="hljs-keyword">true</span>)    <span class="hljs-comment">// ← Hibernate optimizations for reads</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Optional&lt;Claim&gt; <span class="hljs-title">findById</span><span class="hljs-params">(Long claimId)</span> </span>{
+        <span class="hljs-keyword">return</span> claimRepository.findById(claimId);
+        <span class="hljs-comment">// Hibernate: SELECT * FROM claims WHERE claim_id = ?</span>
+    }
+    
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-meta">@Transactional</span>(readOnly = <span class="hljs-keyword">true</span>)
+    <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Claim&gt; <span class="hljs-title">findAllClaims</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> claimRepository.findAll();
+        <span class="hljs-comment">// Hibernate: SELECT * FROM claims</span>
+    }
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// REVIEW CLAIM - Update with decision</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Claim <span class="hljs-title">reviewClaim</span><span class="hljs-params">(Long claimId, ClaimReviewDTO reviewDTO, User adjuster)</span> </span>{
+        <span class="hljs-comment">// Find existing claim</span>
+        Claim claim = claimRepository.findById(claimId)
+                .orElseThrow(() -&gt; <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Claim not found"</span>));
+        
+        <span class="hljs-comment">// Update fields</span>
+        claim.setAdjuster(adjuster);
+        claim.setClaimStatus(reviewDTO.getClaimStatus());
+        claim.setApprovedAmount(reviewDTO.getApprovedAmount());
+        claim.setRemarks(reviewDTO.getRemarks());
+        
+        <span class="hljs-comment">// Save updates</span>
+        <span class="hljs-keyword">return</span> claimRepository.save(claim);
+        <span class="hljs-comment">// Hibernate: UPDATE claims SET adjuster_id=?, claim_status=?, ... WHERE claim_id=?</span>
+    }
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// ENTITY TO DTO CONVERSION</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> ClaimDTO <span class="hljs-title">convertToDTO</span><span class="hljs-params">(Claim claim)</span> </span>{
+        <span class="hljs-keyword">return</span> ClaimDTO.builder()
+                .claimId(claim.getClaimId())
+                .claimNumber(claim.getClaimNumber())
+                .policyId(claim.getPolicy().getPolicyId())
+                .policyName(claim.getPolicy().getPolicyName())
+                .claimantId(claim.getClaimant().getUserId())
+                .claimantName(claim.getClaimant().getFullName())
+                <span class="hljs-comment">// Handle nullable relationships</span>
+                .adjusterId(claim.getAdjuster() != <span class="hljs-keyword">null</span> ? 
+                        claim.getAdjuster().getUserId() : <span class="hljs-keyword">null</span>)
+                .adjusterName(claim.getAdjuster() != <span class="hljs-keyword">null</span> ? 
+                        claim.getAdjuster().getFullName() : <span class="hljs-keyword">null</span>)
+                .claimAmount(claim.getClaimAmount())
+                .approvedAmount(claim.getApprovedAmount())
+                .claimStatus(claim.getClaimStatus())
+                .build();
+    }
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// PRIVATE HELPER - Generate unique claim number</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> String <span class="hljs-title">generateClaimNumber</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-comment">// Format: CLM-YYYYMMDD-XXX (e.g., CLM-20260131-001)</span>
+        String datePrefix = LocalDate.now()
+                .format(DateTimeFormatter.ofPattern(<span class="hljs-string">"yyyyMMdd"</span>));
+        String baseNumber = <span class="hljs-string">"CLM-"</span> + datePrefix + <span class="hljs-string">"-"</span>;
+        
+        <span class="hljs-keyword">int</span> counter = <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">while</span> (claimRepository.existsByClaimNumber(
+                baseNumber + String.format(<span class="hljs-string">"%03d"</span>, counter))) {
+            counter++;
+        }
+        
+        <span class="hljs-keyword">return</span> baseNumber + String.format(<span class="hljs-string">"%03d"</span>, counter);
+    }
+}
+</div></code></pre>
+<hr>
+<h2 id="34-controller-layer-claimcontrollerjava">3.4 CONTROLLER LAYER (ClaimController.java)</h2>
+<h3 id="what-is-a-controller">What is a Controller?</h3>
+<p>The Controller handles <strong>HTTP requests</strong>. It receives input, calls services, and returns responses (views or data).</p>
+<h3 id="complete-code-with-explanations">Complete Code with Explanations</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">package</span> com.hicms.controller;
+
+<span class="hljs-meta">@Controller</span>                       <span class="hljs-comment">// ← Marks as Spring MVC controller (returns views)</span>
+<span class="hljs-meta">@RequestMapping</span>(<span class="hljs-string">"/claims"</span>)        <span class="hljs-comment">// ← Base URL: all endpoints start with /claims</span>
+<span class="hljs-meta">@RequiredArgsConstructor</span>          <span class="hljs-comment">// ← Constructor injection for dependencies</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClaimController</span> </span>{
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// DEPENDENCY INJECTION</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ClaimService claimService;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> PolicyEnrollmentService enrollmentService;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> UserService userService;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> DocumentService documentService;
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// LIST CLAIMS - GET /claims</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@GetMapping</span>                   <span class="hljs-comment">// ← Handles GET /claims</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">listClaims</span><span class="hljs-params">(
+            @AuthenticationPrincipal UserDetails userDetails,  // ← Current logged-in user
+            Model model)</span> </span>{                                      <span class="hljs-comment">// ← Data carrier to view</span>
+        
+        <span class="hljs-comment">// Get full user entity from username</span>
+        User user = userService.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -&gt; <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"User not found"</span>));
+        
+        List&lt;Claim&gt; claims;
+        
+        <span class="hljs-comment">// ROLE-BASED FILTERING</span>
+        <span class="hljs-keyword">switch</span> (user.getRole()) {
+            <span class="hljs-keyword">case</span> ADMIN:
+                claims = claimService.findAllClaims();          <span class="hljs-comment">// See all</span>
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">case</span> AGENT:
+                claims = claimService.findClaimsByAgent(user.getUserId());
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">case</span> CLAIM_ADJUSTER:
+                claims = claimService.findClaimsByAdjuster(user.getUserId());
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">default</span>:  <span class="hljs-comment">// USER</span>
+                claims = claimService.findClaimsByClaimant(user.getUserId());
+        }
+        
+        <span class="hljs-comment">// Add data to model (available in Thymeleaf template)</span>
+        model.addAttribute(<span class="hljs-string">"claims"</span>, claimService.convertToDTOList(claims));
+        model.addAttribute(<span class="hljs-string">"userRole"</span>, user.getRole());
+        
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"claim/list"</span>;      <span class="hljs-comment">// ← Returns templates/claim/list.html</span>
+    }
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// SHOW SUBMIT FORM - GET /claims/submit</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/submit"</span>)
+    <span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasAnyRole('USER', 'AGENT')"</span>)  <span class="hljs-comment">// ← Security: only USER or AGENT</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">submitClaimForm</span><span class="hljs-params">(
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model)</span> </span>{
+        
+        User user = userService.findByUsername(userDetails.getUsername())
+                .orElseThrow();
+        
+        model.addAttribute(<span class="hljs-string">"claim"</span>, <span class="hljs-keyword">new</span> ClaimDTO());  <span class="hljs-comment">// Empty form object</span>
+        model.addAttribute(<span class="hljs-string">"userRole"</span>, user.getRole());
+        
+        <span class="hljs-keyword">if</span> (user.getRole() == Role.AGENT) {
+            <span class="hljs-comment">// Agent can file for any customer</span>
+            model.addAttribute(<span class="hljs-string">"customers"</span>, userService.findUsersByRole(Role.USER));
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-comment">// User sees only their active policy enrollments</span>
+            List&lt;PolicyEnrollment&gt; activeEnrollments = 
+                    enrollmentService.findActiveEnrollmentsByUser(user.getUserId());
+            model.addAttribute(<span class="hljs-string">"enrollments"</span>, 
+                    enrollmentService.convertToDTOList(activeEnrollments));
+        }
+        
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"claim/submit"</span>;    <span class="hljs-comment">// ← Returns templates/claim/submit.html</span>
+    }
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// PROCESS SUBMIT - POST /claims/submit</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/submit"</span>)
+    <span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasAnyRole('USER', 'AGENT')"</span>)
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">submitClaim</span><span class="hljs-params">(
+            @Valid @ModelAttribute(<span class="hljs-string">"claim"</span>)</span> ClaimDTO claimDTO,  <span class="hljs-comment">// ← Form data + validation</span>
+            BindingResult result,                                <span class="hljs-comment">// ← Validation errors</span>
+            @<span class="hljs-title">RequestParam</span><span class="hljs-params">(required = <span class="hljs-keyword">false</span>)</span> Long customerId,     <span class="hljs-comment">// ← Query param (for agents)</span>
+            @<span class="hljs-title">RequestParam</span><span class="hljs-params">(value = <span class="hljs-string">"documents"</span>, required = <span class="hljs-keyword">false</span>)</span> 
+                    List&lt;MultipartFile&gt; documents,               <span class="hljs-comment">// ← File uploads</span>
+            @AuthenticationPrincipal UserDetails userDetails,
+            RedirectAttributes redirectAttributes,               <span class="hljs-comment">// ← Flash messages</span>
+            Model model) </span>{
+        
+        User currentUser = userService.findByUsername(userDetails.getUsername())
+                .orElseThrow();
+        
+        <span class="hljs-comment">// CHECK VALIDATION ERRORS</span>
+        <span class="hljs-keyword">if</span> (result.hasErrors()) {
+            <span class="hljs-comment">// Return to form with error messages</span>
+            model.addAttribute(<span class="hljs-string">"userRole"</span>, currentUser.getRole());
+            <span class="hljs-comment">// ... repopulate dropdowns ...</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"claim/submit"</span>;
+        }
+        
+        <span class="hljs-keyword">try</span> {
+            Claim savedClaim;
+            
+            <span class="hljs-keyword">if</span> (currentUser.getRole() == Role.AGENT &amp;&amp; customerId != <span class="hljs-keyword">null</span>) {
+                <span class="hljs-comment">// Agent submitting for customer</span>
+                User customer = userService.findById(customerId).orElseThrow();
+                savedClaim = claimService.submitClaimWithAgent(claimDTO, customer, currentUser);
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-comment">// User submitting for themselves</span>
+                savedClaim = claimService.submitClaim(claimDTO, currentUser);
+            }
+            
+            <span class="hljs-comment">// HANDLE FILE UPLOADS</span>
+            <span class="hljs-keyword">if</span> (documents != <span class="hljs-keyword">null</span> &amp;&amp; !documents.isEmpty()) {
+                <span class="hljs-keyword">for</span> (MultipartFile file : documents) {
+                    <span class="hljs-keyword">if</span> (!file.isEmpty()) {
+                        documentService.uploadDocument(
+                                savedClaim.getClaimId(), file, currentUser);
+                    }
+                }
+            }
+            
+            <span class="hljs-comment">// SUCCESS - redirect with message</span>
+            redirectAttributes.addFlashAttribute(<span class="hljs-string">"successMessage"</span>, 
+                    <span class="hljs-string">"Claim submitted successfully!"</span>);
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"redirect:/claims"</span>;  <span class="hljs-comment">// ← PRG pattern (Post-Redirect-Get)</span>
+            
+        } <span class="hljs-keyword">catch</span> (Exception e) {
+            <span class="hljs-comment">// ERROR - stay on form</span>
+            model.addAttribute(<span class="hljs-string">"errorMessage"</span>, e.getMessage());
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"claim/submit"</span>;
+        }
+    }
+    
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-comment">// REVIEW CLAIM - POST /claims/review/{id}</span>
+    <span class="hljs-comment">// ════════════════════════════════════════════════════════════════════════</span>
+    <span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/review/{id}"</span>)
+    <span class="hljs-meta">@PreAuthorize</span>(<span class="hljs-string">"hasAnyRole('CLAIM_ADJUSTER', 'ADMIN')"</span>)  <span class="hljs-comment">// ← Only adjusters/admins</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">reviewClaim</span><span class="hljs-params">(
+            @PathVariable Long id,                           // ← From URL: /review/<span class="hljs-number">5</span>
+            @ModelAttribute(<span class="hljs-string">"review"</span>)</span> ClaimReviewDTO reviewDTO,
+            @AuthenticationPrincipal UserDetails userDetails,
+            RedirectAttributes redirectAttributes) </span>{
+        <span class="hljs-keyword">try</span> {
+            User adjuster = userService.findByUsername(userDetails.getUsername())
+                    .orElseThrow();
+            
+            claimService.reviewClaim(id, reviewDTO, adjuster);
+            
+            redirectAttributes.addFlashAttribute(<span class="hljs-string">"successMessage"</span>, 
+                    <span class="hljs-string">"Claim reviewed successfully!"</span>);
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"redirect:/claims"</span>;
+            
+        } <span class="hljs-keyword">catch</span> (Exception e) {
+            redirectAttributes.addFlashAttribute(<span class="hljs-string">"errorMessage"</span>, e.getMessage());
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"redirect:/claims/review/"</span> + id;
+        }
+    }
+}
+</div></code></pre>
+<hr>
+<h1 id="4-annotations-reference-guide">4. ANNOTATIONS REFERENCE GUIDE</h1>
+<h2 id="41-jpahibernate-annotations-entity-layer">4.1 JPA/Hibernate Annotations (Entity Layer)</h2>
+<table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>Location</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@Entity</code></td>
+<td>Class</td>
+<td>Marks class as database table</td>
+<td><code>@Entity public class Claim</code></td>
+</tr>
+<tr>
+<td><code>@Table</code></td>
+<td>Class</td>
+<td>Specifies table name</td>
+<td><code>@Table(name = &quot;claims&quot;)</code></td>
+</tr>
+<tr>
+<td><code>@Id</code></td>
+<td>Field</td>
+<td>Marks primary key</td>
+<td><code>@Id private Long claimId</code></td>
+</tr>
+<tr>
+<td><code>@GeneratedValue</code></td>
+<td>Field</td>
+<td>Auto-generate PK</td>
+<td><code>@GeneratedValue(strategy = GenerationType.IDENTITY)</code></td>
+</tr>
+<tr>
+<td><code>@Column</code></td>
+<td>Field</td>
+<td>Column customization</td>
+<td><code>@Column(nullable = false, length = 50)</code></td>
+</tr>
+<tr>
+<td><code>@ManyToOne</code></td>
+<td>Field</td>
+<td>Many-to-one relationship</td>
+<td><code>@ManyToOne private Policy policy</code></td>
+</tr>
+<tr>
+<td><code>@OneToMany</code></td>
+<td>Field</td>
+<td>One-to-many relationship</td>
+<td><code>@OneToMany(mappedBy = &quot;claim&quot;)</code></td>
+</tr>
+<tr>
+<td><code>@JoinColumn</code></td>
+<td>Field</td>
+<td>Foreign key column</td>
+<td><code>@JoinColumn(name = &quot;policy_id&quot;)</code></td>
+</tr>
+<tr>
+<td><code>@Enumerated</code></td>
+<td>Field</td>
+<td>Store enum as string/ordinal</td>
+<td><code>@Enumerated(EnumType.STRING)</code></td>
+</tr>
+<tr>
+<td><code>@PrePersist</code></td>
+<td>Method</td>
+<td>Before INSERT callback</td>
+<td>Auto-set createdDate</td>
+</tr>
+<tr>
+<td><code>@PreUpdate</code></td>
+<td>Method</td>
+<td>Before UPDATE callback</td>
+<td>Auto-update updatedDate</td>
+</tr>
+</tbody>
+</table>
+<h2 id="42-spring-annotations">4.2 Spring Annotations</h2>
+<table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>Layer</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@Repository</code></td>
+<td>Repository</td>
+<td>Data access component, enables exception translation</td>
+</tr>
+<tr>
+<td><code>@Service</code></td>
+<td>Service</td>
+<td>Business logic component</td>
+</tr>
+<tr>
+<td><code>@Controller</code></td>
+<td>Controller</td>
+<td>Web MVC controller (returns views)</td>
+</tr>
+<tr>
+<td><code>@RestController</code></td>
+<td>Controller</td>
+<td>REST API controller (returns JSON)</td>
+</tr>
+<tr>
+<td><code>@Component</code></td>
+<td>Any</td>
+<td>Generic Spring-managed bean</td>
+</tr>
+<tr>
+<td><code>@Autowired</code></td>
+<td>Field/Constructor</td>
+<td>Dependency injection</td>
+</tr>
+<tr>
+<td><code>@RequiredArgsConstructor</code></td>
+<td>Class</td>
+<td>Lombok: generates constructor for final fields</td>
+</tr>
+<tr>
+<td><code>@Transactional</code></td>
+<td>Class/Method</td>
+<td>Database transaction management</td>
+</tr>
+</tbody>
+</table>
+<h2 id="43-webmvc-annotations">4.3 Web/MVC Annotations</h2>
+<table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@RequestMapping</code></td>
+<td>Base URL mapping</td>
+<td><code>@RequestMapping(&quot;/claims&quot;)</code></td>
+</tr>
+<tr>
+<td><code>@GetMapping</code></td>
+<td>Handle GET requests</td>
+<td><code>@GetMapping(&quot;/view/{id}&quot;)</code></td>
+</tr>
+<tr>
+<td><code>@PostMapping</code></td>
+<td>Handle POST requests</td>
+<td><code>@PostMapping(&quot;/submit&quot;)</code></td>
+</tr>
+<tr>
+<td><code>@PathVariable</code></td>
+<td>URL path parameter</td>
+<td><code>/claims/view/{id}</code> → <code>id</code></td>
+</tr>
+<tr>
+<td><code>@RequestParam</code></td>
+<td>Query/form parameter</td>
+<td><code>?customerId=5</code> → <code>customerId</code></td>
+</tr>
+<tr>
+<td><code>@ModelAttribute</code></td>
+<td>Bind form to object</td>
+<td>HTML form → ClaimDTO</td>
+</tr>
+<tr>
+<td><code>@Valid</code></td>
+<td>Trigger validation</td>
+<td>Check @NotNull, @Size, etc.</td>
+</tr>
+<tr>
+<td><code>@AuthenticationPrincipal</code></td>
+<td>Get logged-in user</td>
+<td>Current user details</td>
+</tr>
+<tr>
+<td><code>@PreAuthorize</code></td>
+<td>Method-level security</td>
+<td><code>hasRole('ADMIN')</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="44-validation-annotations-dto-layer">4.4 Validation Annotations (DTO Layer)</h2>
+<table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@NotNull</code></td>
+<td>Cannot be null</td>
+<td><code>@NotNull private Long policyId</code></td>
+</tr>
+<tr>
+<td><code>@NotBlank</code></td>
+<td>Not null/empty/whitespace</td>
+<td><code>@NotBlank private String description</code></td>
+</tr>
+<tr>
+<td><code>@Size</code></td>
+<td>String length limits</td>
+<td><code>@Size(max = 1000)</code></td>
+</tr>
+<tr>
+<td><code>@DecimalMin</code></td>
+<td>Minimum numeric value</td>
+<td><code>@DecimalMin(&quot;0.01&quot;)</code></td>
+</tr>
+<tr>
+<td><code>@DecimalMax</code></td>
+<td>Maximum numeric value</td>
+<td><code>@DecimalMax(&quot;999999.99&quot;)</code></td>
+</tr>
+<tr>
+<td><code>@Email</code></td>
+<td>Valid email format</td>
+<td><code>@Email private String email</code></td>
+</tr>
+<tr>
+<td><code>@Pattern</code></td>
+<td>Regex pattern</td>
+<td><code>@Pattern(regexp = &quot;...&quot;)</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="5-complete-code-flow-walkthrough">5. COMPLETE CODE FLOW WALKTHROUGH</h1>
+<h2 id="51-flow-user-submits-a-new-claim">5.1 Flow: User Submits a New Claim</h2>
+<pre class="hljs"><code><div>┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 1: User clicks &quot;Submit New Claim&quot; button                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 2: Browser sends GET /claims/submit                                    │
+│ HTTP Request: GET http://localhost:8081/claims/submit                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 3: Spring Security checks authentication                               │
+│ - Is user logged in? → YES (has session cookie)                            │
+│ - @PreAuthorize(&quot;hasAnyRole('USER', 'AGENT')&quot;) → User has USER role → OK   │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 4: ClaimController.submitClaimForm() executes                          │
+│                                                                             │
+│ @GetMapping(&quot;/submit&quot;)                                                      │
+│ public String submitClaimForm(@AuthenticationPrincipal UserDetails user,   │
+│                               Model model) {                                │
+│     User user = userService.findByUsername(userDetails.getUsername());     │
+│     model.addAttribute(&quot;claim&quot;, new ClaimDTO());  // Empty form object     │
+│     model.addAttribute(&quot;enrollments&quot;, enrollmentService.find...(userId));  │
+│     return &quot;claim/submit&quot;;  // ← Returns view name                         │
+│ }                                                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 5: Thymeleaf renders templates/claim/submit.html                       │
+│ - Populates dropdown with user's active enrollments                        │
+│ - Creates empty form bound to ClaimDTO                                      │
+│ - Browser displays the form to user                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 6: User fills form and clicks Submit                                   │
+│ - Selects policy: Health Plus (policyId: 1)                                │
+│ - Amount: $2,500.00                                                         │
+│ - Description: &quot;Hospital visit for surgery&quot;                                │
+│ - Uploads: medical_report.pdf                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 7: Browser sends POST /claims/submit                                   │
+│ HTTP Request: POST http://localhost:8081/claims/submit                      │
+│ Content-Type: multipart/form-data                                           │
+│ Body: policyId=1, claimAmount=2500.00, description=..., documents=file     │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 8: Spring Security validates (same as step 3)                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 9: Spring MVC binds form data to ClaimDTO                              │
+│ @ModelAttribute(&quot;claim&quot;) ClaimDTO claimDTO                                  │
+│                                                                             │
+│ ClaimDTO {                                                                   │
+│     policyId: 1,                                                            │
+│     claimAmount: 2500.00,                                                   │
+│     description: &quot;Hospital visit for surgery&quot;                              │
+│ }                                                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 10: @Valid triggers Bean Validation                                    │
+│ - @NotNull policyId → OK (has value)                                       │
+│ - @DecimalMin(&quot;0.01&quot;) claimAmount → OK (2500 &gt; 0.01)                       │
+│ - @NotBlank description → OK (has text)                                    │
+│ - BindingResult.hasErrors() → false                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 11: ClaimController calls ClaimService                                 │
+│                                                                             │
+│ savedClaim = claimService.submitClaim(claimDTO, currentUser);              │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 12: ClaimServiceImpl.submitClaim() executes                            │
+│                                                                             │
+│ 12a. Fetch Policy:                                                          │
+│      policyRepository.findById(1) → Policy{id:1, name:&quot;Health Plus&quot;,...}   │
+│      Hibernate SQL: SELECT * FROM policies WHERE policy_id = 1             │
+│                                                                             │
+│ 12b. Validate Enrollment:                                                   │
+│      enrollmentRepository.existsByPolicyholderUserIdAndPolicy...           │
+│      Hibernate SQL: SELECT COUNT(*) FROM policy_enrollments                │
+│                     WHERE policyholder_id=5 AND policy_id=1                │
+│                     AND enrollment_status='ACTIVE'                         │
+│      Result: true (user is enrolled)                                        │
+│                                                                             │
+│ 12c. Validate Amount:                                                       │
+│      2500 &lt;= 100000 (coverage amount) → OK                                 │
+│                                                                             │
+│ 12d. Generate Claim Number:                                                 │
+│      &quot;CLM-20260131-001&quot; (checks for uniqueness)                            │
+│                                                                             │
+│ 12e. Build Claim Entity:                                                    │
+│      Claim claim = Claim.builder()                                          │
+│          .claimNumber(&quot;CLM-20260131-001&quot;)                                  │
+│          .policy(policy)                                                    │
+│          .claimant(currentUser)                                             │
+│          .claimAmount(2500.00)                                              │
+│          .claimStatus(PENDING)                                              │
+│          .build();                                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 13: ClaimRepository.save(claim) executes                               │
+│                                                                             │
+│ Before save:                                                                │
+│ - @PrePersist callback triggers                                            │
+│ - Sets createdDate = 2026-01-31T10:30:00                                   │
+│ - Sets updatedDate = 2026-01-31T10:30:00                                   │
+│                                                                             │
+│ Hibernate generates SQL:                                                    │
+│ INSERT INTO claims (claim_number, policy_id, claimant_id, claim_amount,    │
+│                     claim_date, description, claim_status, created_date,   │
+│                     updated_date)                                           │
+│ VALUES ('CLM-20260131-001', 1, 5, 2500.00, '2026-01-31',                   │
+│         'Hospital visit...', 'PENDING', '2026-01-31 10:30:00', ...)        │
+│                                                                             │
+│ MySQL auto-generates claim_id: 10                                           │
+│ Hibernate sets claim.claimId = 10                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 14: Controller handles document upload                                 │
+│                                                                             │
+│ for (MultipartFile file : documents) {                                      │
+│     documentService.uploadDocument(10, file, currentUser);                 │
+│ }                                                                           │
+│ - Saves file to: ./uploads/documents/10/medical_report.pdf                 │
+│ - Creates Document entity with claimId=10                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 15: Controller returns redirect                                        │
+│                                                                             │
+│ redirectAttributes.addFlashAttribute(&quot;successMessage&quot;, &quot;Claim submitted!&quot;); │
+│ return &quot;redirect:/claims&quot;;                                                  │
+│                                                                             │
+│ HTTP Response: 302 Redirect to /claims                                      │
+│ Browser automatically sends GET /claims                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 16: User sees claim list with success message                          │
+│                                                                             │
+│ &quot;Claim submitted successfully!&quot;                                             │
+│ New claim CLM-20260131-001 appears in the list                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+</div></code></pre>
+<hr>
+<h1 id="6-database--hibernate-integration">6. DATABASE &amp; HIBERNATE INTEGRATION</h1>
+<h2 id="61-connection-configuration-applicationproperties">6.1 Connection Configuration (application.properties)</h2>
+<pre class="hljs"><code><div><span class="hljs-comment"># Database Connection</span>
+<span class="hljs-meta">spring.datasource.url</span>=<span class="hljs-string">jdbc:mysql://localhost:3306/hicms_db?createDatabaseIfNotExist=true</span>
+<span class="hljs-meta">spring.datasource.username</span>=<span class="hljs-string">root</span>
+<span class="hljs-meta">spring.datasource.password</span>=<span class="hljs-string">root</span>
+<span class="hljs-meta">spring.datasource.driver-class-name</span>=<span class="hljs-string">com.mysql.cj.jdbc.Driver</span>
+<span class="hljs-comment">
+# Hibernate/JPA Configuration</span>
+<span class="hljs-meta">spring.jpa.hibernate.ddl-auto</span>=<span class="hljs-string">update        # Auto-create/update tables</span>
+<span class="hljs-meta">spring.jpa.show-sql</span>=<span class="hljs-string">true                     # Log SQL to console</span>
+<span class="hljs-meta">spring.jpa.properties.hibernate.format_sql</span>=<span class="hljs-string">true</span>
+<span class="hljs-meta">spring.jpa.properties.hibernate.dialect</span>=<span class="hljs-string">org.hibernate.dialect.MySQLDialect</span>
+</div></code></pre>
+<h3 id="ddl-auto-options">DDL-Auto Options</h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>none</code></td>
+<td>Do nothing</td>
+</tr>
+<tr>
+<td><code>validate</code></td>
+<td>Validate schema, don't change</td>
+</tr>
+<tr>
+<td><code>update</code></td>
+<td>Update schema to match entities</td>
+</tr>
+<tr>
+<td><code>create</code></td>
+<td>Drop and recreate on startup</td>
+</tr>
+<tr>
+<td><code>create-drop</code></td>
+<td>Create on start, drop on shutdown</td>
+</tr>
+</tbody>
+</table>
+<h2 id="62-how-hibernate-translates-operations">6.2 How Hibernate Translates Operations</h2>
+<h3 id="save-operation">save() Operation</h3>
+<pre class="hljs"><code><div><span class="hljs-comment">// Java code</span>
+Claim claim = Claim.builder()
+        .claimNumber(<span class="hljs-string">"CLM-20260131-001"</span>)
+        .policy(policy)
+        .claimant(user)
+        .claimAmount(<span class="hljs-keyword">new</span> BigDecimal(<span class="hljs-string">"2500.00"</span>))
+        .claimStatus(ClaimStatus.PENDING)
+        .build();
+
+claimRepository.save(claim);
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment">-- Hibernate generates (for new entity with null ID):</span>
+<span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> claims 
+    (claim_number, policy_id, claimant_id, claim_amount, claim_date, 
+     description, claim_status, created_date, updated_date)
+<span class="hljs-keyword">VALUES</span> 
+    (<span class="hljs-string">'CLM-20260131-001'</span>, <span class="hljs-number">1</span>, <span class="hljs-number">5</span>, <span class="hljs-number">2500.00</span>, <span class="hljs-string">'2026-01-31'</span>, 
+     <span class="hljs-string">'Hospital visit...'</span>, <span class="hljs-string">'PENDING'</span>, <span class="hljs-string">'2026-01-31 10:30:00'</span>, <span class="hljs-string">'2026-01-31 10:30:00'</span>);
+</div></code></pre>
+<h3 id="findbyid-operation">findById() Operation</h3>
+<pre class="hljs"><code><div><span class="hljs-comment">// Java code</span>
+Optional&lt;Claim&gt; claim = claimRepository.findById(<span class="hljs-number">10L</span>);
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment">-- Hibernate generates:</span>
+<span class="hljs-keyword">SELECT</span> c.claim_id, c.claim_number, c.policy_id, c.claimant_id, 
+       c.claim_amount, c.approved_amount, c.claim_date, c.description,
+       c.claim_status, c.remarks, c.created_date, c.updated_date
+<span class="hljs-keyword">FROM</span> claims c
+<span class="hljs-keyword">WHERE</span> c.claim_id = <span class="hljs-number">10</span>;
+</div></code></pre>
+<h3 id="lazy-loading-relationship">Lazy Loading (Relationship)</h3>
+<pre class="hljs"><code><div><span class="hljs-comment">// Java code</span>
+Claim claim = claimRepository.findById(<span class="hljs-number">10L</span>).orElseThrow();
+String policyName = claim.getPolicy().getPolicyName();  <span class="hljs-comment">// ← Triggers lazy load</span>
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment">-- First query (findById):</span>
+<span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> claims <span class="hljs-keyword">WHERE</span> claim_id = <span class="hljs-number">10</span>;
+
+<span class="hljs-comment">-- Second query (when accessing policy - LAZY loading):</span>
+<span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> policies <span class="hljs-keyword">WHERE</span> policy_id = <span class="hljs-number">1</span>;
+</div></code></pre>
+<h3 id="custom-query-method">Custom Query Method</h3>
+<pre class="hljs"><code><div><span class="hljs-comment">// Java code</span>
+List&lt;Claim&gt; claims = claimRepository.findByClaimantUserId(<span class="hljs-number">5L</span>);
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment">-- Hibernate generates from method name:</span>
+<span class="hljs-keyword">SELECT</span> c.* <span class="hljs-keyword">FROM</span> claims c
+<span class="hljs-keyword">WHERE</span> c.claimant_id = <span class="hljs-number">5</span>;
+</div></code></pre>
+<h3 id="jpql-query">JPQL Query</h3>
+<pre class="hljs"><code><div><span class="hljs-comment">// Java code</span>
+<span class="hljs-meta">@Query</span>(<span class="hljs-string">"SELECT c FROM Claim c WHERE c.adjuster IS NULL AND c.claimStatus = 'PENDING'"</span>)
+<span class="hljs-function">List&lt;Claim&gt; <span class="hljs-title">findUnassignedClaims</span><span class="hljs-params">()</span></span>;
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment">-- Hibernate translates JPQL to SQL:</span>
+<span class="hljs-keyword">SELECT</span> c.* <span class="hljs-keyword">FROM</span> claims c
+<span class="hljs-keyword">WHERE</span> c.adjuster_id <span class="hljs-keyword">IS</span> <span class="hljs-literal">NULL</span> 
+  <span class="hljs-keyword">AND</span> c.claim_status = <span class="hljs-string">'PENDING'</span>;
+</div></code></pre>
+<h2 id="63-entity-lifecycle-states">6.3 Entity Lifecycle States</h2>
+<pre class="hljs"><code><div>┌──────────────┐     new Claim()      ┌──────────────┐
+│   TRANSIENT  │◄────────────────────│   (Just     │
+│  (Not in DB) │                      │   Created)  │
+└──────┬───────┘                      └──────────────┘
+       │
+       │ save() / persist()
+       ▼
+┌──────────────┐
+│   MANAGED    │◄──── Changes tracked by Hibernate
+│ (In Session) │      Dirty checking on commit
+└──────┬───────┘
+       │
+       │ Transaction commits / Session closes
+       ▼
+┌──────────────┐
+│   DETACHED   │◄──── Entity disconnected from session
+│              │      Changes NOT tracked
+└──────┬───────┘
+       │
+       │ merge()
+       ▼
+┌──────────────┐
+│   MANAGED    │◄──── Re-attached to session
+│   (Again)    │
+└──────────────┘
+</div></code></pre>
+<hr>
+<h1 id="7-method-connectivity--data-flow">7. METHOD CONNECTIVITY &amp; DATA FLOW</h1>
+<h2 id="71-complete-method-call-chain">7.1 Complete Method Call Chain</h2>
+<pre class="hljs"><code><div>User Action: Click &quot;Submit Claim&quot; button
+                    │
+                    ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ ClaimController.submitClaim()                                             │
+│ ────────────────────────────────────────────────────────────────────────  │
+│ Parameters received:                                                      │
+│   - @Valid @ModelAttribute ClaimDTO claimDTO (form data)                 │
+│   - BindingResult result (validation errors)                             │
+│   - @RequestParam List&lt;MultipartFile&gt; documents (uploaded files)         │
+│   - @AuthenticationPrincipal UserDetails userDetails (logged user)       │
+└───────────────────────┬───────────────────────────────────────────────────┘
+                        │
+                        │ calls
+                        ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ UserService.findByUsername(username)                                      │
+│ ────────────────────────────────────────────────────────────────────────  │
+│ Input:  &quot;john.doe&quot; (from UserDetails)                                    │
+│ Output: User{userId:5, username:&quot;john.doe&quot;, role:USER}                   │
+└───────────────────────┬───────────────────────────────────────────────────┘
+                        │
+                        │ returns User
+                        ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ ClaimService.submitClaim(claimDTO, currentUser)                           │
+│ ────────────────────────────────────────────────────────────────────────  │
+│ Input:  ClaimDTO{policyId:1, claimAmount:2500, description:&quot;...&quot;}        │
+│         User{userId:5}                                                    │
+└───────────────────────┬───────────────────────────────────────────────────┘
+                        │
+                        │ calls internally
+                        ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ PolicyRepository.findById(1L)                                             │
+│ ────────────────────────────────────────────────────────────────────────  │
+│ SQL: SELECT * FROM policies WHERE policy_id = 1                          │
+│ Returns: Policy{policyId:1, policyName:&quot;Health Plus&quot;, coverage:100000}   │
+└───────────────────────┬───────────────────────────────────────────────────┘
+                        │
+                        │ then calls
+                        ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ PolicyEnrollmentRepository.existsByPolicyholder...()                      │
+│ ────────────────────────────────────────────────────────────────────────  │
+│ SQL: SELECT COUNT(*)&gt;0 FROM policy_enrollments                           │
+│      WHERE policyholder_id=5 AND policy_id=1 AND status='ACTIVE'         │
+│ Returns: true                                                             │
+└───────────────────────┬───────────────────────────────────────────────────┘
+                        │
+                        │ validation passes, then calls
+                        ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ ClaimRepository.save(claim)                                               │
+│ ────────────────────────────────────────────────────────────────────────  │
+│ Input: Claim{claimNumber:&quot;CLM-20260131-001&quot;, policyId:1, claimantId:5,   │
+│              claimAmount:2500, status:PENDING}                           │
+│                                                                           │
+│ Hibernate triggers @PrePersist → sets createdDate, updatedDate           │
+│                                                                           │
+│ SQL: INSERT INTO claims (...) VALUES (...)                               │
+│ Returns: Claim{claimId:10, ...} (with generated ID)                      │
+└───────────────────────┬───────────────────────────────────────────────────┘
+                        │
+                        │ returns saved Claim
+                        ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ DocumentService.uploadDocument(10, file, currentUser)                     │
+│ ────────────────────────────────────────────────────────────────────────  │
+│ - Saves file to: ./uploads/documents/10/medical_report.pdf               │
+│ - Creates Document entity                                                 │
+│ - documentRepository.save(document)                                       │
+│ SQL: INSERT INTO documents (...) VALUES (...)                            │
+└───────────────────────┬───────────────────────────────────────────────────┘
+                        │
+                        │ returns to Controller
+                        ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ ClaimController returns &quot;redirect:/claims&quot;                                │
+│ ────────────────────────────────────────────────────────────────────────  │
+│ - Adds flash message: &quot;Claim submitted successfully!&quot;                    │
+│ - HTTP 302 Redirect                                                       │
+│ - Browser follows redirect to GET /claims                                │
+└───────────────────────────────────────────────────────────────────────────┘
+</div></code></pre>
+<h2 id="72-data-transformation-through-layers">7.2 Data Transformation Through Layers</h2>
+<pre class="hljs"><code><div>┌─────────────────────────────────────────────────────────────────────────────┐
+│                           DATA FLOW DIAGRAM                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+BROWSER → CONTROLLER
+━━━━━━━━━━━━━━━━━━━━
+HTML Form Data (key=value pairs)
+    │
+    │ Spring MVC @ModelAttribute binding
+    ▼
+ClaimDTO (Java object)
+┌─────────────────────────────┐
+│ policyId: 1                 │
+│ claimAmount: 2500.00        │
+│ description: &quot;Hospital...&quot;  │
+│ reason: null                │
+└─────────────────────────────┘
+
+CONTROLLER → SERVICE
+━━━━━━━━━━━━━━━━━━━━
+ClaimDTO + User objects passed as method parameters
+
+SERVICE → REPOSITORY
+━━━━━━━━━━━━━━━━━━━━
+Service builds Claim entity from DTO
+┌─────────────────────────────┐
+│ Claim (Entity)              │
+├─────────────────────────────┤
+│ claimId: null (not saved)   │
+│ claimNumber: &quot;CLM-2026...&quot;  │
+│ policy: Policy{id:1}        │  ← Relationship object
+│ claimant: User{id:5}        │  ← Relationship object
+│ claimAmount: 2500.00        │
+│ claimStatus: PENDING        │
+│ createdDate: null           │
+└─────────────────────────────┘
+
+REPOSITORY → DATABASE
+━━━━━━━━━━━━━━━━━━━━━
+Hibernate converts Entity to SQL
+
+INSERT INTO claims (
+    claim_number,      ← from claimNumber field
+    policy_id,         ← from policy.policyId (FK)
+    claimant_id,       ← from claimant.userId (FK)
+    claim_amount,      ← from claimAmount field
+    claim_status,      ← from claimStatus enum (as STRING)
+    created_date       ← from @PrePersist callback
+) VALUES (
+    'CLM-20260131-001', 1, 5, 2500.00, 'PENDING', '2026-01-31 10:30:00'
+)
+
+DATABASE → REPOSITORY (Return)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MySQL returns auto-generated ID
+Hibernate populates claimId: 10
+
+SERVICE → CONTROLLER (Return)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Returns Claim entity with generated ID
+
+CONTROLLER → VIEW (For display)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Service converts Entity to DTO for view
+┌─────────────────────────────┐
+│ ClaimDTO                    │
+├─────────────────────────────┤
+│ claimId: 10                 │
+│ claimNumber: &quot;CLM-2026...&quot;  │
+│ policyName: &quot;Health Plus&quot;   │  ← Flattened from relationship
+│ claimantName: &quot;John Doe&quot;    │  ← Flattened from relationship
+│ claimAmount: 2500.00        │
+│ claimStatus: PENDING        │
+└─────────────────────────────┘
+
+VIEW → BROWSER
+━━━━━━━━━━━━━━
+Thymeleaf renders HTML with DTO data
+</div></code></pre>
+<hr>
+<h1 id="8-interview-ready-explanations">8. INTERVIEW-READY EXPLANATIONS</h1>
+<h2 id="q1-%22explain-the-overall-architecture-of-the-claim-module%22">Q1: &quot;Explain the overall architecture of the Claim module.&quot;</h2>
+<p><strong>Answer:</strong>
+&quot;The Claim module follows a layered architecture with clear separation of concerns:</p>
+<ol>
+<li>
+<p><strong>Entity Layer</strong> - <code>Claim.java</code> maps to the database table using JPA annotations. It defines the data structure and relationships.</p>
+</li>
+<li>
+<p><strong>Repository Layer</strong> - <code>ClaimRepository</code> extends <code>JpaRepository</code> for CRUD operations. Spring Data JPA auto-implements methods based on naming conventions.</p>
+</li>
+<li>
+<p><strong>Service Layer</strong> - <code>ClaimService</code> interface with <code>ClaimServiceImpl</code> contains business logic like enrollment validation, amount checking, and claim number generation.</p>
+</li>
+<li>
+<p><strong>Controller Layer</strong> - <code>ClaimController</code> handles HTTP requests, binds form data, and returns views.</p>
+</li>
+<li>
+<p><strong>DTO Layer</strong> - <code>ClaimDTO</code> transfers data between controller and view, with validation annotations.</p>
+</li>
+</ol>
+<p>Data flows: Browser → Controller → Service → Repository → Database, and back.&quot;</p>
+<hr>
+<h2 id="q2-%22how-does-transactional-work-in-the-service-layer%22">Q2: &quot;How does @Transactional work in the service layer?&quot;</h2>
+<p><strong>Answer:</strong>
+&quot;The <code>@Transactional</code> annotation on <code>ClaimServiceImpl</code> means:</p>
+<ol>
+<li>When any method is called, Spring starts a database transaction.</li>
+<li>All database operations within that method share the same transaction.</li>
+<li>If the method completes successfully, the transaction is committed.</li>
+<li>If any exception occurs, the transaction is rolled back - all changes are undone.</li>
+</ol>
+<p>For example, if <code>submitClaim()</code> saves a claim but document upload fails, without <code>@Transactional</code>, the claim would remain. With it, everything rolls back, keeping data consistent.</p>
+<p>I also use <code>@Transactional(readOnly = true)</code> on read methods for performance optimization - Hibernate skips dirty checking.&quot;</p>
+<hr>
+<h2 id="q3-%22how-does-hibernate-map-entity-to-database-table%22">Q3: &quot;How does Hibernate map entity to database table?&quot;</h2>
+<p><strong>Answer:</strong>
+&quot;Hibernate uses annotations to map Java classes to database tables:</p>
+<ul>
+<li><code>@Entity</code> marks the class as a persistent entity</li>
+<li><code>@Table(name = 'claims')</code> specifies the table name</li>
+<li><code>@Id</code> marks the primary key field</li>
+<li><code>@GeneratedValue(strategy = IDENTITY)</code> tells MySQL to auto-increment</li>
+<li><code>@Column(nullable = false, length = 50)</code> defines column constraints</li>
+<li><code>@ManyToOne</code> defines foreign key relationships</li>
+</ul>
+<p>When I call <code>claimRepository.save(claim)</code>, Hibernate:</p>
+<ol>
+<li>Checks if entity is new (claimId is null) → generates INSERT</li>
+<li>Or if existing → generates UPDATE</li>
+<li>Executes @PrePersist callback to set timestamps</li>
+<li>Executes the SQL against MySQL</li>
+<li>Sets the generated ID back on the entity</li>
+</ol>
+<p>With <code>show-sql=true</code>, I can see the exact SQL being executed.&quot;</p>
+<hr>
+<h2 id="q4-%22explain-the-difference-between-entity-and-dto%22">Q4: &quot;Explain the difference between Entity and DTO.&quot;</h2>
+<p><strong>Answer:</strong>
+&quot;Entity and DTO serve different purposes:</p>
+<p><strong>Entity (Claim.java)</strong>:</p>
+<ul>
+<li>Represents database table structure</li>
+<li>Contains JPA annotations for ORM</li>
+<li>Has relationships (Policy, User) as object references</li>
+<li>Managed by Hibernate persistence context</li>
+<li>Should not be exposed directly to views (security, lazy loading issues)</li>
+</ul>
+<p><strong>DTO (ClaimDTO.java)</strong>:</p>
+<ul>
+<li>Data transfer between layers</li>
+<li>Contains validation annotations (@NotNull, @Size)</li>
+<li>Flattens relationships (policyName instead of Policy object)</li>
+<li>Safe to pass to views</li>
+<li>No database coupling</li>
+</ul>
+<p>I convert Entity → DTO in the service layer using <code>convertToDTO()</code> method. This protects internal structure and handles lazy loading within the transaction.&quot;</p>
+<hr>
+<h2 id="q5-%22how-does-spring-data-jpa-generate-queries-from-method-names%22">Q5: &quot;How does Spring Data JPA generate queries from method names?&quot;</h2>
+<p><strong>Answer:</strong>
+&quot;Spring Data JPA has a query derivation mechanism. It parses method names and generates SQL:</p>
+<pre class="hljs"><code><div>findByClaimantUserId(Long userId)
+</div></code></pre>
+<p>Spring parses this as:</p>
+<ul>
+<li><code>find</code> → SELECT query</li>
+<li><code>By</code> → WHERE clause starts</li>
+<li><code>Claimant</code> → Navigate to claimant relationship</li>
+<li><code>UserId</code> → Access userId field</li>
+</ul>
+<p>Generated SQL:</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> claims <span class="hljs-keyword">WHERE</span> claimant_id = ?
+</div></code></pre>
+<p>Other examples:</p>
+<ul>
+<li><code>findByClaimStatusIn(List)</code> → <code>WHERE status IN (?,...)</code></li>
+<li><code>existsByClaimNumber(String)</code> → <code>SELECT COUNT(*) &gt; 0 WHERE claim_number = ?</code></li>
+<li><code>countByClaimStatus(Status)</code> → <code>SELECT COUNT(*) WHERE status = ?</code></li>
+</ul>
+<p>For complex queries, I use <code>@Query</code> with JPQL, which uses entity names instead of table names.&quot;</p>
+<hr>
+<h2 id="q6-%22how-does-the-claim-submission-flow-work-end-to-end%22">Q6: &quot;How does the claim submission flow work end-to-end?&quot;</h2>
+<p><strong>Answer:</strong>
+&quot;When a user submits a claim:</p>
+<ol>
+<li>
+<p><strong>Browser</strong> sends GET <code>/claims/submit</code> → Controller returns the form with user's active enrollments</p>
+</li>
+<li>
+<p>User fills form and clicks Submit → Browser sends POST <code>/claims/submit</code> with form data</p>
+</li>
+<li>
+<p><strong>Spring Security</strong> checks authentication and <code>@PreAuthorize</code> role</p>
+</li>
+<li>
+<p><strong>Controller</strong> receives request:</p>
+<ul>
+<li><code>@ModelAttribute</code> binds form data to ClaimDTO</li>
+<li><code>@Valid</code> triggers validation (checks @NotNull, @DecimalMin)</li>
+<li>If validation fails, return form with errors</li>
+</ul>
+</li>
+<li>
+<p><strong>Service</strong> validates business rules:</p>
+<ul>
+<li>Check user is enrolled in selected policy</li>
+<li>Check amount doesn't exceed coverage</li>
+<li>Generate unique claim number</li>
+</ul>
+</li>
+<li>
+<p><strong>Repository.save()</strong> triggers:</p>
+<ul>
+<li><code>@PrePersist</code> sets timestamps</li>
+<li>Hibernate generates INSERT SQL</li>
+<li>MySQL executes and returns generated ID</li>
+</ul>
+</li>
+<li>
+<p><strong>Controller</strong> handles file uploads via DocumentService</p>
+</li>
+<li>
+<p><strong>Redirect</strong> to <code>/claims</code> with success flash message</p>
+</li>
+</ol>
+<p>The entire service method runs in a single transaction, ensuring atomicity.&quot;</p>
+<hr>
+<p><em>End of Technical Documentation</em></p>
+
+</body>
+</html>

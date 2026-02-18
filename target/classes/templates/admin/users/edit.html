@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}">
+    <title>Edit User - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-person-gear"></i> Edit User</h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/users/edit/{id}(id=${user.userId})}" method="post" th:object="${user}">
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" 
+                                       th:value="${user.username}" readonly disabled
+                                       style="background-color: #e9ecef;">
+                                <small class="text-muted">Username cannot be changed</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" 
+                                       th:field="*{email}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="password" class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="password" 
+                                       name="password" minlength="6">
+                                <div class="form-text">Leave blank to keep current password</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" 
+                                       name="confirmPassword">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="fullName" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="fullName" 
+                                       th:field="*{fullName}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="tel" class="form-control" id="phone" 
+                                       th:field="*{phone}">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" th:field="*{address}" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role *</label>
+                            <select class="form-select" id="role" th:field="*{role}" required>
+                                <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"
+                                        th:selected="${user.role == r}">Role</option>
+                            </select>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>User ID:</strong> <span th:text="${user.userId}">1</span><br>
+                            <strong>Account Created:</strong> <span th:text="${user.createdDate != null ? #temporals.format(user.createdDate, 'yyyy-MM-dd HH:mm') : 'N/A'}">2024-01-01</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/admin/users}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (password && password !== confirmPassword) {
+            e.preventDefault();
+            alert('Passwords do not match!');
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}">
+    <title>Register - HICMS</title>
+</head>
+<body class="bg-light">
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4><i class="bi bi-person-plus"></i> Create Account</h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/register}" th:object="${user}" method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">Username *</label>
+                                <input type="text" class="form-control" id="username" 
+                                       th:field="*{username}" th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'" 
+                                       placeholder="Choose a username">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" 
+                                     th:errors="*{username}"></div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" 
+                                       th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" 
+                                       placeholder="Enter email">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" 
+                                     th:errors="*{email}"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" id="fullName" 
+                                   th:field="*{fullName}" th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'" 
+                                   placeholder="Enter your full name">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" 
+                                 th:errors="*{fullName}"></div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label">Password *</label>
+                                <input type="password" class="form-control" id="password" 
+                                       th:field="*{password}" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" 
+                                       placeholder="Create password">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" 
+                                     th:errors="*{password}"></div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm Password *</label>
+                                <input type="password" class="form-control" id="confirmPassword" 
+                                       th:field="*{confirmPassword}" th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'" 
+                                       placeholder="Confirm password">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" 
+                                     th:errors="*{confirmPassword}"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="text" class="form-control" id="phone" 
+                                       th:field="*{phone}" placeholder="Enter phone number">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" th:field="*{address}" 
+                                      rows="2" placeholder="Enter your address"></textarea>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-person-plus"></i> Register
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr>
+                    
+                    <div class="text-center">
+                        <p class="mb-0">Already have an account? 
+                            <a th:href="@{/login}">Login here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

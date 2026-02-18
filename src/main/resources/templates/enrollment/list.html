@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head}">
+    <title>Enrollments - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-card-checklist"></i> Policy Enrollments</h2>
+        <a th:href="@{/enrollments/enroll}" class="btn btn-success" sec:authorize="hasAnyRole('USER', 'AGENT')">
+            <i class="bi bi-plus-circle"></i> New Enrollment
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <div th:if="${#lists.isEmpty(enrollments)}" class="text-center py-5">
+                <i class="bi bi-inbox display-1 text-muted"></i>
+                <p class="lead mt-3">No enrollments found</p>
+                <a th:href="@{/enrollments/enroll}" class="btn btn-success" sec:authorize="hasAnyRole('USER', 'AGENT')">
+                    Enroll in a Policy
+                </a>
+            </div>
+            
+            <div class="table-responsive" th:unless="${#lists.isEmpty(enrollments)}">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Policy</th>
+                            <th th:if="${userRole.name() != 'USER'}">Policyholder</th>
+                            <th>Coverage</th>
+                            <th>Premium</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="enrollment : ${enrollments}">
+                            <td>
+                                <strong th:text="${enrollment.policyName}">Policy Name</strong><br>
+                                <small class="text-muted" th:text="${enrollment.policyNumber}">POL-001</small>
+                            </td>
+                            <td th:if="${userRole.name() != 'USER'}" th:text="${enrollment.policyholderName}">Customer Name</td>
+                            <td>$<span th:text="${enrollment.coverageAmount}">0.00</span></td>
+                            <td>$<span th:text="${enrollment.premiumAmount}">0.00</span>/mo</td>
+                            <td th:text="${enrollment.startDate}">2024-01-01</td>
+                            <td th:text="${enrollment.endDate}">2025-01-01</td>
+                            <td>
+                                <span class="badge" 
+                                      th:classappend="${enrollment.enrollmentStatus.name() == 'ACTIVE'} ? 'bg-success' : 
+                                                     (${enrollment.enrollmentStatus.name() == 'PENDING'} ? 'bg-warning text-dark' : 
+                                                     (${enrollment.enrollmentStatus.name() == 'EXPIRED'} ? 'bg-secondary' : 'bg-danger'))"
+                                      th:text="${enrollment.enrollmentStatus}">Status</span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a th:href="@{/enrollments/view/{id}(id=${enrollment.enrollmentId})}" 
+                                       class="btn btn-outline-primary" title="View">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <!-- Cancel button - Only for USER, AGENT, ADMIN (not CLAIM_ADJUSTER) -->
+                                    <form sec:authorize="hasAnyRole('USER', 'AGENT', 'ADMIN')"
+                                          th:if="${enrollment.enrollmentStatus.name() == 'ACTIVE' || enrollment.enrollmentStatus.name() == 'PENDING'}"
+                                          th:action="@{/enrollments/cancel/{id}(id=${enrollment.enrollmentId})}" 
+                                          method="post" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to cancel this enrollment?');">
+                                        <button type="submit" class="btn btn-outline-danger" title="Cancel">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    </form>
+                                    <!-- Admin can delete cancelled enrollments -->
+                                    <form sec:authorize="hasRole('ADMIN')"
+                                          th:if="${enrollment.enrollmentStatus.name() == 'CANCELLED'}"
+                                          th:action="@{/enrollments/delete/{id}(id=${enrollment.enrollmentId})}" 
+                                          method="post" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to permanently delete this enrollment? This action cannot be undone.');">
+                                        <button type="submit" class="btn btn-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}">
+    <title>View User - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="bi bi-person-circle"></i> User Details</h4>
+                    <a th:href="@{/admin/users}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">User ID</h6>
+                            <p class="fw-bold" th:text="${user.userId}">1</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Username</h6>
+                            <p class="fw-bold" th:text="${user.username}">username</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Full Name</h6>
+                            <p class="fw-bold" th:text="${user.fullName}">Full Name</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Email</h6>
+                            <p class="fw-bold" th:text="${user.email}">email@example.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Phone</h6>
+                            <p class="fw-bold" th:text="${user.phone != null ? user.phone : 'Not provided'}">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Role</h6>
+                            <span class="badge fs-6"
+                                  th:classappend="${user.role.name() == 'ADMIN'} ? 'bg-danger' :
+                                                 (${user.role.name() == 'AGENT'} ? 'bg-info' :
+                                                 (${user.role.name() == 'CLAIM_ADJUSTER'} ? 'bg-warning text-dark' : 'bg-success'))"
+                                  th:text="${user.role}">Role</span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-muted">Address</h6>
+                            <p class="fw-bold" th:text="${user.address != null ? user.address : 'Not provided'}">-</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Account Status</h6>
+                            <span th:if="${user.enabled}" class="badge bg-success fs-6">
+                                <i class="bi bi-check-circle"></i> Active
+                            </span>
+                            <span th:unless="${user.enabled}" class="badge bg-danger fs-6">
+                                <i class="bi bi-x-circle"></i> Disabled
+                            </span>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Account Created</h6>
+                            <p class="fw-bold" th:text="${user.createdDate != null ? #temporals.format(user.createdDate, 'yyyy-MM-dd HH:mm') : 'N/A'}">2024-01-01</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/admin/users}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Users
+                        </a>
+                        <div class="btn-group" th:if="${user.role.name() != 'ADMIN'}">
+                            <form th:if="${user.enabled}" th:action="@{/admin/users/disable/{id}(id=${user.userId})}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-warning" onclick="return confirm('Are you sure you want to disable this user?');">
+                                    <i class="bi bi-person-dash"></i> Disable User
+                                </button>
+                            </form>
+                            <form th:unless="${user.enabled}" th:action="@{/admin/users/enable/{id}(id=${user.userId})}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-person-check"></i> Enable User
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

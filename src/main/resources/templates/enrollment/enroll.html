@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head}">
+    <title>Enroll in Policy - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-plus-circle"></i> Enroll in Policy</h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/enrollments/enroll}" method="post">
+                        
+                        <!-- Customer Selection (Agent Only) -->
+                        <div class="mb-3" th:if="${userRole.name() == 'AGENT'}">
+                            <label for="customerId" class="form-label">Select Customer *</label>
+                            <select class="form-select" id="customerId" name="customerId" required>
+                                <option value="">-- Select Customer --</option>
+                                <option th:each="customer : ${customers}" 
+                                        th:value="${customer.userId}" 
+                                        th:text="${customer.fullName} + ' (' + ${customer.email} + ')'">Customer</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Policy Selection -->
+                        <div class="mb-4">
+                            <label class="form-label">Select Policy *</label>
+                            <div th:if="${#lists.isEmpty(policies)}" class="alert alert-info">
+                                No active policies available for enrollment.
+                            </div>
+                            <div th:unless="${#lists.isEmpty(policies)}">
+                                <div th:each="policy : ${policies}" class="card mb-2">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="policyId" 
+                                                   th:id="'policy_' + ${policy.policyId}"
+                                                   th:value="${policy.policyId}"
+                                                   th:checked="${selectedPolicyId == policy.policyId}"
+                                                   required>
+                                            <label class="form-check-label w-100" th:for="'policy_' + ${policy.policyId}">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <h5 th:text="${policy.policyName}">Policy Name</h5>
+                                                        <small class="text-muted" th:text="${policy.policyNumber}">POL-001</small>
+                                                        <p class="mb-1" th:if="${policy.description}" th:text="${policy.description}">Description</p>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <div class="h5 text-success mb-0">
+                                                            $<span th:text="${#numbers.formatDecimal(policy.coverageAmount, 1, 2)}">0.00</span>
+                                                        </div>
+                                                        <small class="text-muted">Coverage</small>
+                                                        <div class="mt-2">
+                                                            <span class="badge bg-primary">
+                                                                $<span th:text="${#numbers.formatDecimal(policy.premiumAmount, 1, 2)}">0.00</span>/mo
+                                                            </span>
+                                                        </div>
+                                                        <small class="text-muted" th:text="${policy.durationMonths} + ' months'">12 months</small>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/enrollments}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back
+                            </a>
+                            <button type="submit" class="btn btn-success" th:disabled="${#lists.isEmpty(policies)}">
+                                <i class="bi bi-check-circle"></i> Confirm Enrollment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

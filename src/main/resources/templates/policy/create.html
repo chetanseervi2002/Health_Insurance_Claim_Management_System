@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}">
+    <title>Create Policy - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-plus-circle"></i> Create New Policy</h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/policies/create}" th:object="${policy}" method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="policyName" class="form-label">Policy Name *</label>
+                                <input type="text" class="form-control" id="policyName" 
+                                       th:field="*{policyName}" th:classappend="${#fields.hasErrors('policyName')} ? 'is-invalid'"
+                                       placeholder="Enter policy name">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('policyName')}" 
+                                     th:errors="*{policyName}"></div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="durationMonths" class="form-label">Duration (Months) *</label>
+                                <input type="number" class="form-control" id="durationMonths" 
+                                       th:field="*{durationMonths}" th:classappend="${#fields.hasErrors('durationMonths')} ? 'is-invalid'"
+                                       placeholder="e.g., 12" min="1">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('durationMonths')}" 
+                                     th:errors="*{durationMonths}"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="coverageAmount" class="form-label">Coverage Amount ($) *</label>
+                                <input type="number" class="form-control" id="coverageAmount" 
+                                       th:field="*{coverageAmount}" th:classappend="${#fields.hasErrors('coverageAmount')} ? 'is-invalid'"
+                                       placeholder="e.g., 100000" step="0.01" min="0.01">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('coverageAmount')}" 
+                                     th:errors="*{coverageAmount}"></div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="premiumAmount" class="form-label">Monthly Premium ($) *</label>
+                                <input type="number" class="form-control" id="premiumAmount" 
+                                       th:field="*{premiumAmount}" th:classappend="${#fields.hasErrors('premiumAmount')} ? 'is-invalid'"
+                                       placeholder="e.g., 500" step="0.01" min="0.01">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('premiumAmount')}" 
+                                     th:errors="*{premiumAmount}"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" th:field="*{description}" 
+                                      rows="4" placeholder="Enter policy description"></textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/policies}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Create Policy
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

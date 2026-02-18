@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head}">
+    <title>View Ticket - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4><i class="bi bi-ticket-detailed"></i> Ticket #<span th:text="${ticket.ticketId}">1</span></h4>
+                    <span class="badge fs-6"
+                          th:classappend="${ticket.ticketStatus.name() == 'OPEN'} ? 'bg-warning text-dark' :
+                                         (${ticket.ticketStatus.name() == 'IN_PROGRESS'} ? 'bg-info' :
+                                         (${ticket.ticketStatus.name() == 'RESOLVED'} ? 'bg-success' : 'bg-secondary'))"
+                          th:text="${ticket.ticketStatus}">Status</span>
+                </div>
+                <div class="card-body">
+                    <!-- Ticket Information -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Subject:</strong>
+                            <p class="h5" th:text="${ticket.subject}">Subject</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Created Date:</strong>
+                            <p th:text="${ticket.createdDate}">2024-01-01</p>
+                        </div>
+                    </div>
+                    
+                    <div sec:authorize="hasAnyRole('ADMIN', 'AGENT', 'CLAIM_ADJUSTER')" class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Customer:</strong>
+                            <p th:text="${ticket.userName}">Customer Name</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Assigned Agent:</strong>
+                            <p th:text="${ticket.assignedToName != null ? ticket.assignedToName : 'Unassigned'}">Agent</p>
+                        </div>
+                    </div>
+                    
+                    <div sec:authorize="hasRole('USER')" class="row mb-3" th:if="${ticket.assignedToName}">
+                        <div class="col-md-6">
+                            <strong>Assigned Agent:</strong>
+                            <p th:text="${ticket.assignedToName != null ? ticket.assignedToName : 'Unassigned'}">Agent</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5>Issue Description</h5>
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <p class="mb-0 white-space-pre-wrap" th:text="${ticket.issueDescription}">Description...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Resolution (if resolved) -->
+                    <div th:if="${ticket.resolution}" class="mb-4">
+                        <h5>Resolution</h5>
+                        <div class="card bg-success bg-opacity-10 border-success">
+                            <div class="card-body">
+                                <p class="mb-0" th:text="${ticket.resolution}">Resolution...</p>
+                                <hr>
+                                <small class="text-muted">
+                                    Resolved on: <span th:text="${ticket.resolvedDate}">2024-01-01</span>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Agent Actions -->
+                    <div sec:authorize="hasAnyRole('ADMIN', 'AGENT', 'CLAIM_ADJUSTER')" 
+                         th:if="${ticket.ticketStatus.name() != 'CLOSED'}">
+                        <hr>
+                        <h5>Agent Actions</h5>
+                        
+                        <!-- Assign to self if unassigned -->
+                        <form th:if="${ticket.assignedToName == null}" 
+                              th:action="@{/support/assign/{id}(id=${ticket.ticketId})}" method="post" class="mb-3">
+                            <button type="submit" class="btn btn-info">
+                                <i class="bi bi-person-plus"></i> Assign to Me
+                            </button>
+                        </form>
+                        
+                        <!-- Update Status -->
+                        <div th:if="${ticket.assignedToName != null}" class="card">
+                            <div class="card-body">
+                                <h6>Update Status</h6>
+                                <form th:action="@{/support/status/{id}(id=${ticket.ticketId})}" method="post" class="mb-4">
+                                    <div class="row align-items-end">
+                                        <div class="col-md-4">
+                                            <label for="status" class="form-label">Status</label>
+                                            <select class="form-select" id="status" name="status">
+                                                <option value="OPEN" 
+                                                        th:selected="${ticket.ticketStatus.name() == 'OPEN'}">
+                                                    Open
+                                                </option>
+                                                <option value="IN_PROGRESS" 
+                                                        th:selected="${ticket.ticketStatus.name() == 'IN_PROGRESS'}">
+                                                    In Progress
+                                                </option>
+                                                <option value="RESOLVED"
+                                                        th:selected="${ticket.ticketStatus.name() == 'RESOLVED'}">
+                                                    Resolved
+                                                </option>
+                                                <option value="CLOSED"
+                                                        th:selected="${ticket.ticketStatus.name() == 'CLOSED'}">
+                                                    Closed
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-outline-primary">
+                                                <i class="bi bi-arrow-repeat"></i> Update
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                
+                                <!-- Resolve Ticket -->
+                                <h6>Resolve Ticket</h6>
+                                <form th:action="@{/support/resolve/{id}(id=${ticket.ticketId})}" method="post">
+                                    <div class="mb-3">
+                                        <label for="resolution" class="form-label">Resolution Notes</label>
+                                        <textarea class="form-control" id="resolution" name="resolution" rows="3"
+                                                  placeholder="Describe how the issue was resolved..." required></textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-check-circle"></i> Mark as Resolved
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/support}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Tickets
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<style>
+    .white-space-pre-wrap {
+        white-space: pre-wrap;
+    }
+</style>
+</body>
+</html>

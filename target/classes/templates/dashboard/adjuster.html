@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head}">
+    <title>Claim Adjuster Dashboard - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <h2 class="mb-4"><i class="bi bi-speedometer2"></i> Claim Adjuster Dashboard</h2>
+    
+    <p class="lead">Welcome back, <strong th:text="${user.fullName}">Adjuster</strong>!</p>
+    
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Pending Claims</h6>
+                            <h2 th:text="${totalPending}">0</h2>
+                        </div>
+                        <i class="bi bi-hourglass display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Assigned to Me</h6>
+                            <h2 th:text="${totalAssigned}">0</h2>
+                        </div>
+                        <i class="bi bi-person-check display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Approved</h6>
+                            <h2 th:text="${approvedCount}">0</h2>
+                        </div>
+                        <i class="bi bi-check-circle display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Rejected</h6>
+                            <h2 th:text="${rejectedCount}">0</h2>
+                        </div>
+                        <i class="bi bi-x-circle display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a th:href="@{/claims/pending}" class="btn btn-warning me-2">
+                        <i class="bi bi-hourglass"></i> View Pending Claims
+                    </a>
+                    <a th:href="@{/claims/unassigned}" class="btn btn-info me-2">
+                        <i class="bi bi-inbox"></i> Unassigned Claims (<span th:text="${totalUnassigned}">0</span>)
+                    </a>
+                    <a th:href="@{/claims}" class="btn btn-primary">
+                        <i class="bi bi-clipboard2-pulse"></i> All My Claims
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Claims Lists -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-inbox"></i> Unassigned Claims</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(unassignedClaims)}" class="text-muted">
+                        No unassigned claims
+                    </div>
+                    <div class="list-group list-group-flush" th:unless="${#lists.isEmpty(unassignedClaims)}">
+                        <div th:each="claim : ${unassignedClaims}" class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1" th:text="${claim.claimNumber}">CLM-001</h6>
+                                    <p class="mb-1 small" th:text="${claim.policyName}">Policy Name</p>
+                                    <small>Amount: $<span th:text="${claim.claimAmount}">0.00</span></small>
+                                </div>
+                                <form th:action="@{/claims/assign/{id}(id=${claim.claimId})}" method="post">
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-person-plus"></i> Assign to Me
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-person-check"></i> My Assigned Claims</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(assignedClaims)}" class="text-muted">
+                        No assigned claims
+                    </div>
+                    <div class="list-group list-group-flush" th:unless="${#lists.isEmpty(assignedClaims)}">
+                        <a th:each="claim : ${assignedClaims}" th:href="@{/claims/review/{id}(id=${claim.claimId})}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1" th:text="${claim.claimNumber}">CLM-001</h6>
+                                <span class="badge" 
+                                      th:classappend="${claim.claimStatus.name() == 'APPROVED'} ? 'bg-success' : 
+                                                     (${claim.claimStatus.name() == 'REJECTED'} ? 'bg-danger' : 
+                                                     (${claim.claimStatus.name() == 'PENDING'} ? 'bg-warning text-dark' : 'bg-info'))"
+                                      th:text="${claim.claimStatus}">Status</span>
+                            </div>
+                            <p class="mb-1" th:text="${claim.claimantName}">Claimant</p>
+                            <small>Amount: $<span th:text="${claim.claimAmount}">0.00</span></small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

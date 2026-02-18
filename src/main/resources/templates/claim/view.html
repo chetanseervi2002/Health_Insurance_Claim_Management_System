@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head}">
+    <title>View Claim - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4><i class="bi bi-clipboard2-data"></i> Claim Details</h4>
+                    <span class="badge fs-6"
+                          th:classappend="${claim.claimStatus.name() == 'PENDING'} ? 'bg-warning text-dark' :
+                                         (${claim.claimStatus.name() == 'UNDER_REVIEW'} ? 'bg-info' :
+                                         (${claim.claimStatus.name() == 'APPROVED'} ? 'bg-success' :
+                                         (${claim.claimStatus.name() == 'REJECTED'} ? 'bg-danger' : 
+                                         (${claim.claimStatus.name() == 'CANCELLED'} ? 'bg-secondary' : 'bg-dark'))))"
+                          th:text="${claim.claimStatus}">Status</span>
+                </div>
+                <div class="card-body">
+                    <!-- Claim Information -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Claim ID:</strong>
+                            <p th:text="'#' + ${claim.claimId}">#1</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Claim Date:</strong>
+                            <p th:text="${claim.claimDate}">2024-01-01</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Policy Name:</strong>
+                            <p th:text="${claim.policyName}">Health Plus</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Policy Number:</strong>
+                            <p th:text="${claim.policyNumber}">POL-001</p>
+                        </div>
+                    </div>
+                    
+                    <div sec:authorize="hasAnyRole('ADMIN', 'CLAIM_ADJUSTER', 'AGENT')" class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Claimant:</strong>
+                            <p th:text="${claim.claimantName}">John Doe</p>
+                        </div>
+                        <div class="col-md-6" th:if="${claim.adjusterName}">
+                            <strong>Assigned Adjuster:</strong>
+                            <p th:text="${claim.adjusterName}">Adjuster Name</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- Financial Information -->
+                    <h5>Financial Details</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Claimed Amount</h6>
+                                    <h3 class="text-primary">$<span th:text="${claim.claimAmount}">0.00</span></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Coverage Limit</h6>
+                                    <h3 class="text-info">$<span th:text="${claim.coverageAmount}">0.00</span></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4" th:if="${claim.approvedAmount != null}">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Approved Amount</h6>
+                                    <h3 class="text-success">$<span th:text="${claim.approvedAmount}">0.00</span></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- Description -->
+                    <h5>Claim Description</h5>
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <p class="mb-0" th:text="${claim.description}">Claim description...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Review Notes (if available) -->
+                    <div th:if="${claim.remarks}">
+                        <h5>Review Notes</h5>
+                        <div class="card" 
+                             th:classappend="${claim.claimStatus.name() == 'APPROVED'} ? 'bg-success bg-opacity-10 border-success' : 
+                                            (${claim.claimStatus.name() == 'REJECTED'} ? 'bg-danger bg-opacity-10 border-danger' : 'bg-info bg-opacity-10 border-info')">
+                            <div class="card-body">
+                                <p class="mb-0" th:text="${claim.remarks}">Review notes...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="d-flex justify-content-between mb-4">
+                <a th:href="@{/claims}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Claims
+                </a>
+                <div>
+                    <!-- User actions - Edit/Cancel only when PENDING -->
+                    <span sec:authorize="hasRole('USER')" th:if="${claim.claimStatus.name() == 'PENDING'}">
+                        <a th:href="@{/claims/edit/{id}(id=${claim.claimId})}" class="btn btn-primary me-2">
+                            <i class="bi bi-pencil"></i> Edit Claim
+                        </a>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                            <i class="bi bi-x-circle"></i> Cancel Claim
+                        </button>
+                    </span>
+                    
+                    <!-- Adjuster actions - Review and Assign -->
+                    <span sec:authorize="hasAnyRole('CLAIM_ADJUSTER', 'ADMIN')">
+                        <a th:if="${claim.claimStatus.name() == 'PENDING' && claim.adjusterName == null}"
+                           th:href="@{/claims/assign/{id}(id=${claim.claimId})}" 
+                           class="btn btn-info me-2"
+                           onclick="event.preventDefault(); document.getElementById('assignForm').submit();">
+                            <i class="bi bi-person-plus"></i> Assign to Me
+                        </a>
+                        <a th:if="${claim.claimStatus.name() == 'PENDING' || claim.claimStatus.name() == 'UNDER_REVIEW'}"
+                           th:href="@{/claims/review/{id}(id=${claim.claimId})}" 
+                           class="btn btn-warning">
+                            <i class="bi bi-clipboard-check"></i> Review Claim
+                        </a>
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Hidden form for assign -->
+            <form sec:authorize="hasAnyRole('CLAIM_ADJUSTER', 'ADMIN')" 
+                  id="assignForm" th:action="@{/claims/assign/{id}(id=${claim.claimId})}" method="post" style="display:none;"></form>
+            
+            <!-- Cancel Confirmation Modal -->
+            <div class="modal fade" id="cancelModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Cancel Claim</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to cancel this claim? This action cannot be undone.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Keep It</button>
+                            <form th:action="@{/claims/cancel/{id}(id=${claim.claimId})}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">Yes, Cancel Claim</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Documents Sidebar -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Documents</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Inline Upload Form -->
+                    <form th:action="@{/documents/upload}" method="post" enctype="multipart/form-data" class="mb-3">
+                        <input type="hidden" name="claimId" th:value="${claim.claimId}">
+                        <div class="input-group">
+                            <input type="file" class="form-control form-control-sm" name="file" required
+                                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                <i class="bi bi-upload"></i> Upload
+                            </button>
+                        </div>
+                        <small class="text-muted">PDF, JPG, PNG, DOC (Max 10MB)</small>
+                    </form>
+                    
+                    <hr>
+                    
+                    <ul class="list-group list-group-flush" th:if="${documents != null && !documents.isEmpty()}">
+                        <li class="list-group-item d-flex justify-content-between align-items-center"
+                            th:each="doc : ${documents}">
+                            <div>
+                                <i class="bi" th:classappend="${doc.documentType.name() == 'MEDICAL_REPORT'} ? 'bi-file-earmark-medical' :
+                                                               (${doc.documentType.name() == 'PRESCRIPTION'} ? 'bi-file-earmark-text' :
+                                                               (${doc.documentType.name() == 'BILL'} ? 'bi-receipt' : 'bi-file-earmark'))"></i>
+                                <span th:text="${doc.originalFileName != null ? doc.originalFileName : doc.documentName}">Document</span>
+                                <br>
+                                <small class="text-muted" th:text="${doc.documentType}">Type</small>
+                            </div>
+                            <a th:href="@{/documents/download/{id}(id=${doc.documentId})}" 
+                               class="btn btn-sm btn-outline-secondary" title="Download">
+                                <i class="bi bi-download"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div th:if="${documents == null || documents.isEmpty()}" class="text-center text-muted py-3">
+                        <i class="bi bi-folder2-open fs-1 d-block mb-2"></i>
+                        No documents uploaded
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

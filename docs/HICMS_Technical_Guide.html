@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HICMS - Complete Technical Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --secondary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(79, 70, 229, 0.4);
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 30px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+        
+        .card-icon.purple { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .card-icon.blue { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .card-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+        .card-icon.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .card-icon.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .card-icon.pink { background: linear-gradient(135deg, #ec4899, #db2777); }
+        
+        .card h2 {
+            font-size: 1.5rem;
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        .card h3 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .card h4 {
+            font-size: 1rem;
+            color: var(--gray);
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Code blocks */
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin: 15px 0;
+        }
+        
+        code {
+            font-family: 'Fira Code', monospace;
+            background: var(--light);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--primary-dark);
+        }
+        
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        
+        /* Syntax highlighting */
+        .keyword { color: #569cd6; }
+        .annotation { color: #dcdcaa; }
+        .string { color: #ce9178; }
+        .comment { color: #6a9955; }
+        .class-name { color: #4ec9b0; }
+        .method { color: #dcdcaa; }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        th {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--light);
+        }
+        
+        tr:nth-child(even) {
+            background: var(--light);
+        }
+        
+        tr:hover {
+            background: #e0e7ff;
+        }
+        
+        /* Annotation badges */
+        .annotation-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: 'Fira Code', monospace;
+            margin: 3px;
+        }
+        
+        .annotation-badge.green {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+        
+        .annotation-badge.blue {
+            background: linear-gradient(135deg, var(--secondary), #0891b2);
+        }
+        
+        .annotation-badge.orange {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+        }
+        
+        /* Flow diagrams */
+        .flow-diagram {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .flow-box {
+            display: inline-block;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            padding: 12px 20px;
+            margin: 5px;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .flow-box.highlight {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .flow-box.success {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        
+        .flow-box.danger {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .flow-box.warning {
+            background: var(--warning);
+            color: white;
+            border-color: var(--warning);
+        }
+        
+        .flow-arrow {
+            display: inline-block;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin: 0 10px;
+            vertical-align: middle;
+        }
+        
+        /* Info boxes */
+        .info-box {
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .info-box.tip {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            border-left: 4px solid var(--success);
+        }
+        
+        .info-box.warning {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border-left: 4px solid var(--warning);
+        }
+        
+        .info-box.important {
+            background: linear-gradient(135deg, #fef2f2, #fecaca);
+            border-left: 4px solid var(--danger);
+        }
+        
+        .info-box.note {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .info-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+        
+        /* Q&A Section */
+        .qa-item {
+            background: var(--light);
+            border-radius: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .question {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .question::before {
+            content: "Q";
+            background: rgba(255,255,255,0.2);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: 700;
+        }
+        
+        .answer {
+            padding: 20px;
+            background: white;
+        }
+        
+        .answer::before {
+            content: "A";
+            background: var(--success);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        
+        /* Architecture diagram */
+        .architecture {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .layer {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid;
+            position: relative;
+        }
+        
+        .layer.presentation { border-color: #8b5cf6; background: linear-gradient(180deg, #f5f3ff, white); }
+        .layer.business { border-color: #06b6d4; background: linear-gradient(180deg, #ecfeff, white); }
+        .layer.persistence { border-color: #10b981; background: linear-gradient(180deg, #ecfdf5, white); }
+        .layer.database { border-color: #f59e0b; background: linear-gradient(180deg, #fffbeb, white); }
+        
+        .layer-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .layer-content {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .layer-arrow {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--gray);
+        }
+        
+        /* Status badges */
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 3px;
+        }
+        
+        .status.pending { background: #fef3c7; color: #92400e; }
+        .status.review { background: #dbeafe; color: #1e40af; }
+        .status.approved { background: #d1fae5; color: #065f46; }
+        .status.rejected { background: #fecaca; color: #991b1b; }
+        .status.cancelled { background: #e5e7eb; color: #374151; }
+        
+        /* TOC */
+        .toc {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            border: none;
+            padding: 0;
+        }
+        
+        .toc ul {
+            list-style: none;
+            columns: 2;
+        }
+        
+        .toc li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+        
+        .toc a {
+            color: var(--dark);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .toc a:hover {
+            color: var(--primary);
+        }
+        
+        .toc .number {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            font-size: 0.8rem;
+            margin-right: 10px;
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+            }
+            .card {
+                box-shadow: none;
+                border: 1px solid #e2e8f0;
+                break-inside: avoid;
+            }
+            .header {
+                box-shadow: none;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .toc ul { columns: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🏥 HICMS Technical Guide</h1>
+            <p class="subtitle">Health Insurance Claim Management System</p>
+            <span class="badge">Spring Boot • Spring Security • JPA/Hibernate • Thymeleaf</span>
+        </header>
+
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h3>📑 Table of Contents</h3>
+            <ul>
+                <li><span class="number">1</span><a href="#annotations">Comprehensive Annotation Guide</a></li>
+                <li><span class="number">2</span><a href="#architecture">System Architecture</a></li>
+                <li><span class="number">3</span><a href="#security">Security & Authentication</a></li>
+                <li><span class="number">4</span><a href="#claims">Claim Management Module</a></li>
+                <li><span class="number">5</span><a href="#flows">Flow Diagrams</a></li>
+                <li><span class="number">6</span><a href="#definitions">Key Definitions</a></li>
+                <li><span class="number">7</span><a href="#interview">Interview Questions</a></li>
+            </ul>
+        </div>
+
+        <!-- Section 1: Annotations -->
+        <div class="card" id="annotations">
+            <div class="card-header">
+                <div class="card-icon purple">📝</div>
+                <h2>1. Comprehensive Annotation Guide</h2>
+            </div>
+            
+            <h3>🚀 Spring Boot Core Annotations</h3>
+            
+            <table>
+                <tr>
+                    <th>Annotation</th>
+                    <th>Purpose</th>
+                    <th>Where Used</th>
+                </tr>
+                <tr>
+                    <td><span class="annotation-badge">@SpringBootApplication</span></td>
+                    <td>Entry point - combines @Configuration + @EnableAutoConfiguration + @ComponentScan</td>
+                    <td>Main class</td>
+                </tr>
+                <tr>
+                    <td><span class="annotation-badge">@Configuration</span></td>
+                    <td>Marks class as source of bean definitions</td>
+                    <td>SecurityConfig</td>
+                </tr>
+                <tr>
+                    <td><span class="annotation-badge">@Bean</span></td>
+                    <td>Declares method return value as Spring-managed bean</td>
+                    <td>Config classes</td>
+                </tr>
+            </table>
+
+            <h3>🏗️ Stereotype Annotations</h3>
+            
+            <div class="info-box tip">
+                <span class="info-icon">💡</span>
+                <div>All stereotype annotations are specializations of <code>@Component</code> and enable component scanning.</div>
+            </div>
+
+            <table>
+                <tr>
+                    <th>Annotation</th>
+                    <th>Layer</th>
+                    <th>Purpose</th>
+                    <th>Special Behavior</th>
+                </tr>
+                <tr>
+                    <td><span class="annotation-badge blue">@Controller</span></td>
+                    <td>Web</td>
+                    <td>Handle HTTP requests, return views</td>
+                    <td>MVC handler mapping</td>
+                </tr>
+                <tr>
+                    <td><span class="annotation-badge blue">@RestController</span></td>
+                    <td>Web</td>
+                    <td>REST API endpoints</td>
+                    <td>Auto @ResponseBody</td>
+                </tr>
+                <tr>
+                    <td><span class="annotation-badge green">@Service</span></td>
+                    <td>Business</td>
+                    <td>Business logic</td>
+                    <td>Semantic only</td>
+                </tr>
+                <tr>
+                    <td><span class="annotation-badge orange">@Repository</span></td>
+                    <td>Data</td>
+                    <td>Data access</td>
+                    <td>Exception translation</td>
+                </tr>
+            </table>
+
+            <h3>🗄️ JPA/Hibernate Annotations</h3>
+
+<pre><code><span class="annotation">@Entity</span>                              <span class="comment">// Maps to database table</span>
+<span class="annotation">@Table</span>(name = <span class="string">"claims"</span>)              <span class="comment">// Explicit table name</span>
+<span class="keyword">public class</span> <span class="class-name">Claim</span> {
+    
+    <span class="annotation">@Id</span>                                  <span class="comment">// Primary key</span>
+    <span class="annotation">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)
+    <span class="keyword">private</span> Long claimId;
+    
+    <span class="annotation">@Column</span>(unique = <span class="keyword">true</span>, nullable = <span class="keyword">false</span>)
+    <span class="keyword">private</span> String claimNumber;
+    
+    <span class="annotation">@ManyToOne</span>(fetch = FetchType.LAZY)   <span class="comment">// Foreign key relationship</span>
+    <span class="annotation">@JoinColumn</span>(name = <span class="string">"policy_id"</span>)
+    <span class="keyword">private</span> Policy policy;
+    
+    <span class="annotation">@Enumerated</span>(EnumType.STRING)         <span class="comment">// Store enum as text</span>
+    <span class="keyword">private</span> ClaimStatus claimStatus;
+    
+    <span class="annotation">@PrePersist</span>                          <span class="comment">// Before INSERT callback</span>
+    <span class="keyword">protected void</span> <span class="method">onCreate</span>() {
+        createdDate = LocalDateTime.now();
+    }
+}</code></pre>
+
+            <h3>🌐 Web/MVC Annotations</h3>
+
+<pre><code><span class="annotation">@Controller</span>
+<span class="annotation">@RequestMapping</span>(<span class="string">"/claims"</span>)           <span class="comment">// Base URL</span>
+<span class="keyword">public class</span> <span class="class-name">ClaimController</span> {
+    
+    <span class="annotation">@GetMapping</span>(<span class="string">"/view/{id}"</span>)           <span class="comment">// GET /claims/view/5</span>
+    <span class="keyword">public</span> String <span class="method">viewClaim</span>(
+        <span class="annotation">@PathVariable</span> Long id,           <span class="comment">// From URL path</span>
+        <span class="annotation">@RequestParam</span> String filter,     <span class="comment">// ?filter=pending</span>
+        Model model) { }
+    
+    <span class="annotation">@PostMapping</span>(<span class="string">"/submit"</span>)
+    <span class="annotation">@PreAuthorize</span>(<span class="string">"hasRole('USER')"</span>)   <span class="comment">// Security check</span>
+    <span class="keyword">public</span> String <span class="method">submitClaim</span>(
+        <span class="annotation">@Valid</span> <span class="annotation">@ModelAttribute</span> ClaimDTO dto,  <span class="comment">// Form binding + validation</span>
+        BindingResult result,
+        <span class="annotation">@AuthenticationPrincipal</span> UserDetails user) { }  <span class="comment">// Current user</span>
+}</code></pre>
+
+            <h3>🔧 Lombok Annotations</h3>
+
+            <table>
+                <tr>
+                    <th>Annotation</th>
+                    <th>Generated Code</th>
+                </tr>
+                <tr>
+                    <td><span class="annotation-badge">@Getter @Setter</span></td>
+                    <td>All getter and setter methods</td>
+                </tr>
+                <tr>
+                    <td><span class="annotation-badge">@NoArgsConstructor</span></td>
+                    <td><code>public Claim() {}</code></td>
+                </tr>
+                <tr>
+                    <td><span class="annotation-badge">@AllArgsConstructor</span></td>
+                    <td>Constructor with all fields</td>
+                </tr>
+                <tr>
+                    <td><span class="annotation-badge">@RequiredArgsConstructor</span></td>
+                    <td>Constructor for <code>final</code> fields (DI)</td>
+                </tr>
+                <tr>
+                    <td><span class="annotation-badge">@Builder</span></td>
+                    <td><code>Claim.builder().field(value).build()</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Section 2: Architecture -->
+        <div class="card" id="architecture">
+            <div class="card-header">
+                <div class="card-icon blue">🏛️</div>
+                <h2>2. System Architecture</h2>
+            </div>
+
+            <h3>📐 Layered Architecture</h3>
+
+            <div class="architecture">
+                <div class="layer presentation">
+                    <div class="layer-title">🖥️ PRESENTATION LAYER</div>
+                    <div class="layer-content">
+                        <code>ClaimController</code> • <code>Thymeleaf Templates</code> • <code>ClaimDTO</code>
+                    </div>
+                </div>
+                <div class="layer-arrow">⬇️ @Autowired</div>
+                <div class="layer business">
+                    <div class="layer-title">⚙️ BUSINESS LAYER</div>
+                    <div class="layer-content">
+                        <code>ClaimService</code> • <code>ClaimServiceImpl</code> • Business Logic • @Transactional
+                    </div>
+                </div>
+                <div class="layer-arrow">⬇️ @Autowired</div>
+                <div class="layer persistence">
+                    <div class="layer-title">💾 PERSISTENCE LAYER</div>
+                    <div class="layer-content">
+                        <code>ClaimRepository</code> • <code>JpaRepository</code> • <code>Claim Entity</code>
+                    </div>
+                </div>
+                <div class="layer-arrow">⬇️ Hibernate ORM</div>
+                <div class="layer database">
+                    <div class="layer-title">🗃️ DATABASE LAYER</div>
+                    <div class="layer-content">
+                        MySQL • <code>claims</code> table • <code>users</code> table • <code>policies</code> table
+                    </div>
+                </div>
+            </div>
+
+            <h3>📁 Project Structure</h3>
+
+<pre><code>src/main/java/com/hicms/
+├── 📁 <span class="class-name">entity/</span>           <span class="comment">← JPA Entities</span>
+│   ├── Claim.java
+│   ├── User.java
+│   ├── Policy.java
+│   └── ClaimStatus.java (enum)
+│
+├── 📁 <span class="class-name">dto/</span>              <span class="comment">← Data Transfer Objects</span>
+│   ├── ClaimDTO.java
+│   └── ClaimReviewDTO.java
+│
+├── 📁 <span class="class-name">repository/</span>       <span class="comment">← Data Access</span>
+│   └── ClaimRepository.java
+│
+├── 📁 <span class="class-name">service/</span>          <span class="comment">← Business Logic</span>
+│   ├── ClaimService.java (interface)
+│   └── impl/ClaimServiceImpl.java
+│
+├── 📁 <span class="class-name">controller/</span>       <span class="comment">← HTTP Handlers</span>
+│   └── ClaimController.java
+│
+├── 📁 <span class="class-name">config/</span>           <span class="comment">← Configuration</span>
+│   └── SecurityConfig.java
+│
+└── 📁 <span class="class-name">security/</span>         <span class="comment">← Security Components</span>
+    └── CustomUserDetailsService.java</code></pre>
+        </div>
+
+        <!-- Section 3: Security -->
+        <div class="card" id="security">
+            <div class="card-header">
+                <div class="card-icon red">🔐</div>
+                <h2>3. Security & Authentication</h2>
+            </div>
+
+            <h3>🔑 Authentication Flow</h3>
+
+            <div class="flow-diagram">
+                <div class="flow-box">👤 User Login</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box highlight">🔍 Security Filter</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">🔐 Auth Manager</div>
+                <br><br>
+                <span class="flow-arrow">↓</span>
+                <br><br>
+                <div class="flow-box">📋 UserDetailsService</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">🗄️ Database Query</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">🔒 BCrypt Verify</div>
+                <br><br>
+                <span class="flow-arrow">↓</span>
+                <br><br>
+                <div class="flow-box success">✅ Session Created</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">🍪 JSESSIONID Cookie</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box highlight">🏠 Dashboard</div>
+            </div>
+
+            <h3>🛡️ Security Configuration</h3>
+
+<pre><code><span class="annotation">@Configuration</span>
+<span class="annotation">@EnableWebSecurity</span>
+<span class="annotation">@EnableMethodSecurity</span>      <span class="comment">// Enables @PreAuthorize</span>
+<span class="keyword">public class</span> <span class="class-name">SecurityConfig</span> {
+
+    <span class="annotation">@Bean</span>
+    <span class="keyword">public</span> SecurityFilterChain <span class="method">filterChain</span>(HttpSecurity http) {
+        http
+            .authorizeHttpRequests(auth -> auth
+                <span class="comment">// Public pages</span>
+                .requestMatchers(<span class="string">"/login"</span>, <span class="string">"/register"</span>).permitAll()
+                
+                <span class="comment">// Role-based access</span>
+                .requestMatchers(<span class="string">"/admin/**"</span>).hasRole(<span class="string">"ADMIN"</span>)
+                .requestMatchers(<span class="string">"/claims/**"</span>).authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage(<span class="string">"/login"</span>)
+                .defaultSuccessUrl(<span class="string">"/dashboard"</span>)
+            );
+        <span class="keyword">return</span> http.build();
+    }
+}</code></pre>
+
+            <h3>👥 User Roles</h3>
+
+            <table>
+                <tr>
+                    <th>Role</th>
+                    <th>Access Level</th>
+                    <th>Capabilities</th>
+                </tr>
+                <tr>
+                    <td><span class="status approved">ADMIN</span></td>
+                    <td>Full System</td>
+                    <td>Everything - user management, all claims, policies</td>
+                </tr>
+                <tr>
+                    <td><span class="status pending">USER</span></td>
+                    <td>Own Data</td>
+                    <td>Submit claims, view own claims, edit/cancel pending</td>
+                </tr>
+                <tr>
+                    <td><span class="status review">AGENT</span></td>
+                    <td>Customer Claims</td>
+                    <td>Submit for customers, view customer claims</td>
+                </tr>
+                <tr>
+                    <td><span class="status rejected">CLAIM_ADJUSTER</span></td>
+                    <td>All Claims</td>
+                    <td>Review claims, approve/reject, assign self</td>
+                </tr>
+            </table>
+
+            <div class="info-box important">
+                <span class="info-icon">⚠️</span>
+                <div>
+                    <strong>Important:</strong> Spring Security requires <code>ROLE_</code> prefix for authorities.
+                    When storing: <code>ROLE_ADMIN</code>. When checking: <code>hasRole('ADMIN')</code>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Claims Module -->
+        <div class="card" id="claims">
+            <div class="card-header">
+                <div class="card-icon green">📋</div>
+                <h2>4. Claim Management Module</h2>
+            </div>
+
+            <h3>🔄 Claim Lifecycle</h3>
+
+            <div class="flow-diagram">
+                <div class="flow-box warning">📝 PENDING</div>
+                <br><br>
+                <span class="flow-arrow">↓ User cancels</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="flow-arrow">↓ Adjuster assigns</span>
+                <br><br>
+                <div class="flow-box cancelled">❌ CANCELLED</div>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="flow-box highlight">🔍 UNDER_REVIEW</div>
+                <br><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="flow-arrow">↓ Decision</span>
+                <br><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="flow-box success">✅ APPROVED</div>
+                &nbsp;&nbsp;
+                <div class="flow-box danger">❌ REJECTED</div>
+            </div>
+
+            <h4>Claim Status Values</h4>
+            <p>
+                <span class="status pending">PENDING</span>
+                <span class="status review">UNDER_REVIEW</span>
+                <span class="status approved">APPROVED</span>
+                <span class="status rejected">REJECTED</span>
+                <span class="status cancelled">CANCELLED</span>
+            </p>
+
+            <h3>✅ Business Validations</h3>
+
+            <div class="info-box note">
+                <span class="info-icon">📌</span>
+                <div>
+                    <strong>When submitting a claim:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>User must be enrolled in the policy (ACTIVE status)</li>
+                        <li>Claim amount cannot exceed policy coverage amount</li>
+                        <li>Policy and user must exist in database</li>
+                    </ul>
+                </div>
+            </div>
+
+<pre><code><span class="keyword">public</span> Claim <span class="method">submitClaim</span>(ClaimDTO dto, User claimant) {
+    
+    <span class="comment">// 1. Validate policy exists</span>
+    Policy policy = policyRepository.findById(dto.getPolicyId())
+        .orElseThrow(() -> <span class="keyword">new</span> RuntimeException(<span class="string">"Policy not found"</span>));
+    
+    <span class="comment">// 2. Validate enrollment</span>
+    <span class="keyword">boolean</span> isEnrolled = enrollmentRepository
+        .existsByPolicyholderAndPolicyAndStatus(claimant, policy, ACTIVE);
+    
+    <span class="keyword">if</span> (!isEnrolled) {
+        <span class="keyword">throw new</span> RuntimeException(<span class="string">"User not enrolled"</span>);
+    }
+    
+    <span class="comment">// 3. Validate amount</span>
+    <span class="keyword">if</span> (dto.getClaimAmount().compareTo(policy.getCoverageAmount()) > 0) {
+        <span class="keyword">throw new</span> RuntimeException(<span class="string">"Amount exceeds coverage"</span>);
+    }
+    
+    <span class="comment">// 4. Create and save</span>
+    Claim claim = Claim.builder()
+        .claimNumber(generateClaimNumber())  <span class="comment">// CLM-20260201-001</span>
+        .policy(policy)
+        .claimant(claimant)
+        .claimAmount(dto.getClaimAmount())
+        .claimStatus(ClaimStatus.PENDING)
+        .build();
+    
+    <span class="keyword">return</span> claimRepository.save(claim);
+}</code></pre>
+
+            <h3>🔒 Ownership Validation</h3>
+
+<pre><code><span class="annotation">@PostMapping</span>(<span class="string">"/cancel/{id}"</span>)
+<span class="annotation">@PreAuthorize</span>(<span class="string">"hasRole('USER')"</span>)
+<span class="keyword">public</span> String <span class="method">cancelClaim</span>(<span class="annotation">@PathVariable</span> Long id,
+                          <span class="annotation">@AuthenticationPrincipal</span> UserDetails userDetails) {
+    
+    User user = userService.findByUsername(userDetails.getUsername());
+    Claim claim = claimService.findById(id).orElseThrow();
+    
+    <span class="comment">// ⚠️ CRITICAL: Verify ownership</span>
+    <span class="keyword">if</span> (!claim.getClaimant().getUserId().equals(user.getUserId())) {
+        <span class="keyword">throw new</span> RuntimeException(<span class="string">"Cannot cancel others' claims!"</span>);
+    }
+    
+    <span class="comment">// Only PENDING claims can be cancelled</span>
+    <span class="keyword">if</span> (claim.getClaimStatus() != ClaimStatus.PENDING) {
+        <span class="keyword">throw new</span> RuntimeException(<span class="string">"Only pending claims cancellable"</span>);
+    }
+    
+    claimService.updateStatus(id, ClaimStatus.CANCELLED);
+}</code></pre>
+        </div>
+
+        <!-- Section 5: Flow Diagrams -->
+        <div class="card" id="flows">
+            <div class="card-header">
+                <div class="card-icon pink">📊</div>
+                <h2>5. Flow Diagrams</h2>
+            </div>
+
+            <h3>🔐 Authentication Request Flow</h3>
+
+            <div class="flow-diagram" style="text-align: left; padding: 20px 40px;">
+                <strong>1. Initial Login Request</strong><br>
+                <code style="background: #1e1e1e; color: #d4d4d4; padding: 10px; display: block; margin: 10px 0; border-radius: 8px;">
+                POST /login<br>
+                Content-Type: application/x-www-form-urlencoded<br>
+                Body: username=john&password=secret123
+                </code>
+                
+                <strong>2. Filter Chain Processing</strong><br>
+                <div style="margin: 10px 0;">
+                    <span class="flow-box" style="font-size: 0.8rem;">SecurityContextPersistenceFilter</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-box" style="font-size: 0.8rem;">UsernamePasswordAuthFilter</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-box" style="font-size: 0.8rem;">ExceptionTranslationFilter</span>
+                </div>
+
+                <strong>3. Authentication Manager</strong><br>
+                <div style="margin: 10px 0; padding: 15px; background: #f8fafc; border-radius: 8px;">
+                    DaoAuthenticationProvider<br>
+                    ↓<br>
+                    CustomUserDetailsService.loadUserByUsername("john")<br>
+                    ↓<br>
+                    BCryptPasswordEncoder.matches(rawPassword, encodedPassword)
+                </div>
+
+                <strong>4. Success Response</strong><br>
+                <code style="background: #1e1e1e; color: #d4d4d4; padding: 10px; display: block; margin: 10px 0; border-radius: 8px;">
+                HTTP/1.1 302 Found<br>
+                Location: /dashboard<br>
+                Set-Cookie: JSESSIONID=ABC123; Path=/; HttpOnly
+                </code>
+            </div>
+
+            <h3>📋 Claim Submission Flow</h3>
+
+            <div class="flow-diagram" style="text-align: left; padding: 20px 40px;">
+                <table style="width: 100%; background: transparent; box-shadow: none;">
+                    <tr style="background: transparent;">
+                        <td style="border: none; vertical-align: top; width: 50%;">
+                            <strong>Step 1-3: Form Display</strong>
+                            <div class="flow-box" style="margin: 5px 0; display: block;">GET /claims/submit</div>
+                            <div class="flow-box" style="margin: 5px 0; display: block;">@PreAuthorize check</div>
+                            <div class="flow-box" style="margin: 5px 0; display: block;">Load enrollments</div>
+                            <div class="flow-box" style="margin: 5px 0; display: block;">Return submit.html</div>
+                        </td>
+                        <td style="border: none; vertical-align: top;">
+                            <strong>Step 4-7: Form Submit</strong>
+                            <div class="flow-box" style="margin: 5px 0; display: block;">POST /claims/submit</div>
+                            <div class="flow-box" style="margin: 5px 0; display: block;">@Valid → Bean Validation</div>
+                            <div class="flow-box" style="margin: 5px 0; display: block;">Service: Validate & Save</div>
+                            <div class="flow-box success" style="margin: 5px 0; display: block;">Redirect /claims ✓</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 6: Key Definitions -->
+        <div class="card" id="definitions">
+            <div class="card-header">
+                <div class="card-icon orange">📚</div>
+                <h2>6. Key Definitions</h2>
+            </div>
+
+            <table>
+                <tr>
+                    <th style="width: 25%;">Term</th>
+                    <th>Definition</th>
+                </tr>
+                <tr>
+                    <td><strong>🔑 Authentication</strong></td>
+                    <td>
+                        <em>"Who are you?"</em><br>
+                        The process of verifying identity using credentials (username/password).
+                        In HICMS: Form login → BCrypt password verification → Session creation.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>🛡️ Authorization</strong></td>
+                    <td>
+                        <em>"What can you do?"</em><br>
+                        Determining if authenticated user can access a resource.
+                        In HICMS: URL patterns in SecurityConfig + @PreAuthorize on methods.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>🎫 JWT</strong></td>
+                    <td>
+                        <em>JSON Web Token</em><br>
+                        Compact token format: <code>header.payload.signature</code><br>
+                        Note: HICMS uses session-based auth, not JWT.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>📋 Claims (Security)</strong></td>
+                    <td>
+                        Pieces of information about a subject (user) in authentication context.
+                        Examples: username, roles, expiration time.
+                        In HICMS: Stored in UserDetails within SecurityContext.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>🗃️ SecurityContextHolder</strong></td>
+                    <td>
+                        Central storage for security information (ThreadLocal by default).<br>
+                        <code>SecurityContextHolder.getContext().getAuthentication()</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>⛓️ FilterChain</strong></td>
+                    <td>
+                        Chain of filters processing HTTP requests before reaching controller.
+                        Key filters: Authentication, Authorization, CSRF, Logout.
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Section 7: Interview Questions -->
+        <div class="card" id="interview">
+            <div class="card-header">
+                <div class="card-icon purple">🎯</div>
+                <h2>7. Interview Questions & Answers</h2>
+            </div>
+
+            <h3>🔷 Spring Boot Annotations</h3>
+
+            <div class="qa-item">
+                <div class="question">What does @SpringBootApplication do internally?</div>
+                <div class="answer">
+                    It's a convenience annotation combining three annotations:
+                    <ul>
+                        <li><strong>@Configuration</strong> - Marks class as source of bean definitions</li>
+                        <li><strong>@EnableAutoConfiguration</strong> - Enables Spring Boot's auto-config</li>
+                        <li><strong>@ComponentScan</strong> - Scans current package and sub-packages</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item">
+                <div class="question">Difference between @Controller and @RestController?</div>
+                <div class="answer">
+                    <table>
+                        <tr>
+                            <th>@Controller</th>
+                            <th>@RestController</th>
+                        </tr>
+                        <tr>
+                            <td>Returns view names (Thymeleaf)</td>
+                            <td>Returns data directly (JSON)</td>
+                        </tr>
+                        <tr>
+                            <td>Need @ResponseBody for JSON</td>
+                            <td>@ResponseBody included</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="qa-item">
+                <div class="question">How does @Transactional work?</div>
+                <div class="answer">
+                    Spring creates a <strong>proxy</strong> around the bean:
+                    <ol>
+                        <li>Before method: Start transaction</li>
+                        <li>Method executes normally</li>
+                        <li>On success: Commit transaction</li>
+                        <li>On exception: Rollback transaction</li>
+                    </ol>
+                    <code>@Transactional(readOnly = true)</code> optimizes for read operations.
+                </div>
+            </div>
+
+            <div class="qa-item">
+                <div class="question">Explain FetchType.LAZY vs EAGER</div>
+                <div class="answer">
+                    <table>
+                        <tr>
+                            <th>LAZY (Recommended)</th>
+                            <th>EAGER</th>
+                        </tr>
+                        <tr>
+                            <td>Load when accessed</td>
+                            <td>Load immediately with parent</td>
+                        </tr>
+                        <tr>
+                            <td>Separate SQL query</td>
+                            <td>JOIN in same query</td>
+                        </tr>
+                        <tr>
+                            <td>Better performance</td>
+                            <td>Can cause N+1 if not careful</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <h3>🔷 Security Questions</h3>
+
+            <div class="qa-item">
+                <div class="question">How does Spring Security authentication work?</div>
+                <div class="answer">
+                    <ol>
+                        <li>User submits credentials (POST /login)</li>
+                        <li>UsernamePasswordAuthenticationFilter intercepts</li>
+                        <li>AuthenticationManager delegates to DaoAuthenticationProvider</li>
+                        <li>CustomUserDetailsService.loadUserByUsername() queries DB</li>
+                        <li>BCryptPasswordEncoder verifies password</li>
+                        <li>On success: Create Authentication → Store in SecurityContext → Create Session</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="qa-item">
+                <div class="question">What is SecurityContextHolder?</div>
+                <div class="answer">
+                    It's the core storage for security information:
+<pre><code>SecurityContextHolder
+  └── SecurityContext
+        └── Authentication
+              ├── Principal (UserDetails)
+              ├── Credentials (password)
+              ├── Authorities (roles)
+              └── isAuthenticated (boolean)</code></pre>
+                    Uses ThreadLocal by default - each thread has its own context.
+                </div>
+            </div>
+
+            <div class="qa-item">
+                <div class="question">Explain @PreAuthorize and how it differs from URL security</div>
+                <div class="answer">
+                    <table>
+                        <tr>
+                            <th>URL Security (SecurityConfig)</th>
+                            <th>@PreAuthorize (Method)</th>
+                        </tr>
+                        <tr>
+                            <td>Coarse-grained (URL patterns)</td>
+                            <td>Fine-grained (per method)</td>
+                        </tr>
+                        <tr>
+                            <td>Evaluated before controller</td>
+                            <td>Evaluated before method</td>
+                        </tr>
+                        <tr>
+                            <td>Cannot access method params</td>
+                            <td>Can use SpEL with params</td>
+                        </tr>
+                    </table>
+                    <code>@PreAuthorize("hasRole('ADMIN') and #id == principal.id")</code>
+                </div>
+            </div>
+
+            <h3>🔷 Claim Module Questions</h3>
+
+            <div class="qa-item">
+                <div class="question">Explain the claim lifecycle in HICMS</div>
+                <div class="answer">
+                    <p><span class="status pending">PENDING</span> → Initial state after submission</p>
+                    <p><span class="status review">UNDER_REVIEW</span> → Adjuster assigns self</p>
+                    <p><span class="status approved">APPROVED</span> → Adjuster approves with amount</p>
+                    <p><span class="status rejected">REJECTED</span> → Adjuster rejects with remarks</p>
+                    <p><span class="status cancelled">CANCELLED</span> → User cancels (only from PENDING)</p>
+                </div>
+            </div>
+
+            <div class="qa-item">
+                <div class="question">What validations occur during claim submission?</div>
+                <div class="answer">
+                    <ol>
+                        <li><strong>Policy exists</strong> - Verify policy ID is valid</li>
+                        <li><strong>User enrolled</strong> - Check active enrollment in policy</li>
+                        <li><strong>Amount valid</strong> - Cannot exceed coverage amount</li>
+                        <li><strong>DTO validation</strong> - @NotNull, @DecimalMin, @NotBlank</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="qa-item">
+                <div class="question">Why is ownership validation important?</div>
+                <div class="answer">
+                    Without ownership checks, users could:
+                    <ul>
+                        <li>Edit other users' claims</li>
+                        <li>Cancel other users' claims</li>
+                        <li>Access sensitive claim data</li>
+                    </ul>
+                    Always verify: <code>claim.getClaimant().getUserId().equals(currentUser.getUserId())</code>
+                </div>
+            </div>
+
+            <h3>🔷 Advanced Questions</h3>
+
+            <div class="qa-item">
+                <div class="question">What is the N+1 query problem?</div>
+                <div class="answer">
+                    Loading N entities, then lazily loading each relationship = 1 + N queries.
+<pre><code>List&lt;Claim&gt; claims = claimRepository.findAll();  // 1 query
+for (Claim c : claims) {
+    c.getPolicy().getName();  // N queries!
+}</code></pre>
+                    <strong>Solutions:</strong>
+                    <ul>
+                        <li>JOIN FETCH in JPQL</li>
+                        <li>@EntityGraph</li>
+                        <li>DTO projections</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="qa-item">
+                <div class="question">Why @Enumerated(STRING) over ORDINAL?</div>
+                <div class="answer">
+                    <table>
+                        <tr>
+                            <th>STRING (Recommended)</th>
+                            <th>ORDINAL</th>
+                        </tr>
+                        <tr>
+                            <td>Stores "PENDING"</td>
+                            <td>Stores 0</td>
+                        </tr>
+                        <tr>
+                            <td>Readable in database</td>
+                            <td>Numbers are confusing</td>
+                        </tr>
+                        <tr>
+                            <td>Safe to reorder enum</td>
+                            <td>Reorder breaks data!</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="qa-item">
+                <div class="question">How does @Valid work with BindingResult?</div>
+                <div class="answer">
+                    <code>@Valid</code> triggers Bean Validation (@NotNull, @Size, etc.).<br>
+                    <code>BindingResult</code> must immediately follow the @Valid parameter:
+<pre><code>public String submit(
+    @Valid @ModelAttribute ClaimDTO dto,  // ✓
+    BindingResult result,                  // Must be right after!
+    Model model) {
+    
+    if (result.hasErrors()) {
+        return "form";  // Show errors
+    }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 30px; color: white;">
+            <p>📚 <strong>HICMS Technical Guide</strong> | Created for Interview Preparation</p>
+            <p style="opacity: 0.8;">Print this page (Ctrl+P) and save as PDF for offline study</p>
+        </div>
+    </div>
+</body>
+</html>

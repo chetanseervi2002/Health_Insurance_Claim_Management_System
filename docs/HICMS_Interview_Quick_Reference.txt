@@ -1,0 +1,288 @@
+================================================================================
+            HICMS - INTERVIEW QUICK REFERENCE GUIDE
+         Health Insurance Claim Management System
+================================================================================
+
+
+================================================================================
+PART 1: ANNOTATIONS QUICK REFERENCE
+================================================================================
+
+SPRING BOOT CORE:
+-----------------
+@SpringBootApplication  → Entry point (combines @Configuration + @EnableAutoConfiguration + @ComponentScan)
+@Configuration         → Defines beans in Java config class
+@Bean                  → Creates Spring-managed bean from method return
+
+STEREOTYPE (Component Scanning):
+--------------------------------
+@Controller            → Web MVC controller (returns views)
+@RestController        → REST API (returns JSON directly)
+@Service               → Business logic layer
+@Repository            → Data access layer (+ exception translation)
+@Component             → Generic Spring component
+
+JPA/HIBERNATE:
+--------------
+@Entity                → Class maps to database table
+@Table(name="...")     → Specifies table name
+@Id                    → Primary key field
+@GeneratedValue        → Auto-generate ID (IDENTITY = auto-increment)
+@Column                → Column properties (nullable, length, unique)
+@ManyToOne             → Many-to-one relationship (FK)
+@OneToMany             → One-to-many relationship
+@JoinColumn            → Foreign key column name
+@Enumerated(STRING)    → Store enum as text (not number)
+@PrePersist            → Callback before INSERT
+@PreUpdate             → Callback before UPDATE
+
+WEB/MVC:
+--------
+@RequestMapping        → Base URL mapping
+@GetMapping            → Handle GET requests
+@PostMapping           → Handle POST requests
+@PathVariable          → Extract from URL: /view/{id}
+@RequestParam          → Query parameter: ?id=5
+@ModelAttribute        → Bind form data to object
+@Valid                 → Trigger Bean Validation
+@AuthenticationPrincipal → Get current logged-in user
+
+SECURITY:
+---------
+@EnableWebSecurity     → Enable Spring Security
+@EnableMethodSecurity  → Enable @PreAuthorize, @PostAuthorize
+@PreAuthorize          → Method-level security check
+
+LOMBOK:
+-------
+@Getter @Setter        → Generate getters/setters
+@NoArgsConstructor     → Empty constructor
+@AllArgsConstructor    → Constructor with all fields
+@RequiredArgsConstructor → Constructor for final fields (DI)
+@Builder               → Builder pattern
+@Data                  → All of the above combined
+
+TRANSACTION:
+------------
+@Transactional         → Transaction management
+@Transactional(readOnly=true) → Read optimization
+
+
+================================================================================
+PART 2: SECURITY ARCHITECTURE
+================================================================================
+
+AUTHENTICATION FLOW:
+-------------------
+1. User submits login form (POST /login)
+2. UsernamePasswordAuthenticationFilter intercepts
+3. AuthenticationManager delegates to DaoAuthenticationProvider
+4. CustomUserDetailsService.loadUserByUsername() queries DB
+5. BCryptPasswordEncoder verifies password
+6. On success: Create Authentication → Store in SecurityContext → Create Session
+7. Subsequent requests: JSESSIONID cookie → Restore SecurityContext
+
+KEY COMPONENTS:
+---------------
+┌─────────────────────────────────────────────────────────────────┐
+│ SecurityContextHolder                                           │
+│   └── SecurityContext                                           │
+│          └── Authentication                                     │
+│                 ├── Principal (UserDetails)                     │
+│                 ├── Credentials (password)                      │
+│                 ├── Authorities (ROLE_USER, ROLE_ADMIN)        │
+│                 └── isAuthenticated (true/false)               │
+└─────────────────────────────────────────────────────────────────┘
+
+AUTHORIZATION LEVELS:
+--------------------
+1. URL-Level (SecurityConfig):
+   .requestMatchers("/admin/**").hasRole("ADMIN")
+
+2. Method-Level (Controller):
+   @PreAuthorize("hasAnyRole('USER', 'AGENT')")
+
+
+================================================================================
+PART 3: CLAIM MODULE ARCHITECTURE
+================================================================================
+
+CLAIM LIFECYCLE:
+---------------
+    ┌──────────┐
+    │ PENDING  │ ←── User submits claim
+    └────┬─────┘
+         │
+    ┌────┴────┐──────────────────┐
+    │         │                  │
+    ▼         ▼                  ▼
+┌────────┐  ┌─────────────┐  ┌───────────┐
+│CANCELLED│  │UNDER_REVIEW │  │           │
+└────────┘  └──────┬──────┘  │           │
+                   │         │           │
+              ┌────┴────┐    │           │
+              │         │    │           │
+              ▼         ▼    │           │
+         ┌────────┐  ┌────────┐         │
+         │APPROVED│  │REJECTED│         │
+         └────────┘  └────────┘         │
+                                        │
+                User can only cancel ───┘
+                when PENDING
+
+ROLE-BASED ACCESS:
+-----------------
+USER         → View own claims, Submit, Edit/Cancel pending
+AGENT        → Submit for customers, View customer claims  
+ADJUSTER     → View all, Assign self, Review (Approve/Reject)
+ADMIN        → Full access
+
+KEY VALIDATIONS:
+---------------
+1. User must be enrolled in policy
+2. Amount cannot exceed coverage
+3. Only owner can edit/cancel
+4. Only PENDING claims are editable
+
+
+================================================================================
+PART 4: KEY DEFINITIONS
+================================================================================
+
+AUTHENTICATION:
+  "Who are you?" - Verifying identity via credentials (username/password)
+
+AUTHORIZATION:
+  "What can you do?" - Checking permissions after authentication
+
+JWT (JSON Web Token):
+  Compact token format: header.payload.signature
+  Contains claims about the user (not used in HICMS - uses sessions)
+
+SECURITY CLAIMS:
+  Pieces of information about user (username, roles, expiry)
+  In JWT: embedded in token. In HICMS: stored in UserDetails/session
+
+SECURITYCONTEXTHOLDER:
+  Core storage for authentication info. ThreadLocal by default.
+  Use: SecurityContextHolder.getContext().getAuthentication()
+
+FILTERCHAIN:
+  Chain of filters processing HTTP requests before controller
+  Key filters: Authentication, Authorization, CSRF, Logout
+
+
+================================================================================
+PART 5: TOP 20 INTERVIEW Q&A
+================================================================================
+
+Q1: What does @SpringBootApplication do?
+A: Combines @Configuration + @EnableAutoConfiguration + @ComponentScan. Entry point that bootstraps the application.
+
+Q2: Difference between @Controller and @RestController?
+A: @Controller returns view names (for Thymeleaf). @RestController returns data directly (JSON) - includes @ResponseBody.
+
+Q3: How does @Transactional work?
+A: Spring creates a proxy. Before method: start transaction. After success: commit. On exception: rollback.
+
+Q4: What is @PreAuthorize?
+A: Method-level security using SpEL. Example: @PreAuthorize("hasRole('ADMIN')"). Evaluated before method execution.
+
+Q5: Explain FetchType.LAZY vs EAGER.
+A: LAZY loads related entity when accessed (separate query). EAGER loads immediately (JOIN). LAZY is recommended default.
+
+Q6: Why use @RequiredArgsConstructor for DI?
+A: Constructor injection is preferred - makes dependencies explicit, supports immutability (final fields), easier testing.
+
+Q7: What is SecurityContextHolder?
+A: Central storage for Authentication. ThreadLocal by default. Contains current user's security info.
+
+Q8: How does form-based authentication work?
+A: POST /login → Filter → AuthManager → UserDetailsService → Password check → Session created → JSESSIONID cookie.
+
+Q9: Why add ROLE_ prefix to authorities?
+A: Spring Security convention. hasRole('ADMIN') automatically checks for ROLE_ADMIN.
+
+Q10: What is BCryptPasswordEncoder?
+A: Password hashing algorithm with salt, adaptive work factor, intentionally slow. Stores: $2a$10$hash...
+
+Q11: Explain @Valid and BindingResult.
+A: @Valid triggers bean validation (@NotNull, @Size). BindingResult captures errors - must follow @Valid parameter immediately.
+
+Q12: What is the claim lifecycle?
+A: PENDING → UNDER_REVIEW → APPROVED/REJECTED. User can cancel only PENDING claims.
+
+Q13: How does role-based claim filtering work?
+A: Controller checks user.getRole() - ADMIN sees all, USER sees own, AGENT sees their filed claims.
+
+Q14: Why validate claim ownership?
+A: Prevent users from editing/canceling others' claims. Check: claim.getClaimant().getUserId().equals(currentUser.getUserId())
+
+Q15: What is the N+1 query problem?
+A: Loading N entities, then lazily loading relationships = 1+N queries. Solution: JOIN FETCH or EntityGraph.
+
+Q16: How does @Enumerated(STRING) differ from ORDINAL?
+A: STRING stores "PENDING" (readable, safe for enum reordering). ORDINAL stores 0,1,2 (breaks if enum order changes).
+
+Q17: What is CSRF and why disable it?
+A: Cross-Site Request Forgery protection. Disabled for convenience/APIs but should be enabled in production.
+
+Q18: Explain @PrePersist and @PreUpdate.
+A: JPA lifecycle callbacks. @PrePersist runs before INSERT, @PreUpdate before UPDATE. Used for auto-timestamps.
+
+Q19: What's the difference between Entity and DTO?
+A: Entity maps to DB (JPA annotations, relationships). DTO transfers data (validation, flattened fields). Entity stays in service layer.
+
+Q20: How does Spring Data JPA generate queries from method names?
+A: Parses method name: findByClaimStatus → WHERE claim_status = ?. Keywords: findBy, And, Or, Between, OrderBy.
+
+
+================================================================================
+PART 6: MERMAID DIAGRAMS (Copy to Mermaid Editor)
+================================================================================
+
+AUTHENTICATION FLOW:
+-------------------
+```mermaid
+sequenceDiagram
+    Browser->>Filter: POST /login (credentials)
+    Filter->>AuthManager: authenticate()
+    AuthManager->>UserDetailsService: loadUserByUsername()
+    UserDetailsService->>Database: SELECT user
+    Database-->>UserDetailsService: User
+    UserDetailsService-->>AuthManager: UserDetails
+    AuthManager->>BCrypt: verify password
+    alt Valid
+        AuthManager-->>Filter: Success
+        Filter->>SecurityContext: Store auth
+        Filter-->>Browser: Redirect + JSESSIONID
+    else Invalid
+        AuthManager-->>Filter: Failure
+        Filter-->>Browser: /login?error
+    end
+```
+
+CLAIM STATE DIAGRAM:
+-------------------
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING: Submit
+    PENDING --> UNDER_REVIEW: Adjuster assigns
+    PENDING --> CANCELLED: User cancels
+    UNDER_REVIEW --> APPROVED: Approve
+    UNDER_REVIEW --> REJECTED: Reject
+    APPROVED --> [*]
+    REJECTED --> [*]
+    CANCELLED --> [*]
+```
+
+
+================================================================================
+END OF QUICK REFERENCE
+================================================================================
+
+Files Created:
+1. docs/HICMS_Complete_Technical_Report.md (Full ~35 Q&A, detailed explanations)
+2. docs/HICMS_Interview_Quick_Reference.txt (This file - condensed version)
+
+Good luck with your interview!

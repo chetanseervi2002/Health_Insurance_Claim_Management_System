@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head}">
+    <title>View Policy - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4><i class="bi bi-file-earmark-text"></i> Policy Details</h4>
+                    <span class="badge" 
+                          th:classappend="${policy.policyStatus.name() == 'ACTIVE'} ? 'bg-success' : 
+                                         (${policy.policyStatus.name() == 'INACTIVE'} ? 'bg-secondary' : 'bg-danger')"
+                          th:text="${policy.policyStatus}">Status</span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Policy Number:</strong>
+                            <p th:text="${policy.policyNumber}">POL-001</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Policy Name:</strong>
+                            <p th:text="${policy.policyName}">Policy Name</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Coverage Amount:</strong>
+                            <p class="h4 text-success">$<span th:text="${#numbers.formatDecimal(policy.coverageAmount, 1, 2)}">0.00</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Monthly Premium:</strong>
+                            <p class="h4 text-primary">$<span th:text="${#numbers.formatDecimal(policy.premiumAmount, 1, 2)}">0.00</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Duration:</strong>
+                            <p><span th:text="${policy.durationMonths}">12</span> months</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Created Date:</strong>
+                            <p th:text="${policy.createdDate}">2024-01-01</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3" th:if="${policy.description}">
+                        <strong>Description:</strong>
+                        <p th:text="${policy.description}">Policy description</p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/policies}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Policies
+                        </a>
+                        <div>
+                            <a th:href="@{/enrollments/enroll(policyId=${policy.policyId})}" 
+                               sec:authorize="hasAnyRole('USER', 'AGENT')"
+                               th:if="${policy.policyStatus.name() == 'ACTIVE'}"
+                               class="btn btn-success">
+                                <i class="bi bi-plus-circle"></i> Enroll in This Policy
+                            </a>
+                            <a th:href="@{/policies/edit/{id}(id=${policy.policyId})}" 
+                               sec:authorize="hasRole('ADMIN')"
+                               class="btn btn-primary">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

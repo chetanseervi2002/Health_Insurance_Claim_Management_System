@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head}">
+    <title>Admin Dashboard - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <h2 class="mb-4"><i class="bi bi-speedometer2"></i> Admin Dashboard</h2>
+    
+    <p class="lead">Welcome back, <strong th:text="${user.fullName}">Admin</strong>!</p>
+    
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Total Policies</h6>
+                            <h2 th:text="${totalPolicies}">0</h2>
+                        </div>
+                        <i class="bi bi-file-earmark-text display-4 opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small><span th:text="${activePolicies}">0</span> Active</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Pending Claims</h6>
+                            <h2 th:text="${pendingClaims}">0</h2>
+                        </div>
+                        <i class="bi bi-clipboard2-pulse display-4 opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small><span th:text="${totalClaims}">0</span> Total Claims</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Approved Claims</h6>
+                            <h2 th:text="${approvedClaims}">0</h2>
+                        </div>
+                        <i class="bi bi-check-circle display-4 opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small><span th:text="${rejectedClaims}">0</span> Rejected</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Total Users</h6>
+                            <h2 th:text="${totalUsers}">0</h2>
+                        </div>
+                        <i class="bi bi-people display-4 opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small><span th:text="${totalAgents}">0</span> Agents, <span th:text="${totalAdjusters}">0</span> Adjusters</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a th:href="@{/policies/create}" class="btn btn-primary me-2">
+                        <i class="bi bi-plus-circle"></i> Create Policy
+                    </a>
+                    <a th:href="@{/admin/users/create}" class="btn btn-secondary me-2">
+                        <i class="bi bi-person-plus"></i> Add User
+                    </a>
+                    <a th:href="@{/claims/pending}" class="btn btn-warning me-2">
+                        <i class="bi bi-hourglass"></i> View Pending Claims
+                    </a>
+                    <a th:href="@{/support/open}" class="btn btn-info">
+                        <i class="bi bi-headset"></i> Open Tickets (<span th:text="${openTickets}">0</span>)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Pending Claims</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(recentClaims)}" class="text-muted">
+                        No pending claims
+                    </div>
+                    <div class="list-group list-group-flush" th:unless="${#lists.isEmpty(recentClaims)}">
+                        <a th:each="claim : ${recentClaims}" th:href="@{/claims/view/{id}(id=${claim.claimId})}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1" th:text="${claim.claimNumber}">CLM-001</h6>
+                                <small class="text-warning">Pending</small>
+                            </div>
+                            <p class="mb-1" th:text="${claim.policy.policyName}">Policy Name</p>
+                            <small th:text="'$' + ${claim.claimAmount}">$0.00</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-ticket"></i> Recent Open Tickets</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(recentTickets)}" class="text-muted">
+                        No open tickets
+                    </div>
+                    <div class="list-group list-group-flush" th:unless="${#lists.isEmpty(recentTickets)}">
+                        <a th:each="ticket : ${recentTickets}" th:href="@{/support/view/{id}(id=${ticket.ticketId})}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1" th:text="${ticket.ticketNumber}">TKT-001</h6>
+                                <small class="text-primary" th:text="${ticket.ticketStatus}">Open</small>
+                            </div>
+                            <p class="mb-1" th:text="${ticket.subject}">Subject</p>
+                            <small th:text="${ticket.user.fullName}">User Name</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

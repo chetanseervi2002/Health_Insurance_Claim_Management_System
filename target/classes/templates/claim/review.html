@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}">
+    <title>Review Claim - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Claim Summary -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4><i class="bi bi-clipboard-check"></i> Review Claim #<span th:text="${claim.claimId}">1</span></h4>
+                    <span class="badge fs-6"
+                          th:classappend="${claim.claimStatus.name() == 'PENDING'} ? 'bg-warning text-dark' :
+                                         (${claim.claimStatus.name() == 'UNDER_REVIEW'} ? 'bg-info' : 'bg-secondary')"
+                          th:text="${claim.claimStatus}">Status</span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Policy:</strong>
+                            <p th:text="${claim.policyName + ' (' + claim.policyNumber + ')'}">Policy Name</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Claimant:</strong>
+                            <p th:text="${claim.claimantName}">John Doe</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Claim Date:</strong>
+                            <p th:text="${claim.claimDate}">2024-01-01</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Claimed Amount:</strong>
+                            <p class="h5 text-primary">$<span th:text="${claim.claimAmount}">0.00</span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Coverage Limit:</strong>
+                            <p class="h5 text-info">$<span th:text="${claim.coverageAmount}">0.00</span></p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5>Claim Description</h5>
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <p class="mb-0" th:text="${claim.description}">Description...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Review Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-pencil-square"></i> Review Decision</h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/claims/review/{id}(id=${claim.claimId})}" method="post" 
+                          th:object="${review}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Decision *</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="claimStatus" id="approve" 
+                                       value="APPROVED" required>
+                                <label class="btn btn-outline-success" for="approve">
+                                    <i class="bi bi-check-circle"></i> Approve
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="claimStatus" id="reject" 
+                                       value="REJECTED" required>
+                                <label class="btn btn-outline-danger" for="reject">
+                                    <i class="bi bi-x-circle"></i> Reject
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="claimStatus" id="underReview" 
+                                       value="UNDER_REVIEW" required>
+                                <label class="btn btn-outline-info" for="underReview">
+                                    <i class="bi bi-hourglass-split"></i> Need More Info
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3" id="approvedAmountDiv" style="display: none;">
+                            <label for="approvedAmount" class="form-label">Approved Amount ($) *</label>
+                            <input type="number" class="form-control" id="approvedAmount" 
+                                   th:field="*{approvedAmount}" step="0.01" min="0.01"
+                                   th:max="${claim.claimAmount}">
+                            <div class="form-text">
+                                Maximum claimable: $<span th:text="${claim.claimAmount}">0.00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="remarks" class="form-label">Review Notes *</label>
+                            <textarea class="form-control" id="remarks" th:field="*{remarks}" 
+                                      rows="4" required
+                                      placeholder="Provide detailed notes explaining your decision..."></textarea>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Important:</strong> This action cannot be undone. Please review all 
+                            documents and information carefully before making your decision.
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/claims/view/{id}(id=${claim.claimId})}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send"></i> Submit Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Documents Sidebar -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Supporting Documents</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush" th:if="${documents != null && !documents.isEmpty()}">
+                        <li class="list-group-item" th:each="doc : ${documents}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-file-earmark"></i>
+                                    <span th:text="${doc.originalFileName != null ? doc.originalFileName : doc.documentName}">Document</span>
+                                    <br>
+                                    <small class="text-muted" th:text="${doc.documentType}">Type</small>
+                                </div>
+                                <a th:href="@{/documents/download/{id}(id=${doc.documentId})}" 
+                                   class="btn btn-sm btn-outline-primary" title="View" target="_blank">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                    <div th:if="${documents == null || documents.isEmpty()}" class="text-center text-muted py-3">
+                        <i class="bi bi-folder2-open fs-1 d-block mb-2"></i>
+                        No documents uploaded
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Review Guidelines -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-book"></i> Review Guidelines</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-check text-success"></i> Verify policy coverage
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check text-success"></i> Check claim amount against limits
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check text-success"></i> Review all supporting documents
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check text-success"></i> Verify treatment dates
+                        </li>
+                        <li>
+                            <i class="bi bi-check text-success"></i> Check for duplicate claims
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const radios = document.querySelectorAll('input[name="claimStatus"]');
+        const approvedAmountDiv = document.getElementById('approvedAmountDiv');
+        const approvedAmountInput = document.getElementById('approvedAmount');
+        
+        radios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'APPROVED') {
+                    approvedAmountDiv.style.display = 'block';
+                    approvedAmountInput.required = true;
+                } else {
+                    approvedAmountDiv.style.display = 'none';
+                    approvedAmountInput.required = false;
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

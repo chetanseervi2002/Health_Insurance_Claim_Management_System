@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}">
+    <title>View Enrollment - HICMS</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main class="container my-4 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4><i class="bi bi-card-checklist"></i> Enrollment Details</h4>
+                    <span class="badge" 
+                          th:classappend="${enrollment.enrollmentStatus.name() == 'ACTIVE'} ? 'bg-success' : 
+                                         (${enrollment.enrollmentStatus.name() == 'PENDING'} ? 'bg-warning text-dark' : 
+                                         (${enrollment.enrollmentStatus.name() == 'EXPIRED'} ? 'bg-secondary' : 'bg-danger'))"
+                          th:text="${enrollment.enrollmentStatus}">Status</span>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Policy Information</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Policy Name:</strong>
+                            <p th:text="${enrollment.policyName}">Policy Name</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Policy Number:</strong>
+                            <p th:text="${enrollment.policyNumber}">POL-001</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Coverage Amount:</strong>
+                            <p class="h5 text-success">$<span th:text="${enrollment.coverageAmount}">0.00</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Monthly Premium:</strong>
+                            <p class="h5 text-primary">$<span th:text="${enrollment.premiumAmount}">0.00</span></p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5 class="card-title">Enrollment Information</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Policyholder:</strong>
+                            <p th:text="${enrollment.policyholderName}">Customer Name</p>
+                        </div>
+                        <div class="col-md-6" th:if="${enrollment.agentName}">
+                            <strong>Agent:</strong>
+                            <p th:text="${enrollment.agentName}">Agent Name</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Enrollment Date:</strong>
+                            <p th:text="${enrollment.enrollmentDate}">2024-01-01</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Start Date:</strong>
+                            <p th:text="${enrollment.startDate}">2024-01-01</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>End Date:</strong>
+                            <p th:text="${enrollment.endDate}">2025-01-01</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/enrollments}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Enrollments
+                        </a>
+                        <div>
+                            <a th:if="${enrollment.enrollmentStatus.name() == 'ACTIVE'}"
+                               th:href="@{/claims/submit}" class="btn btn-warning">
+                                <i class="bi bi-clipboard2-plus"></i> File a Claim
+                            </a>
+                            <form th:if="${enrollment.enrollmentStatus.name() == 'ACTIVE' || enrollment.enrollmentStatus.name() == 'PENDING'}"
+                                  th:action="@{/enrollments/cancel/{id}(id=${enrollment.enrollmentId})}" 
+                                  method="post" class="d-inline"
+                                  onsubmit="return confirm('Are you sure you want to cancel this enrollment?');">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-x-circle"></i> Cancel Enrollment
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

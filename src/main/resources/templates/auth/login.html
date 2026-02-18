@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}">
+    <title>Login - HICMS</title>
+</head>
+<body class="bg-light">
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4><i class="bi bi-hospital"></i> HICMS Login</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Success Message -->
+                    <div th:if="${param.logout}" class="alert alert-success" role="alert">
+                        <i class="bi bi-check-circle"></i> You have been logged out successfully.
+                    </div>
+                    
+                    <!-- Error Message -->
+                    <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle"></i> Invalid username or password.
+                    </div>
+                    
+                    <!-- Registration Success Message -->
+                    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+                        <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+                    </div>
+                    
+                    <form th:action="@{/login}" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" 
+                                       placeholder="Enter username" required autofocus>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" 
+                                       placeholder="Enter password" required>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-box-arrow-in-right"></i> Login
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr>
+                    
+                    <div class="text-center">
+                        <p class="mb-0">Don't have an account? 
+                            <a th:href="@{/register}">Register here</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="card-footer text-center text-muted">
+                    <small>Health Insurance Claim Management System</small>
+                </div>
+            </div>
+            
+            <!-- Demo Credentials -->
+            <div class="card mt-3">
+                <div class="card-header bg-info text-white">
+                    <small><i class="bi bi-info-circle"></i> Demo Credentials</small>
+                </div>
+                <div class="card-body">
+                    <small>
+                        <table class="table table-sm table-borderless mb-0">
+                            <tr><td><strong>Admin:</strong></td><td>admin / admin123</td></tr>
+                            <tr><td><strong>Agent:</strong></td><td>agent / agent123</td></tr>
+                            <tr><td><strong>Adjuster:</strong></td><td>adjuster / adjuster123</td></tr>
+                            <tr><td><strong>User:</strong></td><td>user / user123</td></tr>
+                        </table>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>
